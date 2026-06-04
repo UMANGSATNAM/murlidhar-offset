@@ -15,7 +15,7 @@ import {
   Gift,
   Truck,
 } from 'lucide-react'
-import { useCartStore } from '@/lib/cart-store'
+import { useCartStore, useCartSubtotal, useCartGstAmount, useCartItemCount } from '@/lib/cart-store'
 import { useNavigationStore } from '@/lib/store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,7 +38,12 @@ interface SavedItem {
 }
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, subtotal, gstAmount, totalAmount, itemCount } = useCartStore()
+  const items = useCartStore((s) => s.items)
+  const removeItem = useCartStore((s) => s.removeItem)
+  const updateQuantity = useCartStore((s) => s.updateQuantity)
+  const subtotalVal = useCartSubtotal()
+  const gstVal = useCartGstAmount()
+  const itemCount = useCartItemCount()
   const { navigate } = useNavigationStore()
   const [couponCode, setCouponCode] = useState('')
   const [discount, setDiscount] = useState(0)
@@ -64,8 +69,6 @@ export default function CartPage() {
     )
   }
 
-  const subtotalVal = subtotal()
-  const gstVal = gstAmount()
   const shipping = subtotalVal >= FREE_SHIPPING_THRESHOLD ? 0 : (items.length > 0 ? SHIPPING_COST : 0)
   const totalVal = subtotalVal + gstVal + shipping - discount
 
@@ -185,7 +188,7 @@ export default function CartPage() {
             <ShoppingCart className="size-7 text-gold" />
             <h1 className="text-2xl md:text-3xl font-bold text-foreground">Shopping Cart</h1>
             <Badge variant="secondary" className="ml-2">
-              {itemCount()} {itemCount() === 1 ? 'item' : 'items'}
+              {itemCount} {itemCount === 1 ? 'item' : 'items'}
             </Badge>
           </div>
 

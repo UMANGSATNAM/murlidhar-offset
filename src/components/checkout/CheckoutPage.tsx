@@ -17,7 +17,7 @@ import {
   Banknote,
   Wallet,
 } from 'lucide-react'
-import { useCartStore } from '@/lib/cart-store'
+import { useCartStore, useCartSubtotal, useCartGstAmount } from '@/lib/cart-store'
 import { useNavigationStore } from '@/lib/store'
 import { useAuthStore } from '@/lib/auth-store'
 import { Button } from '@/components/ui/button'
@@ -68,7 +68,8 @@ const INDIAN_STATES = [
 ]
 
 export default function CheckoutPage() {
-  const { items, subtotal, gstAmount, totalAmount, clearCart } = useCartStore()
+  const items = useCartStore((s) => s.items)
+  const clearCart = useCartStore((s) => s.clearCart)
   const { navigate } = useNavigationStore()
   const { user, isLoggedIn } = useAuthStore()
   const [currentStep, setCurrentStep] = useState(1)
@@ -97,8 +98,8 @@ export default function CheckoutPage() {
     requestAnimationFrame(() => setMounted(true))
   }, [isLoggedIn, user])
 
-  const subtotalVal = subtotal()
-  const gstVal = gstAmount()
+  const subtotalVal = useCartSubtotal()
+  const gstVal = useCartGstAmount()
   const shipping = subtotalVal >= 999 ? 0 : 99
   const totalVal = subtotalVal + gstVal + shipping
 

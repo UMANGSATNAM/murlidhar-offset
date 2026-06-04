@@ -1,90 +1,120 @@
 # Murlidhar Offset - Project Worklog
 
-## Project Status: MVP Complete - All Core Features Implemented
+## Round 2: Bug Fixes, Styling Improvements & New Features
 
-### Current State Assessment
-The Murlidhar Offset printing platform is fully functional with all major features implemented. The application uses a single-page architecture with Zustand-based client-side routing, a comprehensive Prisma database schema, and a premium dark navy + gold design theme.
+### Current Project Status: Stable - VLM Rating 8/10
+The platform is fully functional with all core features working correctly. Cart reactivity has been fixed, new UI components added, and design quality improved from 7/10 to 8/10 based on VLM analysis.
 
-### Completed Work
+---
 
-#### Phase 1: Foundation (Completed)
-- **Database Schema**: Complete Prisma schema with 20+ models (Users, Products, Categories, Orders, Cart, Coupons, Reviews, CMS, Settings, etc.)
-- **Theme & Branding**: Custom CSS with brand colors (Navy #0D1B3D, Gold #C9A227), glassmorphism utilities, premium shadows, custom scrollbar, 11 keyframe animations
-- **Client-side Router**: Zustand store with 13 page types, smooth navigation with scroll-to-top
-- **API Routes**: 11 API routes covering Products, Categories, Cart, Orders, Auth, Admin (dashboard/products/orders/customers), CMS, Upload, Settings
-- **Seed Data**: 12 categories, 12 products with variants/pricing, 3 coupons, 5 sample orders, 6 reviews, CMS content, site settings
+### Round 2 Completed Work
 
-#### Phase 2: Customer-Facing Pages (Completed)
-- **Landing Page**: Hero section with animated elements, Featured Products, Popular Categories (12), Why Choose Us (6 features), Testimonials carousel, Printing Process (4 steps), Bulk Order CTA, FAQ section
-- **Product Catalog**: Full product listing with filters (category, price, material, search), sort options, pagination, responsive grid
-- **Product Detail**: Image gallery with zoom, dynamic pricing calculator (material/size/finish selectors), quantity tiers, GST calculation, add to cart, tabs (description, specs, pricing, FAQ, reviews)
-- **Shopping Cart**: Item management, quantity controls, coupon system, GST breakdown, free shipping threshold, empty cart state
-- **Checkout**: 4-step process (Address → Payment → Review → Confirmation), Razorpay/COD options, order creation
-- **Authentication**: Login/Register with tab toggle, auth store with localStorage persistence
-- **User Dashboard**: Overview stats, order history, saved designs, wishlist, addresses, profile settings
+#### Bug Fixes (Task R2)
+1. **CRITICAL FIX: Cart Store Reactivity** - Rewrote `/src/lib/cart-store.ts`
+   - Replaced method-based computed values (`subtotal()`, `gstAmount()`, `totalAmount()`, `itemCount()`) with Zustand selector hooks
+   - Added `useCartSubtotal()`, `useCartGstAmount()`, `useCartTotalAmount()`, `useCartItemCount()` selector hooks
+   - These selectors properly subscribe to `items` changes, causing re-renders when cart items change
 
-#### Phase 3: Admin Panel (Completed)
-- **Admin Layout**: Dark navy sidebar with navigation, top bar with search/notifications, responsive mobile toggle
-- **Dashboard**: Revenue/order/customer stats, charts (AreaChart, PieChart), recent orders, best sellers
-- **Product Management**: CRUD operations, variant management, quantity pricing tiers, SEO fields
-- **Order Management**: Status filtering, order details with timeline, status changes, internal notes
-- **CMS Management**: Hero/Banners/Testimonials/FAQs/Footer sections, content editing with sort order
-- **Settings**: General, Contact, Payment, Shipping, Tax, SEO, Theme groups with individual save
-- **Customer Management**: Customer list with search, detail view
+2. **FIX: Header Cart Badge** - Updated `/src/components/layout/Header.tsx`
+   - Replaced broken `useState` + `useEffect` cart count tracking with `useCartItemCount()` selector
+   - Cart badge now properly updates when items are added from ProductDetail page
 
-#### Phase 4: Polish & QA (In Progress)
-- Fixed HTML hydration issue (p > div nesting with Skeleton component)
-- Fixed "Get Custom Quote" button visibility (changed to gold border/text)
-- VLM analysis rated design 7/10 - good professional look
-- All API endpoints returning 200 successfully
-- No console errors after fixes
+3. **FIX: CartPage** - Updated `/src/components/cart/CartPage.tsx`
+   - Replaced method calls with selector hooks for proper reactivity
+   - Fixed hydration timing
 
-### Architecture Summary
-- **Frontend**: Next.js 16, React 19, TypeScript, Tailwind CSS 4, shadcn/ui, Framer Motion, Recharts
-- **Backend**: Next.js API routes, Prisma ORM with SQLite
-- **State**: Zustand (navigation, cart, auth), localStorage persistence
-- **Routing**: Client-side SPA via Zustand store (single `/` route)
+4. **FIX: CheckoutPage** - Updated `/src/components/checkout/CheckoutPage.tsx`
+   - Replaced method calls with selector hooks
 
-### File Structure
-```
-src/
-├── app/
-│   ├── api/ (11 route files)
-│   ├── globals.css (custom theme)
-│   ├── layout.tsx
-│   └── page.tsx (SPA container)
-├── components/
-│   ├── admin/ (6 components)
-│   ├── auth/ (1 component)
-│   ├── cart/ (1 component)
-│   ├── checkout/ (1 component)
-│   ├── dashboard/ (1 component)
-│   ├── home/ (8 section components)
-│   ├── layout/ (3 components)
-│   └── products/ (5 components)
-└── lib/
-    ├── auth-store.ts
-    ├── cart-store.ts
-    ├── db.ts
-    ├── store.ts
-    └── utils.ts
-```
+5. **FIX: ProductCatalog** - Fixed HTML hydration error
+   - Changed `<p>` to `<div>` in results count section to prevent nested `<div>` inside `<p>` issue
+
+#### Styling Improvements (Task R3)
+1. **AnnouncementBar** (`/src/components/home/AnnouncementBar.tsx`)
+   - Slim rotating message bar above header
+   - 5 announcements, 4-second rotation
+   - Framer Motion slide transitions, dot indicators, dismiss button
+
+2. **TrustStrip** (`/src/components/home/TrustStrip.tsx`)
+   - Horizontal trust badges between Hero and Featured Products
+   - 5 badges: ISO 9001, 10K+ Customers, 24hr Production, Free Design, Satisfaction Guarantee
+   - Gold dividers, staggered fade-in animation
+
+3. **CTABanner** (`/src/components/home/CTABanner.tsx`)
+   - Full-width navy gradient CTA between Categories and WhyChooseUs
+   - CSS diamond gold pattern overlay
+   - Glass-morphism stats card, "Ready to Print?" heading
+   - Scale animation on scroll
+
+4. **Hero Section** - Improved "Get Custom Quote" button visibility
+   - Changed from white border (blended with navy) to gold border/text
+   - Added more spacing between stat cards
+
+#### New Features (Task R4)
+1. **AIQuoteEstimator** (`/src/components/products/AIQuoteEstimator.tsx`)
+   - Quick quote calculator on products page
+   - 4 custom select dropdowns (Product, Quantity, Paper, Finish)
+   - Formula-based ₹ price range estimate
+   - "Get Exact Quote" button
+
+2. **NotificationPopup** (`/src/components/layout/NotificationPopup.tsx`)
+   - Social proof toast on bottom-left
+   - 10 Indian names/cities with order actions
+   - Auto-rotates every 15s, shows 6s, initial 5s delay
+   - Spring enter/exit animations, dismissible
+
+3. **SearchModal** (`/src/components/layout/SearchModal.tsx`)
+   - Full-screen search modal (Ctrl+K / ⌘K)
+   - Glass-navy card, auto-focus input
+   - Recent searches, popular categories, quick links
+   - Real-time category filtering
+   - Custom event integration with Header
+
+4. **Integration** - Updated `/src/app/page.tsx`
+   - All new components properly positioned
+   - AnnouncementBar above header
+   - TrustStrip between Hero & Featured
+   - CTABanner between Categories & WhyChooseUs
+   - AIQuoteEstimator on products page
+   - SearchModal + NotificationPopup as global overlays
+
+---
+
+### VLM Design Quality Progress
+| Round | Rating | Key Feedback |
+|-------|--------|-------------|
+| Round 1 | 7/10 | Good foundation, needs better visual integration, gold border not visible on navy |
+| Round 2 | 8/10 | Strong premium feel, effective navy+gold scheme, social proof adds authenticity |
+
+### Verification Results
+- ✅ All API endpoints return 200
+- ✅ No console errors on homepage
+- ✅ Cart add-to-cart flow works (items persist to localStorage)
+- ✅ Cart badge updates reactively when items added
+- ✅ Cart page displays items with quantity controls
+- ✅ Dynamic pricing updates correctly with variant changes
+- ✅ Lint passes cleanly
+- ✅ AnnouncementBar rotates messages
+- ✅ SearchModal accessible via Ctrl+K
+- ✅ NotificationPopup shows social proof messages
+- ✅ TrustStrip displays trust badges
+- ✅ CTABanner visible between sections
+
+---
 
 ### Unresolved Issues & Risks
-1. **No real authentication**: Auth store uses localStorage, not NextAuth/JWT - needs proper implementation for production
-2. **No payment gateway integration**: Razorpay/Stripe are placeholders only
-3. **No file upload preview**: Upload API saves files but no preview/validation UI
-4. **No product image management**: Products use placeholder gradients instead of real images
-5. **Admin page navigation**: Cannot easily test admin page through browser automation (needs manual localStorage manipulation)
-6. **Mobile responsiveness**: Needs more detailed testing on various screen sizes
-7. **Performance**: Could benefit from more aggressive code splitting and image optimization
+1. **Product Images**: Products still use "MO" placeholder gradients instead of real images - needs AI-generated product mockups
+2. **No Real Authentication**: Auth store uses localStorage only, not JWT/NextAuth
+3. **No Payment Gateway**: Razorpay/Stripe are visual placeholders only
+4. **Admin Page Testing**: Can't easily navigate to admin via browser automation (needs localStorage manipulation)
+5. **Mobile Testing**: Needs more detailed testing on various mobile screen sizes
+6. **Minor HTML Warning**: Occasional `<p>` containing `<div>` hydration warning in ProductCatalog (previously fixed but may reappear)
 
-### Next Phase Priorities
-1. Generate product images with AI (image-generation skill)
-2. Implement proper NextAuth authentication
-3. Add Razorpay payment integration
-4. Build design editor component (Canva-like)
-5. Add file upload preview and print quality validation
-6. Improve mobile responsiveness
-7. Add more animations and micro-interactions
-8. SEO optimization (sitemap, robots.txt, structured data)
+### Priority Recommendations for Next Phase
+1. **Generate AI Product Images** - Replace "MO" placeholders with actual product mockups using image-generation skill
+2. **Implement NextAuth** - Proper JWT-based authentication with session management
+3. **Add Razorpay Integration** - Real payment gateway integration
+4. **Build Design Editor** - Canva-like lightweight editor for product customization
+5. **Mobile Responsiveness Testing** - Detailed QA on mobile viewports
+6. **SEO Optimization** - Sitemap, robots.txt, structured data markup
+7. **Performance Optimization** - Code splitting, lazy loading, image optimization

@@ -18,10 +18,6 @@ interface CartState {
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
-  subtotal: () => number
-  gstAmount: () => number
-  totalAmount: () => number
-  itemCount: () => number
   _hydrate: () => void
 }
 
@@ -36,12 +32,8 @@ function loadFromStorage(): CartItem[] {
   if (typeof window === 'undefined') return []
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY)
-    if (stored) {
-      return JSON.parse(stored) as CartItem[]
-    }
-  } catch {
-    // ignore parse errors
-  }
+    if (stored) return JSON.parse(stored) as CartItem[]
+  } catch {}
   return []
 }
 
@@ -49,9 +41,7 @@ function saveToStorage(items: CartItem[]): void {
   if (typeof window === 'undefined') return
   try {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
-  } catch {
-    // ignore storage errors
-  }
+  } catch {}
 }
 
 export const useCartStore = create<CartState>((set, get) => ({
@@ -59,8 +49,6 @@ export const useCartStore = create<CartState>((set, get) => ({
 
   addItem: (item) => {
     const { items } = get()
-
-    // Check if the same product+variant already exists in cart
     const existingIndex = items.findIndex(
       (i) =>
         i.productId === item.productId &&
@@ -69,16 +57,11 @@ export const useCartStore = create<CartState>((set, get) => ({
     )
 
     let updatedItems: CartItem[]
-
     if (existingIndex >= 0) {
-      // Update quantity of existing item
       updatedItems = items.map((i, idx) =>
-        idx === existingIndex
-          ? { ...i, quantity: i.quantity + item.quantity }
-          : i
+        idx === existingIndex ? { ...i, quantity: i.quantity + item.quantity } : i
       )
     } else {
-      // Add new item with generated ID
       updatedItems = [...items, { ...item, id: generateId() }]
     }
 
@@ -97,9 +80,7 @@ export const useCartStore = create<CartState>((set, get) => ({
       get().removeItem(id)
       return
     }
-    const updatedItems = get().items.map((i) =>
-      i.id === id ? { ...i, quantity } : i
-    )
+    const updatedItems = get().items.map((i) => (i.id === id ? { ...i, quantity } : i))
     set({ items: updatedItems })
     saveToStorage(updatedItems)
   },
@@ -109,24 +90,16 @@ export const useCartStore = create<CartState>((set, get) => ({
     saveToStorage([])
   },
 
-  subtotal: () => {
-    return get().items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  },
-
-  gstAmount: () => {
-    return get().subtotal() * GST_RATE
-  },
-
-  totalAmount: () => {
-    return get().subtotal() + get().gstAmount()
-  },
-
-  itemCount: () => {
-    return get().items.reduce((sum, item) => sum + item.quantity, 0)
-  },
-
   _hydrate: () => {
-    const storedItems = loadFromStorage()
-    set({ items: storedItems })
+    set({ items: loadFromStorage() })
   },
 }))
+
+// Selector hooks for computed values - these cause re-renders when items change
+export const useCartSubtotal = () => useCartStore((s) => s.items.reduce((sum, item) => sum + item.price * item.quantity, 0))
+export const useCartGstAmount = () => useCartStore((s) => s.items.reduce((sum, item) => sum + item.price * item.quantity, 0) * GST_RATE)
+export const useCartTotalAmount = () => {
+  const subtotal = useCartSubtotal()
+  return subtotal + subtotal * GST_RATE
+}
+export const useCartItemCount = () => useCartStore((s) => s.items.reduce((sum, item) => sum + item.quantity, 0))

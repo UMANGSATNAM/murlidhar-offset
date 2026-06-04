@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Menu,
-  X,
   Search,
   ShoppingCart,
   User,
@@ -13,7 +12,6 @@ import {
   Printer,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
@@ -23,7 +21,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useNavigationStore } from '@/lib/store'
-import { useCartStore } from '@/lib/cart-store'
+import { useCartStore, useCartItemCount } from '@/lib/cart-store'
 
 const navLinks = [
   { label: 'Home', page: 'home' as const },
@@ -42,23 +40,17 @@ const categoryLinks = [
 ]
 
 export default function Header() {
-  const { navigate, page, setSearchQuery, searchQuery } =
-    useNavigationStore()
-  const { itemCount, _hydrate } = useCartStore()
+  const { navigate, page } = useNavigationStore()
+  const cartCount = useCartItemCount()
+  const _hydrate = useCartStore((s) => s._hydrate)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [catDropdown, setCatDropdown] = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [cartCount, setCartCount] = useState(0)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     _hydrate()
   }, [_hydrate])
-
-  useEffect(() => {
-    setCartCount(itemCount())
-  }, [itemCount, useCartStore.getState().items])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -78,14 +70,6 @@ export default function Header() {
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      navigate('products')
-      setSearchOpen(false)
-    }
-  }
 
   const handleNavClick = (p: 'home' | 'products') => {
     navigate(p)
@@ -226,46 +210,16 @@ export default function Header() {
 
           {/* Right section */}
           <div className="flex items-center gap-2 md:gap-3">
-            {/* Desktop search */}
-            <form
-              onSubmit={handleSearch}
-              className="hidden md:flex items-center relative"
+            {/* Search - opens SearchModal */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => window.dispatchEvent(new Event('open-search-modal'))}
+              className="text-white/80 hover:text-gold hover:bg-white/10"
+              aria-label="Search (Ctrl+K)"
             >
-              {searchOpen ? (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 220, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  className="flex items-center"
-                >
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search products..."
-                    className="h-9 bg-white/10 border-gold/20 text-white placeholder:text-white/40 focus:border-gold/50 text-sm pr-8"
-                    autoFocus
-                    onBlur={() => {
-                      if (!searchQuery) setSearchOpen(false)
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-2 text-white/60 hover:text-gold"
-                  >
-                    <Search className="size-4" />
-                  </button>
-                </motion.div>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setSearchOpen(true)}
-                  className="text-white/80 hover:text-gold hover:bg-white/10"
-                >
-                  <Search className="size-5" />
-                </Button>
-              )}
-            </form>
+              <Search className="size-5" />
+            </Button>
 
             {/* Cart */}
             <Button
@@ -319,18 +273,18 @@ export default function Header() {
                 </SheetHeader>
 
                 <div className="mt-6 flex flex-col gap-1 px-2">
-                  {/* Mobile search */}
-                  <form onSubmit={handleSearch} className="mb-4">
-                    <div className="relative">
-                      <Input
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search products..."
-                        className="bg-white/10 border-gold/20 text-white placeholder:text-white/40 h-10 pl-10"
-                      />
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-white/40" />
-                    </div>
-                  </form>
+                  {/* Mobile search - opens SearchModal */}
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false)
+                      setTimeout(() => window.dispatchEvent(new Event('open-search-modal')), 300)
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/60 hover:bg-white/5 hover:text-white transition-all mb-4"
+                  >
+                    <Search className="size-4" />
+                    <span className="text-sm">Search products...</span>
+                    <kbd className="ml-auto px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/30">⌘K</kbd>
+                  </button>
 
                   {navLinks.map((link) => (
                     <button

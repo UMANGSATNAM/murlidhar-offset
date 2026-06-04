@@ -9,6 +9,11 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import WhatsAppButton from '@/components/layout/WhatsAppButton'
 
+// New layout components
+import AnnouncementBar from '@/components/home/AnnouncementBar'
+import SearchModal from '@/components/layout/SearchModal'
+import NotificationPopup from '@/components/layout/NotificationPopup'
+
 // Home sections - dynamic imports for performance
 const HeroSection = dynamic(
   () => import('@/components/home/HeroSection'),
@@ -18,8 +23,16 @@ const FeaturedProducts = dynamic(
   () => import('@/components/home/FeaturedProducts'),
   { ssr: false }
 )
+const TrustStrip = dynamic(
+  () => import('@/components/home/TrustStrip'),
+  { ssr: false }
+)
 const PopularCategories = dynamic(
   () => import('@/components/home/PopularCategories'),
+  { ssr: false }
+)
+const CTABanner = dynamic(
+  () => import('@/components/home/CTABanner'),
   { ssr: false }
 )
 const WhyChooseUs = dynamic(
@@ -50,6 +63,10 @@ const ProductCatalog = dynamic(
 )
 const ProductDetail = dynamic(
   () => import('@/components/products/ProductDetail'),
+  { ssr: false }
+)
+const AIQuoteEstimator = dynamic(
+  () => import('@/components/products/AIQuoteEstimator'),
   { ssr: false }
 )
 
@@ -98,8 +115,10 @@ function HomePageContent() {
   return (
     <>
       <HeroSection />
+      <TrustStrip />
       <FeaturedProducts />
       <PopularCategories />
+      <CTABanner />
       <WhyChooseUs />
       <TestimonialsSection />
       <PrintingProcess />
@@ -122,7 +141,17 @@ export default function Home() {
       case 'home':
         return <HomePageContent />
       case 'products':
-        return <ProductCatalog />
+        return (
+          <div className="relative">
+            <ProductCatalog />
+            {/* AI Quote Estimator - positioned as a floating sidebar on desktop */}
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+              <div className="max-w-md mx-auto lg:mx-0 lg:absolute lg:right-8 lg:top-8 lg:w-96">
+                <AIQuoteEstimator />
+              </div>
+            </div>
+          </div>
+        )
       case 'product-detail':
         return <ProductDetail />
       case 'cart':
@@ -145,6 +174,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Announcement Bar - above header */}
+      <AnnouncementBar />
+
       {/* Header */}
       <Header />
 
@@ -158,6 +190,10 @@ export default function Home() {
 
       {/* WhatsApp button */}
       <WhatsAppButton />
+
+      {/* Global modals & popups */}
+      <SearchModal />
+      <NotificationPopup />
     </div>
   )
 }
