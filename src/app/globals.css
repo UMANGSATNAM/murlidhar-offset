@@ -1,0 +1,677 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   MURLIDHAR OFFSET — Premium Offset Printing Brand Theme
+   Brand Colors:
+     Dark Navy Blue: #0D1B3D → oklch(0.17 0.04 260)
+     Gold Accent:    #C9A227 → oklch(0.70 0.14 85)
+     White:          #FFFFFF → oklch(1 0 0)
+   Style: Premium · Minimal · Elegant · Corporate · Luxury
+   ============================================================ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  /* Brand Color Tokens */
+  --color-navy: #0D1B3D;
+  --color-navy-light: #1A2D52;
+  --color-navy-dark: #081228;
+  --color-gold: #C9A227;
+  --color-gold-light: #D4B54E;
+  --color-gold-dark: #A8861E;
+  --color-gold-muted: #C9A22720;
+}
+
+:root {
+  --radius: 0.625rem;
+
+  /* Core palette — light mode */
+  --background: oklch(0.99 0.002 260);
+  --foreground: oklch(0.17 0.04 260);
+
+  /* Card */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.17 0.04 260);
+
+  /* Popover */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.17 0.04 260);
+
+  /* Primary = Dark Navy Blue */
+  --primary: oklch(0.17 0.04 260);
+  --primary-foreground: oklch(0.99 0.005 85);
+
+  /* Secondary = Soft navy tint */
+  --secondary: oklch(0.96 0.008 260);
+  --secondary-foreground: oklch(0.22 0.05 260);
+
+  /* Muted = Warm neutral */
+  --muted: oklch(0.96 0.005 260);
+  --muted-foreground: oklch(0.50 0.02 260);
+
+  /* Accent = Gold */
+  --accent: oklch(0.70 0.14 85);
+  --accent-foreground: oklch(0.17 0.04 260);
+
+  /* Destructive */
+  --destructive: oklch(0.577 0.245 27.325);
+
+  /* Borders & inputs */
+  --border: oklch(0.92 0.006 260);
+  --input: oklch(0.92 0.006 260);
+  --ring: oklch(0.70 0.14 85);
+
+  /* Chart colors — brand-aligned */
+  --chart-1: oklch(0.17 0.04 260);
+  --chart-2: oklch(0.70 0.14 85);
+  --chart-3: oklch(0.45 0.08 260);
+  --chart-4: oklch(0.80 0.10 85);
+  --chart-5: oklch(0.55 0.10 40);
+
+  /* Sidebar */
+  --sidebar: oklch(0.97 0.005 260);
+  --sidebar-foreground: oklch(0.17 0.04 260);
+  --sidebar-primary: oklch(0.17 0.04 260);
+  --sidebar-primary-foreground: oklch(0.99 0.005 85);
+  --sidebar-accent: oklch(0.93 0.015 85);
+  --sidebar-accent-foreground: oklch(0.17 0.04 260);
+  --sidebar-border: oklch(0.92 0.006 260);
+  --sidebar-ring: oklch(0.70 0.14 85);
+}
+
+.dark {
+  /* Core palette — dark mode (navy-based) */
+  --background: oklch(0.17 0.04 260);
+  --foreground: oklch(0.96 0.005 85);
+
+  /* Card = slightly lighter navy */
+  --card: oklch(0.22 0.045 260);
+  --card-foreground: oklch(0.96 0.005 85);
+
+  /* Popover */
+  --popover: oklch(0.22 0.045 260);
+  --popover-foreground: oklch(0.96 0.005 85);
+
+  /* Primary = Gold in dark mode */
+  --primary: oklch(0.70 0.14 85);
+  --primary-foreground: oklch(0.13 0.04 260);
+
+  /* Secondary = Navy tint */
+  --secondary: oklch(0.25 0.05 260);
+  --secondary-foreground: oklch(0.96 0.005 85);
+
+  /* Muted */
+  --muted: oklch(0.25 0.05 260);
+  --muted-foreground: oklch(0.65 0.02 260);
+
+  /* Accent = Gold */
+  --accent: oklch(0.55 0.12 85);
+  --accent-foreground: oklch(0.96 0.005 85);
+
+  /* Destructive */
+  --destructive: oklch(0.704 0.191 22.216);
+
+  /* Borders */
+  --border: oklch(0.35 0.04 260);
+  --input: oklch(0.30 0.04 260);
+  --ring: oklch(0.70 0.14 85);
+
+  /* Chart colors — brand-aligned for dark mode */
+  --chart-1: oklch(0.70 0.14 85);
+  --chart-2: oklch(0.55 0.10 260);
+  --chart-3: oklch(0.80 0.10 85);
+  --chart-4: oklch(0.45 0.08 260);
+  --chart-5: oklch(0.60 0.10 40);
+
+  /* Sidebar */
+  --sidebar: oklch(0.14 0.035 260);
+  --sidebar-foreground: oklch(0.96 0.005 85);
+  --sidebar-primary: oklch(0.70 0.14 85);
+  --sidebar-primary-foreground: oklch(0.13 0.04 260);
+  --sidebar-accent: oklch(0.25 0.05 260);
+  --sidebar-accent-foreground: oklch(0.96 0.005 85);
+  --sidebar-border: oklch(0.30 0.04 260);
+  --sidebar-ring: oklch(0.70 0.14 85);
+}
+
+/* ============================================================
+   BASE LAYER
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ============================================================
+   CUSTOM SCROLLBAR — Premium Gold & Navy
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(0.96 0.005 260);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.55 0.10 85);
+  border-radius: 4px;
+  border: 1px solid oklch(0.96 0.005 260);
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.70 0.14 85);
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: oklch(0.22 0.045 260);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.55 0.10 85);
+  border-color: oklch(0.22 0.045 260);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.70 0.14 85);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.55 0.10 85) oklch(0.96 0.005 260);
+}
+
+.dark * {
+  scrollbar-color: oklch(0.55 0.10 85) oklch(0.22 0.045 260);
+}
+
+/* ============================================================
+   BRAND UTILITY CLASSES
+   ============================================================ */
+
+/* Gold gradient backgrounds */
+.gold-gradient {
+  background: linear-gradient(135deg, #C9A227 0%, #D4B54E 50%, #C9A227 100%);
+  color: #0D1B3D;
+}
+
+.gold-gradient-shimmer {
+  background: linear-gradient(
+    120deg,
+    #C9A227 0%,
+    #D4B54E 25%,
+    #E8CC6E 50%,
+    #D4B54E 75%,
+    #C9A227 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+  color: #0D1B3D;
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #C9A227 0%, #E8CC6E 50%, #C9A227 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navy gradient backgrounds */
+.navy-gradient {
+  background: linear-gradient(135deg, #0D1B3D 0%, #1A2D52 50%, #0D1B3D 100%);
+  color: #FFFFFF;
+}
+
+.navy-gradient-deep {
+  background: linear-gradient(180deg, #0D1B3D 0%, #081228 100%);
+  color: #FFFFFF;
+}
+
+.navy-gradient-text {
+  background: linear-gradient(135deg, #1A2D52 0%, #0D1B3D 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Combined premium gradient */
+.premium-gradient {
+  background: linear-gradient(135deg, #0D1B3D 0%, #1A2D52 40%, #C9A227 100%);
+  color: #FFFFFF;
+}
+
+.hero-gradient {
+  background: linear-gradient(
+    160deg,
+    #0D1B3D 0%,
+    #1A2D52 30%,
+    #0D1B3D 60%,
+    #1A2D52 100%
+  );
+  color: #FFFFFF;
+}
+
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-navy {
+  background: rgba(13, 27, 61, 0.75);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  color: #FFFFFF;
+}
+
+.glass-gold {
+  background: rgba(201, 162, 39, 0.12);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border: 1px solid rgba(201, 162, 39, 0.25);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px) saturate(200%);
+  -webkit-backdrop-filter: blur(20px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(13, 27, 61, 0.08);
+}
+
+.dark .glass {
+  background: rgba(13, 27, 61, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark .glass-card {
+  background: rgba(13, 27, 61, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Premium shadows */
+.premium-shadow {
+  box-shadow:
+    0 4px 6px -1px rgba(13, 27, 61, 0.08),
+    0 2px 4px -2px rgba(13, 27, 61, 0.04),
+    0 0 0 1px rgba(13, 27, 61, 0.02);
+}
+
+.premium-shadow-lg {
+  box-shadow:
+    0 10px 15px -3px rgba(13, 27, 61, 0.1),
+    0 4px 6px -4px rgba(13, 27, 61, 0.05),
+    0 0 0 1px rgba(13, 27, 61, 0.02);
+}
+
+.premium-shadow-xl {
+  box-shadow:
+    0 20px 25px -5px rgba(13, 27, 61, 0.12),
+    0 8px 10px -6px rgba(13, 27, 61, 0.06),
+    0 0 0 1px rgba(13, 27, 61, 0.02);
+}
+
+.gold-shadow {
+  box-shadow:
+    0 4px 14px -2px rgba(201, 162, 39, 0.35),
+    0 0 0 1px rgba(201, 162, 39, 0.1);
+}
+
+.gold-shadow-lg {
+  box-shadow:
+    0 10px 25px -5px rgba(201, 162, 39, 0.3),
+    0 4px 10px -3px rgba(201, 162, 39, 0.15),
+    0 0 0 1px rgba(201, 162, 39, 0.08);
+}
+
+.navy-shadow {
+  box-shadow:
+    0 4px 14px -2px rgba(13, 27, 61, 0.4),
+    0 0 0 1px rgba(13, 27, 61, 0.1);
+}
+
+/* Premium borders */
+.gold-border {
+  border: 1px solid rgba(201, 162, 39, 0.4);
+}
+
+.gold-border-glow {
+  border: 1px solid rgba(201, 162, 39, 0.5);
+  box-shadow: 0 0 15px rgba(201, 162, 39, 0.1), inset 0 0 15px rgba(201, 162, 39, 0.03);
+}
+
+.navy-border {
+  border: 1px solid rgba(13, 27, 61, 0.15);
+}
+
+/* Text utilities */
+.text-gold {
+  color: #C9A227;
+}
+
+.text-navy {
+  color: #0D1B3D;
+}
+
+/* Divider */
+.gold-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C9A227, transparent);
+  border: none;
+}
+
+.navy-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #0D1B3D, transparent);
+  border: none;
+}
+
+/* Premium hover lift effect */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(13, 27, 61, 0.12),
+    0 8px 10px -6px rgba(13, 27, 61, 0.06);
+}
+
+/* Gold underline animation on hover */
+.gold-underline-hover {
+  position: relative;
+  text-decoration: none;
+}
+
+.gold-underline-hover::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #C9A227, #D4B54E);
+  transition: width 0.3s ease;
+}
+
+.gold-underline-hover:hover::after {
+  width: 100%;
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes goldPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 162, 39, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(201, 162, 39, 0);
+  }
+}
+
+@keyframes subtleFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes rotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+
+@keyframes revealLine {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Animation utility classes */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease-out forwards;
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.7s ease-out forwards;
+}
+
+.animate-fade-in-left {
+  animation: fadeInLeft 0.7s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fadeInRight 0.7s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-gold-pulse {
+  animation: goldPulse 2s ease-in-out infinite;
+}
+
+.animate-subtle-float {
+  animation: subtleFloat 4s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Staggered delay utilities */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+
+/* Fill mode for entrance animations */
+.animate-fade-in,
+.animate-fade-in-up,
+.animate-fade-in-down,
+.animate-fade-in-left,
+.animate-fade-in-right,
+.animate-scale-in,
+.animate-slide-up {
+  animation-fill-mode: both;
+}
+
+/* ============================================================
+   PREMIUM SELECTION STYLING
+   ============================================================ */
+::selection {
+  background: rgba(201, 162, 39, 0.25);
+  color: #0D1B3D;
+}
+
+.dark ::selection {
+  background: rgba(201, 162, 39, 0.35);
+  color: #FFFFFF;
+}
+
+/* ============================================================
+   FOCUS STYLING — Accessible + Brand-aligned
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid #C9A227;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   PREMIUM TRANSITIONS (add via class)
+   ============================================================ */
+.transition-premium {
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.transition-bounce {
+  transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
