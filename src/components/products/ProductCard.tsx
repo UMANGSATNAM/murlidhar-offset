@@ -140,16 +140,19 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       whileHover={{ y: -6 }}
-      className="group relative flex flex-col rounded-xl bg-card premium-shadow hover:premium-shadow-xl transition-smooth overflow-hidden cursor-pointer border border-border/40 gold-glow-hover border-glow-animate card-hover-lift"
+      className="group relative flex flex-col rounded-xl bg-card premium-shadow hover:premium-shadow-xl transition-smooth overflow-hidden cursor-pointer border border-border/40 hover:border-gold/40 gold-glow-hover card-hover-lift"
       onClick={handleViewDetails}
     >
+      {/* Gold border glow on hover */}
+      <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10 ring-1 ring-gold/30" />
+
       {/* Image Area */}
       <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-navy/5 to-navy/10">
         {mainImage ? (
           <img
             src={mainImage}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy via-navy-light to-navy">
@@ -162,8 +165,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         )}
 
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/20 transition-colors duration-300" />
+        {/* Gradient overlay that shifts on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/0 via-transparent to-transparent group-hover:from-navy/30 group-hover:via-navy/10 transition-all duration-500" />
+
+        {/* Existing overlay */}
+        <div className="absolute inset-0 bg-navy/0 group-hover:bg-navy/10 transition-colors duration-300" />
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
@@ -180,12 +186,12 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         </div>
 
         {/* Quick Actions - right side */}
-        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 z-20">
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleWishlist}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-md hover:bg-gold hover:text-navy transition-colors border border-white/20"
           >
             <Heart className="h-4 w-4" />
           </motion.button>
@@ -193,10 +199,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleCompare}
-            className={`flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm shadow-md transition-colors ${
+            className={`flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-md shadow-md transition-colors border ${
               inCompare
-                ? 'bg-gold text-navy'
-                : 'bg-white/90 hover:bg-gold hover:text-navy'
+                ? 'bg-gold text-navy border-gold'
+                : 'bg-white/90 hover:bg-gold hover:text-navy hover:border-gold border-white/20'
             }`}
           >
             <GitCompare className="h-4 w-4" />
@@ -205,7 +211,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleViewDetails}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-md shadow-md hover:bg-gold hover:text-navy transition-colors border border-white/20"
           >
             <Eye className="h-4 w-4" />
           </motion.button>

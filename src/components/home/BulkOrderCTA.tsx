@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Phone, Printer } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 export default function BulkOrderCTA() {
   const { navigate } = useNavigationStore()
@@ -31,7 +32,7 @@ export default function BulkOrderCTA() {
         />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <ScrollReveal variant="scale-in" className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Printer icon */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
@@ -104,7 +105,7 @@ export default function BulkOrderCTA() {
             </span>
           ))}
         </motion.div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

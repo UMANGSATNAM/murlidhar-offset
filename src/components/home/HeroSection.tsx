@@ -13,7 +13,7 @@ const stats = [
   { value: '24hr', label: 'Delivery', icon: Truck },
 ]
 
-const rotatingWords = ['Print', 'Story', 'Vision', 'Brand', 'Dream']
+const rotatingWords = ['Print', 'Design', 'Vision', 'Brand', 'Dream']
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },

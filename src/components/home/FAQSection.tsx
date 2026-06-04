@@ -8,6 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 interface FAQ {
   id: string
@@ -100,7 +101,7 @@ export default function FAQSection() {
     <section className="py-16 md:py-24 bg-gray-50/30 relative">
       {/* Subtle top gold divider */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal variant="fade-up" className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
           <motion.div
@@ -137,7 +138,7 @@ export default function FAQSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          <Accordion
+        <Accordion
             type="single"
             collapsible
             className="w-full"
@@ -183,7 +184,7 @@ export default function FAQSection() {
             ))}
           </Accordion>
         </motion.div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

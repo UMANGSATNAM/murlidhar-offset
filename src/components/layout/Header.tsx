@@ -17,6 +17,8 @@ import {
   Sun,
   Moon,
   GitCompare,
+  Bell,
+  Package,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -33,6 +35,7 @@ import { useWishlistStore, useWishlistCount } from '@/lib/wishlist-store'
 import { useCompareStore, useCompareCount } from '@/lib/compare-store'
 import { useTheme } from 'next-themes'
 import ThemeToggle from '@/components/layout/ThemeToggle'
+import NotificationCenter from '@/components/layout/NotificationCenter'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -251,6 +254,9 @@ export default function Header() {
               <Search className="size-5" />
             </Button>
 
+            {/* Notification Center */}
+            <NotificationCenter />
+
             {/* Theme Toggle */}
             <ThemeToggle />
 
@@ -376,6 +382,15 @@ export default function Header() {
                     <Search className="size-4" />
                     <span className="text-sm">Search products...</span>
                     <kbd className="ml-auto px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] font-mono text-white/30">⌘K</kbd>
+                  </button>
+
+                  {/* Mobile notifications */}
+                  <button
+                    onClick={() => setMobileOpen(false)}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-white/60 hover:bg-white/5 hover:text-white transition-all mb-4"
+                  >
+                    <Bell className="size-4" />
+                    <span className="text-sm">Notifications</span>
                   </button>
 
                   {navLinks.map((link) => (
@@ -518,6 +533,17 @@ export default function Header() {
                         {cartCount} items
                       </Badge>
                     )}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      navigate('sample-request')
+                      setMobileOpen(false)
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center gap-2"
+                  >
+                    <Package className="size-4" />
+                    <span>Free Samples</span>
                   </button>
 
                   <button

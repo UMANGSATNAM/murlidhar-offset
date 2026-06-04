@@ -16,8 +16,11 @@ import {
   Mail,
   Layers,
   Tag,
+  Trash2,
 } from 'lucide-react'
 import { useNavigationStore } from '@/lib/store'
+
+const RECENT_SEARCHES_KEY = 'murlidhar-offset-recent-searches'
 
 const popularCategories = [
   { name: 'Business Cards', slug: 'business-cards', icon: CreditCard },
@@ -37,28 +40,62 @@ const quickLinks = [
   { label: 'My Account', page: 'auth' as const },
 ]
 
-const defaultRecentSearches = [
+const trendingSearches = [
   'Business Cards',
-  'Wedding Invitations',
-  'Brochure Design',
+  'Wedding Cards',
+  'Brochures',
+  'Custom Packaging',
 ]
+
+function loadRecentSearches(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const stored = localStorage.getItem(RECENT_SEARCHES_KEY)
+    if (stored) {
+      return JSON.parse(stored) as string[]
+    }
+  } catch {
+    // ignore
+  }
+  return []
+}
+
+function saveRecentSearches(searches: string[]) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches))
+  } catch {
+    // ignore
+  }
+}
 
 export default function SearchModal() {
   const { navigate, setSearchQuery } = useNavigationStore()
   const [isOpen, setIsOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [recentSearches, setRecentSearches] = useState<string[]>(defaultRecentSearches)
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return []
+    return loadRecentSearches()
+  })
+  const [selectedIndex, setSelectedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
+
+  // Save recent searches to localStorage when they change
+  useEffect(() => {
+    saveRecentSearches(recentSearches)
+  }, [recentSearches])
 
   // Callbacks for open/close with focus management and query reset
   const openModal = useCallback(() => {
     setIsOpen(true)
+    setSelectedIndex(-1)
     setTimeout(() => inputRef.current?.focus(), 100)
   }, [])
 
   const closeModal = useCallback(() => {
     setIsOpen(false)
     setQuery('')
+    setSelectedIndex(-1)
   }, [])
 
   // Keyboard shortcut: Ctrl+K or Cmd+K
@@ -124,12 +161,77 @@ export default function SearchModal() {
     setRecentSearches((prev) => prev.filter((s) => s !== search))
   }
 
+  const clearRecentSearches = () => {
+    setRecentSearches([])
+  }
+
+  // Build list of selectable items for keyboard navigation
+  const selectableItems = (() => {
+    const items: Array<{ type: 'recent' | 'trending' | 'category' | 'action'; value: string }> = []
+
+    if (!query) {
+      // Recent searches
+      recentSearches.forEach((s) =>
+        items.push({ type: 'recent', value: s })
+      )
+      // Trending searches
+      trendingSearches.forEach((s) =>
+        items.push({ type: 'trending', value: s })
+      )
+    }
+
+    // Categories (filtered)
+    const filteredCategories = query
+      ? popularCategories.filter((c) =>
+          c.name.toLowerCase().includes(query.toLowerCase())
+        )
+      : popularCategories
+
+    filteredCategories.forEach((c) =>
+      items.push({ type: 'category', value: c.slug })
+    )
+
+    // Search action
+    if (query.trim()) {
+      items.push({ type: 'action', value: query })
+    }
+
+    return items
+  })()
+
   // Filter categories based on query
   const filteredCategories = query
     ? popularCategories.filter((c) =>
         c.name.toLowerCase().includes(query.toLowerCase())
       )
     : popularCategories
+
+  const filteredCount = query ? filteredCategories.length : 0
+
+  // Keyboard navigation within the modal
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setSelectedIndex((prev) =>
+        prev < selectableItems.length - 1 ? prev + 1 : 0
+      )
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setSelectedIndex((prev) =>
+        prev > 0 ? prev - 1 : selectableItems.length - 1
+      )
+    } else if (e.key === 'Enter' && selectedIndex >= 0) {
+      e.preventDefault()
+      const item = selectableItems[selectedIndex]
+      if (item) {
+        if (item.type === 'category') {
+          handleCategoryClick(item.value)
+        } else {
+          handleSearch(item.value)
+        }
+      }
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -162,7 +264,11 @@ export default function SearchModal() {
                     ref={inputRef}
                     type="text"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(e) => {
+                      setQuery(e.target.value)
+                      setSelectedIndex(-1)
+                    }}
+                    onKeyDown={handleKeyDown}
                     placeholder="Search products, categories, or pages..."
                     className="w-full pl-12 pr-12 py-4 bg-transparent text-white text-base placeholder:text-white/30 outline-none border-b border-gold/10"
                   />
@@ -181,30 +287,76 @@ export default function SearchModal() {
                   {/* Recent searches */}
                   {recentSearches.length > 0 && !query && (
                     <div className="mb-5">
-                      <h4 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                        <Clock className="size-3" />
-                        Recent Searches
+                      <h4 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2 flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="size-3" />
+                          Recent Searches
+                        </span>
+                        <button
+                          onClick={clearRecentSearches}
+                          className="text-white/25 hover:text-white/50 transition-colors flex items-center gap-1 normal-case text-[10px] font-normal"
+                          aria-label="Clear recent searches"
+                        >
+                          <Trash2 className="size-2.5" />
+                          Clear
+                        </button>
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {recentSearches.map((search) => (
-                          <button
-                            key={search}
-                            onClick={() => handleSearch(search)}
-                            className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white/70 text-xs hover:bg-gold/10 hover:border-gold/20 hover:text-gold transition-all"
-                          >
-                            <span>{search}</span>
+                        {recentSearches.map((search, idx) => {
+                          const globalIdx = idx
+                          return (
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                removeRecentSearch(search)
-                              }}
-                              className="opacity-0 group-hover:opacity-100 text-white/30 hover:text-white/60 transition-opacity"
-                              aria-label={`Remove ${search}`}
+                              key={search}
+                              onClick={() => handleSearch(search)}
+                              className={`group flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border text-white/70 text-xs transition-all ${
+                                selectedIndex === globalIdx
+                                  ? 'border-gold/40 bg-gold/10 text-gold'
+                                  : 'border-white/10 hover:bg-gold/10 hover:border-gold/20 hover:text-gold'
+                              }`}
                             >
-                              <X className="size-2.5" />
+                              <span>{search}</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  removeRecentSearch(search)
+                                }}
+                                className="opacity-0 group-hover:opacity-100 text-white/30 hover:text-white/60 transition-opacity"
+                                aria-label={`Remove ${search}`}
+                              >
+                                <X className="size-2.5" />
+                              </button>
                             </button>
-                          </button>
-                        ))}
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Trending searches */}
+                  {!query && (
+                    <div className="mb-5">
+                      <h4 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <TrendingUp className="size-3" />
+                        Trending Searches
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {trendingSearches.map((search, idx) => {
+                          const globalIdx = recentSearches.length + idx
+                          return (
+                            <button
+                              key={search}
+                              onClick={() => handleSearch(search)}
+                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white/70 text-xs transition-all ${
+                                selectedIndex === globalIdx
+                                  ? 'bg-gold/10 border border-gold/40 text-gold'
+                                  : 'bg-white/[0.03] border border-transparent hover:bg-gold/10 hover:border-gold/20 hover:text-gold'
+                              }`}
+                            >
+                              <TrendingUp className="size-2.5 text-gold/40" />
+                              <span>{search}</span>
+                            </button>
+                          )
+                        })}
                       </div>
                     </div>
                   )}
@@ -214,19 +366,36 @@ export default function SearchModal() {
                     <h4 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                       <TrendingUp className="size-3" />
                       {query ? 'Matching Categories' : 'Popular Categories'}
+                      {query && filteredCount > 0 && (
+                        <span className="ml-auto normal-case font-normal text-white/20">
+                          {filteredCount} result{filteredCount !== 1 ? 's' : ''}
+                        </span>
+                      )}
                     </h4>
                     <div className="grid grid-cols-2 gap-1.5">
-                      {filteredCategories.map((cat) => (
-                        <button
-                          key={cat.slug}
-                          onClick={() => handleCategoryClick(cat.slug)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-white/[0.03] hover:bg-gold/10 border border-transparent hover:border-gold/20 text-white/70 hover:text-gold text-sm transition-all group"
-                        >
-                          <cat.icon className="size-4 text-gold/40 group-hover:text-gold transition-colors shrink-0" />
-                          <span className="truncate">{cat.name}</span>
-                          <ArrowRight className="size-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-                        </button>
-                      ))}
+                      {filteredCategories.map((cat, idx) => {
+                        const trendingOffset = query ? 0 : recentSearches.length + trendingSearches.length
+                        const globalIdx = trendingOffset + idx
+                        return (
+                          <button
+                            key={cat.slug}
+                            onClick={() => handleCategoryClick(cat.slug)}
+                            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-white/70 hover:text-gold text-sm transition-all group ${
+                              selectedIndex === globalIdx
+                                ? 'bg-gold/10 border border-gold/20 text-gold'
+                                : 'bg-white/[0.03] hover:bg-gold/10 border border-transparent hover:border-gold/20'
+                            }`}
+                          >
+                            <cat.icon className={`size-4 shrink-0 transition-colors ${
+                              selectedIndex === globalIdx
+                                ? 'text-gold'
+                                : 'text-gold/40 group-hover:text-gold'
+                            }`} />
+                            <span className="truncate">{cat.name}</span>
+                            <ArrowRight className="size-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                          </button>
+                        )
+                      })}
                     </div>
                     {filteredCategories.length === 0 && query && (
                       <p className="text-white/30 text-sm text-center py-4">
@@ -261,7 +430,11 @@ export default function SearchModal() {
                     <div className="pt-3 border-t border-gold/10">
                       <button
                         onClick={() => handleSearch(query)}
-                        className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg gold-gradient text-navy font-semibold text-sm hover:opacity-90 transition-opacity"
+                        className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
+                          selectedIndex === selectableItems.length - 1
+                            ? 'gold-gradient-shimmer text-navy'
+                            : 'gold-gradient text-navy hover:opacity-90'
+                        }`}
                       >
                         <Search className="size-4" />
                         Search for &ldquo;{query}&rdquo;
@@ -270,14 +443,20 @@ export default function SearchModal() {
                   )}
                 </div>
 
-                {/* Footer with keyboard shortcut hint */}
+                {/* Footer with keyboard shortcut hints */}
                 <div className="px-4 py-2.5 border-t border-gold/10 flex items-center justify-between">
                   <div className="flex items-center gap-3 text-white/25 text-[10px]">
                     <span className="flex items-center gap-1">
                       <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono">
+                        ↑↓
+                      </kbd>
+                      navigate
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono">
                         ↵
                       </kbd>
-                      to search
+                      to select
                     </span>
                     <span className="flex items-center gap-1">
                       <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[9px] font-mono">

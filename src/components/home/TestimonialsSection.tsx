@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Star, ChevronLeft, ChevronRight, Quote } from 'lucide-react'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 interface Testimonial {
   id: string
@@ -139,7 +140,7 @@ export default function TestimonialsSection() {
       {/* Subtle top gold divider */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal variant="fade-left" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
           <motion.div
@@ -285,7 +286,7 @@ export default function TestimonialsSection() {
             ))}
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

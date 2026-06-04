@@ -10,6 +10,7 @@ import {
   Receipt,
   Globe,
 } from 'lucide-react'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 const features = [
   {
@@ -94,7 +95,7 @@ export default function WhyChooseUs() {
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/3 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+      <ScrollReveal variant="scale-in" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section header */}
         <div className="text-center mb-12 md:mb-16">
           <motion.div
@@ -193,7 +194,7 @@ export default function WhyChooseUs() {
             ))}
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

@@ -9,6 +9,8 @@ import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
 import { useCompareStore } from '@/lib/compare-store'
 import { toast } from 'sonner'
+import ScrollReveal from '@/components/ui/ScrollReveal'
+import ProductCardSkeleton from '@/components/products/ProductCardSkeleton'
 
 interface Product {
   id: string
@@ -119,7 +121,7 @@ export default function FeaturedProducts() {
 
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-[#F8F9FA] to-white relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal variant="fade-up" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
           <motion.div
@@ -163,10 +165,7 @@ export default function FeaturedProducts() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-xl border bg-muted/30 animate-pulse h-72"
-              />
+              <ProductCardSkeleton key={i} />
             ))}
           </div>
         ) : (
@@ -318,12 +317,7 @@ export default function FeaturedProducts() {
         )}
 
         {/* View all button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
+        <ScrollReveal variant="fade-up" delay={0.3} className="text-center mt-12">
           <Button
             onClick={() => navigate('products')}
             variant="outline"
@@ -332,8 +326,8 @@ export default function FeaturedProducts() {
             View All Products
             <ArrowRight className="size-4 ml-2" />
           </Button>
-        </motion.div>
-      </div>
+        </ScrollReveal>
+      </ScrollReveal>
     </section>
   )
 }

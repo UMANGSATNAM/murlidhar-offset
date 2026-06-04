@@ -18,7 +18,7 @@ const containerVariants = {
     opacity: 1,
     y: 0,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
       duration: 0.6,
       ease: [0.22, 1, 0.36, 1],
     },
@@ -26,10 +26,11 @@ const containerVariants = {
 }
 
 const badgeVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
+    scale: 1,
     transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
   },
 }
@@ -65,10 +66,13 @@ export default function TrustStrip() {
             <React.Fragment key={badge.text}>
               <motion.div
                 variants={badgeVariants}
-                className="flex items-center gap-4 px-6 sm:px-10 py-4 group"
+                className="flex items-center gap-4 px-6 sm:px-10 py-4 group relative"
               >
+                {/* Gold underline on hover */}
+                <div className="absolute bottom-0 left-6 right-6 sm:left-10 sm:right-10 h-[2px] bg-gradient-to-r from-transparent via-gold/0 to-transparent group-hover:via-gold/50 transition-all duration-500" />
+
                 <motion.div
-                  className="w-12 h-12 rounded-xl bg-navy/[0.06] flex items-center justify-center group-hover:bg-gold/15 transition-colors duration-300 icon-bounce-hover shadow-[0_2px_8px_-2px_rgba(13,27,61,0.06)]"
+                  className="w-12 h-12 rounded-xl bg-gradient-to-br from-navy/[0.06] to-gold/[0.04] flex items-center justify-center group-hover:from-gold/20 group-hover:to-gold/10 transition-all duration-300 icon-bounce-hover shadow-[0_2px_8px_-2px_rgba(13,27,61,0.06)] group-hover:shadow-[0_4px_12px_-2px_rgba(201,162,39,0.15)]"
                   whileHover={{ scale: 1.15 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                 >

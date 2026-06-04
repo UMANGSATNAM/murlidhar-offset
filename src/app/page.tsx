@@ -2,6 +2,7 @@
 
 import React from 'react'
 import dynamic from 'next/dynamic'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigationStore } from '@/lib/store'
 
 // Layout components - eagerly loaded
@@ -121,6 +122,18 @@ const ComparePage = dynamic(
   { ssr: false }
 )
 
+// Sample Request page - dynamic import
+const SampleRequestPage = dynamic(
+  () => import('@/components/pages/SampleRequestPage'),
+  { ssr: false }
+)
+
+// Live Chat Widget - dynamic import
+const LiveChatWidget = dynamic(
+  () => import('@/components/layout/LiveChatWidget'),
+  { ssr: false }
+)
+
 // Policy pages - dynamic import
 const PolicyPage = dynamic(
   () => import('@/components/pages/PolicyPage'),
@@ -219,6 +232,8 @@ export default function Home() {
         return <OrderTrackingPage />
       case 'compare':
         return <ComparePage />
+      case 'sample-request':
+        return <SampleRequestPage />
       case 'privacy':
         return <PolicyPage type="privacy" />
       case 'terms':
@@ -245,7 +260,18 @@ export default function Home() {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col">
-        {renderContent()}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={page}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 flex flex-col"
+          >
+            {renderContent()}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer */}
@@ -253,6 +279,9 @@ export default function Home() {
 
       {/* WhatsApp button */}
       <WhatsAppButton />
+
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
 
       {/* Global modals & popups */}
       <SearchModal />

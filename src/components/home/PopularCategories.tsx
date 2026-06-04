@@ -18,6 +18,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { useNavigationStore } from '@/lib/store'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 const iconMap: Record<string, React.ElementType> = {
   'credit-card': CreditCard,
@@ -117,7 +118,7 @@ export default function PopularCategories() {
       {/* Subtle top gold divider */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal variant="fade-right" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
           <motion.div
@@ -183,8 +184,15 @@ export default function PopularCategories() {
                   onClick={() =>
                     navigate('products', { categorySlug: category.slug })
                   }
-                  className="group cursor-pointer rounded-xl overflow-hidden border border-transparent hover:border-gold/30 transition-all duration-300 gold-glow-hover border-glow-animate card-hover-lift relative"
+                  className="group cursor-pointer rounded-xl overflow-hidden border border-border/40 hover:border-gold/40 transition-all duration-300 gold-glow-hover card-hover-lift relative bg-white"
                 >
+                  {/* Subtle background pattern */}
+                  <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
+                    style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #C9A227 20px, #C9A227 21px)',
+                    }}
+                  />
+
                   {/* Background image with overlay */}
                   {catImage && (
                     <div className="absolute inset-0">
@@ -197,18 +205,21 @@ export default function PopularCategories() {
                     </div>
                   )}
 
+                  {/* Gold top accent line on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/0 to-transparent group-hover:via-gold/60 transition-all duration-500" />
+
                   {/* Content */}
-                  <div className={`relative p-5 md:p-6 ${!catImage ? 'bg-navy/5 hover:bg-navy/10' : ''} transition-all duration-300`}>
+                  <div className={`relative p-5 md:p-6 transition-all duration-300`}>
                     <div className="flex items-start justify-between mb-4">
                       <motion.div
-                        className="w-12 h-12 rounded-xl bg-navy/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-gold/15 transition-all duration-300"
+                        className="w-12 h-12 rounded-xl bg-gradient-to-br from-navy/[0.06] to-gold/[0.06] flex items-center justify-center group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-gold/20 group-hover:to-gold/10 transition-all duration-300 shadow-sm"
                         whileHover={{ rotate: [0, -10, 10, 0] }}
                         transition={{ duration: 0.4 }}
                       >
                         <Icon className="size-6 text-navy group-hover:text-gold-dark transition-colors duration-300" />
                       </motion.div>
                       {/* Product count badge */}
-                      <div className="px-2.5 py-1 rounded-full gold-gradient text-navy text-[10px] font-bold shadow-sm">
+                      <div className="px-2.5 py-1 rounded-full bg-gradient-to-r from-gold via-gold-light to-gold text-navy text-[10px] font-bold shadow-sm premium-shadow group-hover:gold-shadow transition-all duration-300">
                         {category.productCount}
                       </div>
                     </div>
@@ -230,7 +241,7 @@ export default function PopularCategories() {
             })}
           </div>
         )}
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

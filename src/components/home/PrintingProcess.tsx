@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Palette, Printer, Scissors, Truck } from 'lucide-react'
+import ScrollReveal from '@/components/ui/ScrollReveal'
 
 const steps = [
   {
@@ -42,7 +43,7 @@ export default function PrintingProcess() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
       {/* Subtle bottom gold divider */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ScrollReveal variant="fade-right" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12 md:mb-16">
           <motion.div
@@ -153,7 +154,7 @@ export default function PrintingProcess() {
             ))}
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   )
 }

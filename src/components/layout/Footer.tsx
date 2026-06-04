@@ -22,6 +22,7 @@ import {
   ShieldCheck,
   Clock,
   Award,
+  ArrowUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -38,6 +39,7 @@ const quickLinks = [
   { label: 'About Us', page: 'about' as const },
   { label: 'Contact Us', page: 'contact' as const },
   { label: 'Wishlist', page: 'wishlist' as const },
+  { label: 'Free Samples', page: 'sample-request' as const },
 ]
 
 const services = [
@@ -85,17 +87,22 @@ export default function Footer() {
     setSubscribing(true)
     // Simulate API call
     await new Promise((resolve) => setTimeout(resolve, 800))
-    toast.success('Subscribed successfully! 🎉', {
+    toast.success('Subscribed successfully!', {
       description: 'You\'ll receive exclusive offers and printing tips.',
     })
     setEmail('')
     setSubscribing(false)
   }
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <footer className="bg-navy-dark text-white mt-auto">
-      {/* Gold divider */}
-      <div className="gold-divider" />
+    <footer className="bg-navy-dark text-white mt-auto relative">
+      {/* Gold gradient top border */}
+      <div className="h-1 bg-gradient-to-r from-navy-dark via-gold to-navy-dark" />
+      <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 
       {/* Newsletter Signup Bar */}
       <div className="navy-gradient">
@@ -117,17 +124,20 @@ export default function Footer() {
               onSubmit={handleSubscribe}
               className="flex w-full md:w-auto max-w-md gap-2"
             >
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-gold focus:ring-gold/30 h-11 flex-1 md:w-64"
-              />
+              <div className="relative flex-1 md:w-72">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-white/30" />
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-gold focus:ring-gold/30 h-11 pl-10 pr-4 w-full rounded-lg"
+                />
+              </div>
               <Button
                 type="submit"
                 disabled={subscribing}
-                className="gold-gradient hover-shimmer text-navy font-semibold h-11 px-5 shrink-0"
+                className="gold-gradient hover-shimmer text-navy font-semibold h-11 px-5 shrink-0 rounded-lg"
               >
                 {subscribing ? (
                   <motion.div
@@ -155,12 +165,12 @@ export default function Footer() {
             {trustBadges.map((badge) => (
               <div
                 key={badge.label}
-                className="flex items-center gap-2.5 justify-center md:justify-start"
+                className="flex items-center gap-2.5 justify-center md:justify-start group/badge"
               >
-                <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gold/10 to-gold/5 flex items-center justify-center shrink-0 group-hover/badge:from-gold/20 group-hover/badge:to-gold/10 transition-all duration-300">
                   <badge.icon className="size-4 text-gold" />
                 </div>
-                <span className="text-white/60 text-xs font-medium">{badge.label}</span>
+                <span className="text-white/60 text-xs font-medium group-hover/badge:text-gold/80 transition-colors duration-200">{badge.label}</span>
               </div>
             ))}
           </div>
@@ -219,10 +229,10 @@ export default function Footer() {
                         categorySlug: (link as { categorySlug?: string }).categorySlug ?? null,
                       })
                     }
-                    className="text-white/60 text-sm hover:text-gold transition-colors duration-200 flex items-center gap-1.5 group"
+                    className="text-white/60 text-sm hover:text-gold transition-colors duration-200 flex items-center gap-1.5 group/link py-0.5"
                   >
-                    <ArrowRight className="size-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200 text-gold" />
-                    <span className="text-[13px]">{link.label}</span>
+                    <ArrowRight className="size-3 opacity-0 -ml-5 group-hover/link:opacity-100 group-hover/link:ml-0 transition-all duration-200 text-gold" />
+                    <span className="text-[13px] group-hover/link:translate-x-0.5 transition-transform duration-200">{link.label}</span>
                   </button>
                 </li>
               ))}
@@ -292,10 +302,10 @@ export default function Footer() {
                 {paymentMethods.map((method) => (
                   <div
                     key={method.label}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-white/5 border border-white/10 text-white/60 text-xs hover:border-gold/30 hover:text-gold/80 transition-all duration-200"
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-white/50 text-xs hover:border-gold/30 hover:text-gold/80 hover:bg-gold/[0.06] transition-all duration-200 group/pay"
                   >
-                    <method.icon className="size-3.5" />
-                    <span>{method.label}</span>
+                    <method.icon className="size-3.5 group-hover/pay:text-gold transition-colors" />
+                    <span className="font-medium">{method.label}</span>
                   </div>
                 ))}
               </div>
@@ -332,6 +342,17 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      {/* Back to top button */}
+      <motion.button
+        onClick={scrollToTop}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="absolute -top-5 right-8 w-10 h-10 rounded-full gold-gradient flex items-center justify-center premium-shadow hover-shimmer z-10"
+        aria-label="Back to top"
+      >
+        <ArrowUp className="size-4 text-navy" />
+      </motion.button>
     </footer>
   )
 }
