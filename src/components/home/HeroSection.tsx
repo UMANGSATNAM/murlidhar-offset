@@ -136,7 +136,7 @@ export default function HeroSection() {
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-6"
             >
               <span className="text-white">Where Every </span>
-              <span className="relative inline-block min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+              <span className="relative inline-block min-w-[180px] sm:min-w-[240px] lg:min-w-[280px]">
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={wordIndex}
@@ -144,7 +144,7 @@ export default function HeroSection() {
                     animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
                     exit={{ y: -30, opacity: 0, filter: 'blur(8px)' }}
                     transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-gradient-animate inline-block"
+                    className="text-gradient-animate inline-block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
                   >
                     {rotatingWords[wordIndex]}
                   </motion.span>
@@ -152,7 +152,7 @@ export default function HeroSection() {
               </span>
               <br />
               <span className="text-white">Tells a </span>
-              <span className="gold-gradient-text">Story</span>
+              <span className="gold-gradient-text text-4xl sm:text-5xl lg:text-6xl">Story</span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -172,7 +172,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.7 }}
-              className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start"
             >
               <Button
                 onClick={() => navigate('products')}
@@ -261,7 +261,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.7 }}
-          className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8"
+          className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
         >
           {stats.map((stat, i) => (
             <motion.div
@@ -270,13 +270,13 @@ export default function HeroSection() {
               variants={fadeInUp}
               initial="hidden"
               animate="visible"
-              className="flex flex-col items-center p-5 rounded-xl glass-gold group hover:bg-gold/10 transition-all duration-300"
+              className="flex flex-col items-center p-5 md:p-6 rounded-xl glass-gold group hover:bg-gold/10 transition-all duration-300 backdrop-blur-sm"
             >
               <stat.icon className="size-5 text-gold mb-2 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-2xl md:text-3xl font-bold text-white mb-1">
+              <span className="text-3xl md:text-4xl font-bold gold-gradient-text mb-1">
                 {stat.value}
               </span>
-              <span className="text-white/50 text-xs md:text-sm text-center">
+              <span className="text-white/60 text-[10px] md:text-xs text-center uppercase tracking-wider">
                 {stat.label}
               </span>
             </motion.div>

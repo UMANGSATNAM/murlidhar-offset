@@ -538,7 +538,9 @@ export default function AdminSettings() {
                     <div className="p-4 space-y-4">
                       {fieldConfigs.notifications
                         .filter((f) => f.key.startsWith('email') || f.key.startsWith('smtp'))
-                        .map((field) => renderField('notifications', field))}
+                        .map((field) => (
+                          <div key={field.key}>{renderField('notifications', field)}</div>
+                        ))}
                     </div>
                   </div>
 
@@ -551,7 +553,9 @@ export default function AdminSettings() {
                     <div className="p-4 space-y-4">
                       {fieldConfigs.notifications
                         .filter((f) => f.key.startsWith('sms'))
-                        .map((field) => renderField('notifications', field))}
+                        .map((field) => (
+                          <div key={field.key}>{renderField('notifications', field)}</div>
+                        ))}
                     </div>
                   </div>
 
@@ -564,7 +568,9 @@ export default function AdminSettings() {
                     <div className="p-4 space-y-4">
                       {fieldConfigs.notifications
                         .filter((f) => f.key.startsWith('whatsapp'))
-                        .map((field) => renderField('notifications', field))}
+                        .map((field) => (
+                          <div key={field.key}>{renderField('notifications', field)}</div>
+                        ))}
                     </div>
                   </div>
 

@@ -46,7 +46,7 @@ export default function AnnouncementBar() {
   if (isDismissed) return null
 
   return (
-    <div className="relative bg-navy-dark overflow-hidden" style={{ height: '28px' }}>
+    <div className="relative bg-navy-dark/90 backdrop-blur-sm overflow-hidden" style={{ height: '28px' }}>
       {/* Subtle gold line at bottom */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 

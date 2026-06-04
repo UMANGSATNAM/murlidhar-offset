@@ -85,7 +85,7 @@ export default function FeaturedProducts() {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-[#F8F9FA] to-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">
@@ -103,7 +103,7 @@ export default function FeaturedProducts() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-navy mb-3"
+            className="text-3xl md:text-4xl font-bold mb-3 text-gradient-animate"
           >
             Our Best Sellers
           </motion.h2>
@@ -149,7 +149,7 @@ export default function FeaturedProducts() {
                 key={product.id}
                 variants={staggerItem}
                 whileHover={{ y: -6 }}
-                className="group rounded-xl border border-border/40 bg-white overflow-hidden premium-shadow hover:premium-shadow-xl transition-all duration-300 cursor-pointer gold-glow-hover border-glow-animate card-hover-lift"
+                className="group rounded-xl border border-border/40 bg-white overflow-hidden shadow-[0_4px_20px_-4px_rgba(13,27,61,0.08)] hover:premium-shadow-xl transition-all duration-300 cursor-pointer gold-glow-hover border-glow-animate card-hover-lift"
                 onClick={() =>
                   navigate('product-detail', { productId: product.id })
                 }
@@ -213,8 +213,8 @@ export default function FeaturedProducts() {
                     </Button>
                   </div>
 
-                  {/* Bottom gradient overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent group-hover:from-black/40 transition-colors duration-300" />
+                  {/* Bottom gradient overlay for text readability */}
+                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-navy/30 via-navy/10 to-transparent group-hover:from-navy/50 transition-colors duration-300 pointer-events-none" />
                 </div>
 
                 {/* Content */}

@@ -12,7 +12,7 @@ export default function BulkOrderCTA() {
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 navy-gradient" />
+      <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-light to-navy" />
       <div className="absolute inset-0 hero-gradient opacity-60" />
 
       {/* Animated dot pattern */}

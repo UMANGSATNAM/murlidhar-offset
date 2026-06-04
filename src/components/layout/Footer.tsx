@@ -222,7 +222,7 @@ export default function Footer() {
                     className="text-white/60 text-sm hover:text-gold transition-colors duration-200 flex items-center gap-1.5 group"
                   >
                     <ArrowRight className="size-3 opacity-0 -ml-5 group-hover:opacity-100 group-hover:ml-0 transition-all duration-200 text-gold" />
-                    {link.label}
+                    <span className="text-[13px]">{link.label}</span>
                   </button>
                 </li>
               ))}
@@ -305,10 +305,10 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/40 text-xs">
+          <p className="text-white/50 text-xs md:text-sm">
             © {new Date().getFullYear()} Murlidhar Offset. All rights reserved.
           </p>
-          <div className="flex items-center gap-4 text-white/40 text-xs">
+          <div className="flex items-center gap-4 text-white/50 text-xs md:text-sm">
             <button
               onClick={() => navigate('privacy')}
               className="hover:text-gold transition-colors"

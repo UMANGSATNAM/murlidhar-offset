@@ -127,13 +127,17 @@ export default function CTABanner() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-                      className="text-center"
+                      className="text-center relative"
                     >
-                      <div className="text-2xl lg:text-3xl font-bold text-gold">
-                        <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                      </div>
-                      <div className="text-white/50 text-xs mt-1 uppercase tracking-wider">
-                        {stat.label}
+                      {/* Subtle background shape */}
+                      <div className="absolute inset-0 rounded-xl bg-gold/[0.06] -m-3" />
+                      <div className="relative">
+                        <div className="text-4xl lg:text-5xl font-bold gold-gradient-text">
+                          <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                        </div>
+                        <div className="text-white/60 text-xs mt-1.5 uppercase tracking-widest font-medium">
+                          {stat.label}
+                        </div>
                       </div>
                     </motion.div>
                   ))}

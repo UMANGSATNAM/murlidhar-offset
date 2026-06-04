@@ -97,7 +97,9 @@ export default function FAQSection() {
   }, [])
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-white to-muted/30">
+    <section className="py-16 md:py-24 bg-gray-50/30 relative">
+      {/* Subtle top gold divider */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <div className="text-center mb-12">

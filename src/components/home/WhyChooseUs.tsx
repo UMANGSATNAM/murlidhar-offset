@@ -177,13 +177,17 @@ export default function WhyChooseUs() {
                   {feature.description}
                 </p>
                 {/* Animated stat */}
-                <div className="flex items-baseline gap-1.5 pt-2 border-t border-white/10">
-                  <span className="text-gold font-bold text-xl">
-                    <AnimatedCounter value={feature.stat.value} suffix={feature.stat.suffix} />
-                  </span>
-                  <span className="text-white/40 text-xs uppercase tracking-wider">
-                    {feature.stat.label}
-                  </span>
+                <div className="flex items-baseline gap-1.5 pt-3 border-t border-white/10 relative">
+                  {/* Subtle background shape */}
+                  <div className="absolute -left-2 -right-2 -top-1 -bottom-1 rounded-lg bg-gold/[0.04]" />
+                  <div className="relative flex items-baseline gap-1.5">
+                    <span className="text-gold font-bold text-2xl gold-gradient-text">
+                      <AnimatedCounter value={feature.stat.value} suffix={feature.stat.suffix} />
+                    </span>
+                    <span className="text-white/50 text-xs uppercase tracking-wider font-medium">
+                      {feature.stat.label}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             ))}

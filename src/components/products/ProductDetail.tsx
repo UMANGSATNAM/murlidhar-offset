@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ChevronRight,
   Home,
@@ -12,7 +12,11 @@ import {
   Upload,
   Share2,
   ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  ChevronLeft,
   ChevronRight as ChevronRightIcon,
+  X,
   Clock,
   Shield,
   Truck,
@@ -20,6 +24,11 @@ import {
   Package,
   Info,
   TrendingDown,
+  ThumbsUp,
+  ThumbsDown,
+  Minus,
+  Plus,
+  Maximize2,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -32,6 +41,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Progress } from '@/components/ui/progress'
 import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
@@ -129,6 +146,16 @@ export default function ProductDetail() {
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 })
   const [isZooming, setIsZooming] = useState(false)
   const imageRef = useRef<HTMLDivElement>(null)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [lightboxZoom, setLightboxZoom] = useState(1)
+  const [lightboxIndex, setLightboxIndex] = useState(0)
+  const lightboxRef = useRef<HTMLDivElement>(null)
+  const [reviewHelpfulness, setReviewHelpfulness] = useState<Record<string, { helpful: number; unhelpful: number; voted: 'helpful' | 'unhelpful' | null }>>({})
+  const [showReviewForm, setShowReviewForm] = useState(false)
+  const [reviewFormRating, setReviewFormRating] = useState(0)
+  const [reviewFormHover, setReviewFormHover] = useState(0)
+  const [reviewFormTitle, setReviewFormTitle] = useState('')
+  const [reviewFormText, setReviewFormText] = useState('')
 
   // Parse images
   const images: string[] = useMemo(() => {
@@ -203,6 +230,93 @@ export default function ProductDetail() {
     const y = ((e.clientY - rect.top) / rect.height) * 100
     setZoomPosition({ x, y })
   }
+
+  // Open lightbox
+  const openLightbox = (idx?: number) => {
+    setLightboxIndex(idx ?? selectedImageIndex)
+    setLightboxZoom(1)
+    setLightboxOpen(true)
+  }
+
+  // Lightbox navigation
+  const lightboxPrev = () => {
+    setLightboxZoom(1)
+    setLightboxIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
+  }
+  const lightboxNext = () => {
+    setLightboxZoom(1)
+    setLightboxIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
+  }
+
+  // Lightbox zoom controls
+  const lightboxZoomIn = () => setLightboxZoom((z) => Math.min(z + 0.5, 5))
+  const lightboxZoomOut = () => setLightboxZoom((z) => Math.max(z - 0.5, 1))
+  const lightboxZoomReset = () => setLightboxZoom(1)
+
+  // Handle lightbox mouse move for pan
+  const handleLightboxMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!lightboxRef.current || lightboxZoom <= 1) return
+    const rect = lightboxRef.current.getBoundingClientRect()
+    const x = ((e.clientX - rect.left) / rect.width) * 100
+    const y = ((e.clientY - rect.top) / rect.height) * 100
+    setZoomPosition({ x, y })
+  }
+
+  // Review helpfulness
+  const handleHelpfulVote = (reviewId: string, type: 'helpful' | 'unhelpful') => {
+    setReviewHelpfulness((prev) => {
+      const current = prev[reviewId] || { helpful: 0, unhelpful: 0, voted: null }
+      if (current.voted === type) {
+        return {
+          ...prev,
+          [reviewId]: {
+            ...current,
+            [type]: Math.max(0, current[type] - 1),
+            voted: null,
+          },
+        }
+      }
+      const updated = { ...current, voted: type }
+      if (current.voted && current.voted !== type) {
+        updated[current.voted] = Math.max(0, current[current.voted] - 1)
+      }
+      updated[type] = current[type] + 1
+      return { ...prev, [reviewId]: updated }
+    })
+  }
+
+  // Submit review
+  const handleSubmitReview = () => {
+    if (reviewFormRating === 0) {
+      toast.error('Please select a rating')
+      return
+    }
+    if (!reviewFormTitle.trim()) {
+      toast.error('Please add a review title')
+      return
+    }
+    if (!reviewFormText.trim()) {
+      toast.error('Please write your review')
+      return
+    }
+    toast.success('Review Submitted!', {
+      description: 'Thank you for your feedback. Your review will appear after moderation.',
+    })
+    setShowReviewForm(false)
+    setReviewFormRating(0)
+    setReviewFormTitle('')
+    setReviewFormText('')
+  }
+
+  // Compute star rating breakdown
+  const ratingBreakdown = useMemo(() => {
+    if (!product) return [0, 0, 0, 0, 0]
+    const counts = [0, 0, 0, 0, 0]
+    product.reviews.forEach((r) => {
+      if (r.rating >= 1 && r.rating <= 5) counts[r.rating - 1]++
+    })
+    return counts
+  }, [product])
 
   // Add to cart
   const handleAddToCart = () => {
@@ -332,10 +446,11 @@ export default function ProductDetail() {
             {/* Main Image */}
             <div
               ref={imageRef}
-              className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-navy/5 to-navy/10 premium-shadow-lg gold-border cursor-crosshair"
+              className="relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-navy/5 to-navy/10 premium-shadow-lg gold-border cursor-crosshair group"
               onMouseEnter={() => setIsZooming(true)}
               onMouseLeave={() => setIsZooming(false)}
               onMouseMove={handleMouseMove}
+              onClick={() => openLightbox()}
             >
               {images[selectedImageIndex] ? (
                 <>
@@ -353,9 +468,16 @@ export default function ProductDetail() {
                     }
                   />
                   {/* Zoom indicator */}
-                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-white text-xs">
+                  <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-black/50 backdrop-blur-sm rounded-full px-3 py-1.5 text-white text-xs transition-opacity group-hover:opacity-100 opacity-80">
                     <ZoomIn className="h-3.5 w-3.5" />
-                    Hover to zoom
+                    <span className="hidden sm:inline">Hover to zoom</span>
+                    <span className="sm:hidden">Tap to enlarge</span>
+                  </div>
+                  {/* Click to open lightbox overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div className="bg-black/50 backdrop-blur-sm rounded-full p-3">
+                      <Maximize2 className="h-5 w-5 text-white" />
+                    </div>
                   </div>
                 </>
               ) : (
@@ -408,6 +530,135 @@ export default function ProductDetail() {
                 ))}
               </div>
             )}
+
+            {/* Image Lightbox Modal */}
+            <Dialog open={lightboxOpen} onOpenChange={setLightboxOpen}>
+              <DialogContent className="max-w-[95vw] sm:max-w-[90vw] md:max-w-4xl lg:max-w-5xl h-[85vh] bg-black/95 border-gold/20 p-0 overflow-hidden" showCloseButton={false}>
+                <DialogTitle className="sr-only">
+                  {product.name} - Image Viewer
+                </DialogTitle>
+                <div className="relative w-full h-full flex flex-col">
+                  {/* Top bar */}
+                  <div className="flex items-center justify-between px-4 py-2 bg-black/80">
+                    <span className="text-white/70 text-sm">
+                      {lightboxIndex + 1} / {images.length}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {/* Zoom controls */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={lightboxZoomOut}
+                        disabled={lightboxZoom <= 1}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <span className="text-white/70 text-xs min-w-[3rem] text-center">
+                        {Math.round(lightboxZoom * 100)}%
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={lightboxZoomIn}
+                        disabled={lightboxZoom >= 5}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={lightboxZoomReset}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                      </Button>
+                      <Separator orientation="vertical" className="h-5 bg-white/20 mx-1" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setLightboxOpen(false)}
+                        className="text-white/70 hover:text-white hover:bg-white/10 h-8 w-8"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Image area */}
+                  <div
+                    ref={lightboxRef}
+                    className="flex-1 relative overflow-hidden flex items-center justify-center cursor-default"
+                    onMouseMove={handleLightboxMouseMove}
+                    style={lightboxZoom > 1 ? { cursor: 'move' } : {}}
+                  >
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={lightboxIndex}
+                        src={images[lightboxIndex]}
+                        alt={`${product.name} - Image ${lightboxIndex + 1}`}
+                        className="max-w-full max-h-full object-contain transition-transform duration-200"
+                        style={{
+                          transform: `scale(${lightboxZoom})`,
+                          transformOrigin: lightboxZoom > 1 ? `${zoomPosition.x}% ${zoomPosition.y}%` : 'center center',
+                        }}
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                      />
+                    </AnimatePresence>
+
+                    {/* Prev button */}
+                    {images.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={lightboxPrev}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white h-10 w-10 rounded-full"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </Button>
+                    )}
+                    {/* Next button */}
+                    {images.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={lightboxNext}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white h-10 w-10 rounded-full"
+                      >
+                        <ChevronRightIcon className="h-5 w-5" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Thumbnail strip */}
+                  {images.length > 1 && (
+                    <div className="flex items-center justify-center gap-2 py-2 bg-black/80 overflow-x-auto px-4">
+                      {images.map((img, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => { setLightboxIndex(idx); setLightboxZoom(1) }}
+                          className={`shrink-0 h-12 w-12 rounded-md overflow-hidden border-2 transition-all ${
+                            lightboxIndex === idx
+                              ? 'border-gold opacity-100'
+                              : 'border-transparent opacity-50 hover:opacity-80'
+                          }`}
+                        >
+                          <img
+                            src={img}
+                            alt={`Thumbnail ${idx + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
 
             {/* Trust Badges */}
             <div className="mt-6 grid grid-cols-3 gap-3">
@@ -895,12 +1146,12 @@ export default function ProductDetail() {
             <TabsContent value="reviews" className="mt-6">
               <div className="rounded-xl bg-card premium-shadow gold-border p-6 sm:p-8">
                 {/* Rating Summary */}
-                <div className="flex items-center gap-6 mb-6">
-                  <div className="text-center">
-                    <div className="text-4xl font-bold gold-gradient-text">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-6">
+                  <div className="text-center min-w-[100px]">
+                    <div className="text-5xl font-bold gold-gradient-text">
                       {reviewStats.average.toFixed(1)}
                     </div>
-                    <div className="flex items-center gap-0.5 mt-1">
+                    <div className="flex items-center justify-center gap-0.5 mt-1">
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star
                           key={star}
@@ -913,86 +1164,236 @@ export default function ProductDetail() {
                       ))}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {reviewStats.count} review
-                      {reviewStats.count !== 1 ? 's' : ''}
+                      {reviewStats.count} review{reviewStats.count !== 1 ? 's' : ''}
                     </p>
                   </div>
+
                   <Separator
                     orientation="vertical"
-                    className="h-16 bg-gold/10"
+                    className="hidden sm:block h-24 bg-gold/10"
                   />
-                  <div className="flex-1">
-                    <Button
-                      variant="outline"
-                      className="border-gold/30 text-gold hover:bg-gold/10 rounded-lg"
-                      onClick={() =>
-                        toast.info('Coming Soon', {
-                          description:
-                            'Review submission will be available soon.',
-                        })
-                      }
-                    >
-                      Write a Review
-                    </Button>
+
+                  {/* Star Rating Breakdown */}
+                  <div className="flex-1 w-full">
+                    {[5, 4, 3, 2, 1].map((starLevel) => {
+                      const count = ratingBreakdown[starLevel - 1]
+                      const percentage = reviewStats.count > 0 ? (count / reviewStats.count) * 100 : 0
+                      return (
+                        <div key={starLevel} className="flex items-center gap-2 mb-1.5">
+                          <div className="flex items-center gap-0.5 w-16 shrink-0">
+                            <span className="text-xs text-muted-foreground w-3">{starLevel}</span>
+                            <Star className="h-3 w-3 fill-gold text-gold" />
+                          </div>
+                          <div className="flex-1 h-2 bg-gold/10 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gold rounded-full transition-all duration-500"
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                          <span className="text-xs text-muted-foreground w-8 text-right">
+                            {count}
+                          </span>
+                        </div>
+                      )
+                    })}
                   </div>
+
+                  <Button
+                    variant="outline"
+                    className="border-gold/30 text-gold hover:bg-gold/10 rounded-lg shrink-0"
+                    onClick={() => setShowReviewForm(true)}
+                  >
+                    Write a Review
+                  </Button>
                 </div>
 
                 <Separator className="bg-gold/10 mb-6" />
 
-                {/* Reviews List */}
-                {product.reviews.length > 0 ? (
-                  <div className="space-y-6">
-                    {product.reviews.map((review) => (
-                      <div
-                        key={review.id}
-                        className="border-b border-gold/5 pb-5 last:border-0"
-                      >
-                        <div className="flex items-center gap-3 mb-2">
+                {/* Write a Review Form */}
+                <AnimatePresence>
+                  {showReviewForm && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden mb-6"
+                    >
+                      <div className="p-4 sm:p-6 rounded-xl bg-gold/5 border border-gold/15">
+                        <h4 className="text-sm font-semibold text-foreground mb-4">
+                          Write a Review
+                        </h4>
+                        {/* Star Rating Input */}
+                        <div className="mb-4">
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            Your Rating *
+                          </label>
                           <div className="flex items-center gap-1">
                             {[1, 2, 3, 4, 5].map((star) => (
-                              <Star
+                              <button
                                 key={star}
-                                className={`h-3.5 w-3.5 ${
-                                  star <= review.rating
-                                    ? 'fill-gold text-gold'
-                                    : 'fill-muted text-muted'
-                                }`}
-                              />
+                                type="button"
+                                onMouseEnter={() => setReviewFormHover(star)}
+                                onMouseLeave={() => setReviewFormHover(0)}
+                                onClick={() => setReviewFormRating(star)}
+                                className="transition-transform hover:scale-110"
+                              >
+                                <Star
+                                  className={`h-6 w-6 ${
+                                    star <= (reviewFormHover || reviewFormRating)
+                                      ? 'fill-gold text-gold'
+                                      : 'fill-muted text-muted'
+                                  } transition-colors`}
+                                />
+                              </button>
                             ))}
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            {new Date(review.createdAt).toLocaleDateString(
-                              'en-IN',
-                              {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                              }
+                            {reviewFormRating > 0 && (
+                              <span className="text-xs text-gold font-medium ml-2">
+                                {reviewFormRating} star{reviewFormRating !== 1 ? 's' : ''}
+                              </span>
                             )}
-                          </span>
+                          </div>
                         </div>
-                        {review.title && (
-                          <h4 className="text-sm font-semibold text-foreground mb-1">
-                            {review.title}
-                          </h4>
-                        )}
-                        {review.comment && (
-                          <p className="text-sm text-muted-foreground">
-                            {review.comment}
-                          </p>
-                        )}
-                        <p className="text-xs text-muted-foreground mt-2">
-                          — {review.user.name || 'Anonymous'}
-                        </p>
+                        {/* Review Title */}
+                        <div className="mb-3">
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            Review Title *
+                          </label>
+                          <Input
+                            value={reviewFormTitle}
+                            onChange={(e) => setReviewFormTitle(e.target.value)}
+                            placeholder="Summarize your experience"
+                            className="border-gold/20 focus:border-gold bg-background"
+                          />
+                        </div>
+                        {/* Review Text */}
+                        <div className="mb-4">
+                          <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
+                            Your Review *
+                          </label>
+                          <Textarea
+                            value={reviewFormText}
+                            onChange={(e) => setReviewFormText(e.target.value)}
+                            placeholder="Tell others about your experience with this product..."
+                            rows={4}
+                            className="border-gold/20 focus:border-gold bg-background resize-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Button
+                            onClick={handleSubmitReview}
+                            className="gold-gradient text-navy font-semibold rounded-lg"
+                          >
+                            Submit Review
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            onClick={() => {
+                              setShowReviewForm(false)
+                              setReviewFormRating(0)
+                              setReviewFormTitle('')
+                              setReviewFormText('')
+                            }}
+                            className="text-muted-foreground"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
-                    ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Reviews List */}
+                {product.reviews.length > 0 ? (
+                  <div className="space-y-5">
+                    {product.reviews.map((review) => {
+                      const helpfulness = reviewHelpfulness[review.id] || { helpful: 0, unhelpful: 0, voted: null }
+                      return (
+                        <div
+                          key={review.id}
+                          className="border-b border-gold/5 pb-5 last:border-0"
+                        >
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="flex items-center gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <Star
+                                  key={star}
+                                  className={`h-3.5 w-3.5 ${
+                                    star <= review.rating
+                                      ? 'fill-gold text-gold'
+                                      : 'fill-muted text-muted'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(review.createdAt).toLocaleDateString(
+                                'en-IN',
+                                {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                }
+                              )}
+                            </span>
+                          </div>
+                          {review.title && (
+                            <h4 className="text-sm font-semibold text-foreground mb-1">
+                              {review.title}
+                            </h4>
+                          )}
+                          {review.comment && (
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                              {review.comment}
+                            </p>
+                          )}
+                          <div className="flex items-center justify-between mt-3">
+                            <p className="text-xs text-muted-foreground">
+                              — {review.user.name || 'Anonymous'}
+                            </p>
+                            {/* Helpfulness votes */}
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => handleHelpfulVote(review.id, 'helpful')}
+                                className={`flex items-center gap-1 text-xs transition-colors ${
+                                  helpfulness.voted === 'helpful'
+                                    ? 'text-gold'
+                                    : 'text-muted-foreground hover:text-gold'
+                                }`}
+                              >
+                                <ThumbsUp className="h-3.5 w-3.5" />
+                                <span>Helpful ({helpfulness.helpful})</span>
+                              </button>
+                              <button
+                                onClick={() => handleHelpfulVote(review.id, 'unhelpful')}
+                                className={`flex items-center gap-1 text-xs transition-colors ${
+                                  helpfulness.voted === 'unhelpful'
+                                    ? 'text-red-400'
+                                    : 'text-muted-foreground hover:text-red-400'
+                                }`}
+                              >
+                                <ThumbsDown className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Star className="h-10 w-10 text-gold/30 mx-auto mb-3" />
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm mb-3">
                       No reviews yet. Be the first to review this product!
                     </p>
+                    <Button
+                      variant="outline"
+                      className="border-gold/30 text-gold hover:bg-gold/10 rounded-lg"
+                      onClick={() => setShowReviewForm(true)}
+                    >
+                      Write the First Review
+                    </Button>
                   </div>
                 )}
               </div>
