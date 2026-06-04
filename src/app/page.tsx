@@ -13,6 +13,7 @@ import WhatsAppButton from '@/components/layout/WhatsAppButton'
 import AnnouncementBar from '@/components/home/AnnouncementBar'
 import SearchModal from '@/components/layout/SearchModal'
 import NotificationPopup from '@/components/layout/NotificationPopup'
+import SectionDivider from '@/components/ui/SectionDivider'
 
 // Home sections - dynamic imports for performance
 const HeroSection = dynamic(
@@ -114,6 +115,12 @@ const OrderTrackingPage = dynamic(
   { ssr: false }
 )
 
+// Compare page - dynamic import
+const ComparePage = dynamic(
+  () => import('@/components/pages/ComparePage'),
+  { ssr: false }
+)
+
 // Policy pages - dynamic import
 const PolicyPage = dynamic(
   () => import('@/components/pages/PolicyPage'),
@@ -147,15 +154,22 @@ function HomePageContent() {
   return (
     <>
       <HeroSection />
+      <SectionDivider direction="dark-to-light" />
       <TrustStrip />
+      <SectionDivider direction="light-to-light" />
       <FeaturedProducts />
       <RecentlyViewedSection />
       <PopularCategories />
+      <SectionDivider direction="light-to-dark" />
       <CTABanner />
       <WhyChooseUs />
+      <SectionDivider direction="dark-to-light" />
       <TestimonialsSection />
+      <SectionDivider direction="light-to-dark" />
       <PrintingProcess />
+      <SectionDivider direction="light-to-dark" />
       <BulkOrderCTA />
+      <SectionDivider direction="dark-to-light" />
       <FAQSection />
     </>
   )
@@ -203,6 +217,8 @@ export default function Home() {
         return <AboutPage />
       case 'order-tracking':
         return <OrderTrackingPage />
+      case 'compare':
+        return <ComparePage />
       case 'privacy':
         return <PolicyPage type="privacy" />
       case 'terms':

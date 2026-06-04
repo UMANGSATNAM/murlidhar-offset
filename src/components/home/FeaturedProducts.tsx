@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Eye, ShoppingCart, Star, Heart } from 'lucide-react'
+import { ArrowRight, Eye, ShoppingCart, Star, Heart, GitCompare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
+import { useCompareStore } from '@/lib/compare-store'
 import { toast } from 'sonner'
 
 interface Product {
@@ -40,6 +41,8 @@ const staggerItem = {
 export default function FeaturedProducts() {
   const { navigate } = useNavigationStore()
   const addItem = useCartStore((s) => s.addItem)
+  const compareAddItem = useCompareStore((s) => s.addItem)
+  const isInCompare = useCompareStore((s) => s.isInCompare)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -84,6 +87,36 @@ export default function FeaturedProducts() {
     })
   }
 
+  const handleCompare = (e: React.MouseEvent, product: Product) => {
+    e.stopPropagation()
+    if (isInCompare(product.id)) {
+      useCompareStore.getState().removeItem(product.id)
+      toast.info('Removed from comparison')
+      return
+    }
+    const success = compareAddItem({
+      productId: product.id,
+      name: product.name,
+      price: product.basePrice,
+      image: product.images?.[0] || '',
+      slug: product.slug,
+      category: product.category.name,
+      materials: [],
+      sizes: [],
+      finishes: [],
+      turnaround: '3-5 Business Days',
+    })
+    if (!success) {
+      toast.error('Compare list is full', {
+        description: 'You can compare up to 3 products at a time. Remove one to add another.',
+      })
+    } else {
+      toast.success('Added to comparison', {
+        description: `${product.name} added. Click the compare icon in the header to view.`,
+      })
+    }
+  }
+
   return (
     <section className="py-16 md:py-24 bg-gradient-to-b from-[#F8F9FA] to-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,7 +152,7 @@ export default function FeaturedProducts() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
+            className="text-muted-foreground text-base max-w-2xl mx-auto"
           >
             Discover our most popular printing products, crafted with premium
             materials and state-of-the-art offset printing technology.
@@ -195,6 +228,18 @@ export default function FeaturedProducts() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
+                      onClick={(e) => handleCompare(e, product)}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-sm shadow-md transition-colors ${
+                        isInCompare(product.id)
+                          ? 'bg-gold text-navy'
+                          : 'bg-white/90 hover:bg-gold hover:text-navy'
+                      }`}
+                    >
+                      <GitCompare className="h-3.5 w-3.5" />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => navigate('product-detail', { productId: product.id })}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
                     >
@@ -222,7 +267,7 @@ export default function FeaturedProducts() {
                   <h3 className="font-semibold text-navy text-sm mb-1 group-hover:text-gold-dark transition-colors line-clamp-1">
                     {product.name}
                   </h3>
-                  <p className="text-muted-foreground text-xs mb-2 line-clamp-1">
+                  <p className="text-muted-foreground text-sm mb-2 line-clamp-1">
                     {product.shortDesc || 'Premium Quality Printing'}
                   </p>
 
@@ -247,7 +292,7 @@ export default function FeaturedProducts() {
 
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-[10px] text-muted-foreground">
+                      <span className="text-xs text-muted-foreground">
                         Starting from
                       </span>
                       <p className="text-gold-dark font-bold text-lg leading-tight">

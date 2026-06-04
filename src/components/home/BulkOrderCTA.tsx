@@ -57,7 +57,7 @@ export default function BulkOrderCTA() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="text-white/60 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed"
+          className="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
         >
           Whether it&apos;s 1,000 business cards or 50,000 wedding invitations,
           we offer the best bulk pricing with uncompromising quality. Get a

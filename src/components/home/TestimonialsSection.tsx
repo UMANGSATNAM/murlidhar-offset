@@ -172,7 +172,7 @@ export default function TestimonialsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
+            className="text-muted-foreground text-base max-w-2xl mx-auto"
           >
             Hear from businesses that trust Murlidhar Offset for their printing needs.
           </motion.p>
@@ -225,7 +225,7 @@ export default function TestimonialsSection() {
                 </div>
 
                 {/* Quote text */}
-                <p className="text-white/85 text-base md:text-lg leading-relaxed mb-8 relative z-10 italic">
+                <p className="text-white/85 text-lg md:text-xl leading-relaxed mb-8 relative z-10 italic">
                   &ldquo;{testimonial.content}&rdquo;
                 </p>
 

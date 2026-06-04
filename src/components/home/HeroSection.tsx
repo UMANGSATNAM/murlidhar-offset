@@ -160,7 +160,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.7 }}
-              className="text-white/70 text-base sm:text-lg max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed"
+              className="text-white/70 text-lg sm:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed"
             >
               Murlidhar Offset — Gujarat&apos;s trusted printing press. From
               business cards to wedding invitations, we bring your vision to

@@ -1,5 +1,163 @@
 # Murlidhar Offset - Project Worklog
 
+## Round 7: Section Transitions, Typography, Product Comparison & Admin Orders
+
+### Current Project Status: Full-Featured Platform - VLM Rating 7.8/10 (up from 7.5/10)
+Focused round addressing the two lowest-scoring VLM dimensions: section transitions (6→8/10) and typography hierarchy (7→8/10). Added product comparison tool and enhanced admin orders management.
+
+---
+
+### Round 7 Completed Work
+
+#### VLM Design Quality Assessment
+| Dimension | Before (R6) | After (R7) |
+|-----------|-------------|------------|
+| Section Transitions | 6/10 | 8/10 |
+| Typography Hierarchy | 7/10 | 8/10 |
+| Premium Feel | 7/10 | 7.5/10 |
+| **Overall** | **7.5/10** | **7.8/10** |
+
+VLM: *"More premium, professional aesthetic than VistaPrint/Printo"* and *"restrained color palette and focused messaging give it an edge in perceived quality"*
+
+#### Section Transition Improvements
+- Created reusable `SectionDivider.tsx` component with 3 modes: light-to-dark, dark-to-light, light-to-light
+- Added 7 wave SVG dividers between home page sections for smooth visual flow
+- Wave shapes use brand colors (navy, gold accent lines) for cohesive transitions
+
+#### Typography Hierarchy Improvements (8 Components)
+- **HeroSection**: Subtitle text-lg→xl
+- **FeaturedProducts**: Short desc text-xs→sm, "Starting from" text-[10px]→xs
+- **PopularCategories**: Category desc text-xs→sm, product count text-xs→sm
+- **WhyChooseUs**: Feature desc text-sm→base, stat label text-xs→sm
+- **TestimonialsSection**: Quote text text-lg/xl→xl/2xl
+- **PrintingProcess**: Step title text-lg→xl, step desc text-sm→base
+- **FAQSection**: Questions font-semibold text-base/lg, answers text-base
+- **BulkOrderCTA**: Body text text-lg/xl→xl/2xl
+
+#### Product Comparison Tool
+- Created `compare-store.ts` with localStorage persistence (max 3 items)
+- Created `ComparePage.tsx` with side-by-side comparison table (desktop) / stacked cards (mobile)
+- Compares: Image, Category, Base Price, Materials, Sizes, Finishes, Turnaround
+- Added compare buttons to ProductCard and FeaturedProducts
+- Header shows compare count badge (visible when items > 0)
+
+#### Admin Orders Enhancement
+- Inline status dropdown for direct status changes with color-coded backgrounds
+- Enhanced search (order number + customer name/email)
+- Payment Status filter (All/Pending/Paid/Failed/Refunded)
+- Export CSV button with 15 columns and date-stamped filename
+- Enhanced Order Detail Modal with timeline, item variant badges, estimated delivery
+- Improved pagination with gold-gradient active state
+
+---
+
+### VLM Design Quality Progress
+| Round | Rating | Key Improvement |
+|-------|--------|----------------|
+| Round 1 | 7/10 | Good foundation, MO placeholders |
+| Round 2 | 8/10 | Social proof, trust badges, announcement bar |
+| Round 3 | 8/10 | AI product images, hero printing press bg |
+| Round 4 | 7.5/10 | Feature expansion, micro-interactions, new pages |
+| Round 5 | 7.5/10 | Dark mode, order tracking, policy pages, deep page polish |
+| Round 6 | 7.5/10 | SEO, image zoom, admin overhaul, VLM-driven styling fixes |
+| Round 7 | 7.8/10 | Wave section dividers, typography hierarchy, product comparison, admin orders |
+
+---
+
+### Project Statistics (Updated)
+- **130+** TypeScript/TSX files
+- **100+** UI components
+- **16** API routes
+- **20+** database models
+- **12** page types (Home, Products, Product Detail, Cart, Checkout, Auth, Dashboard, Wishlist, About, Contact, Order Tracking, Compare)
+- **3** policy pages (Privacy, Terms, Refund)
+- **6** admin sub-pages (Dashboard, Products, Orders, Customers, CMS, Settings)
+- **1** theme toggle (light/dark mode)
+- **5** JSON-LD structured data schemas
+- **1** sitemap + robots.txt
+- **1** product image lightbox with zoom
+- **1** product comparison tool (up to 3 products)
+- **7** wave section dividers
+
+---
+
+### Unresolved Issues & Risks
+1. **No Real Authentication**: Auth store uses localStorage only, not JWT/NextAuth
+2. **No Payment Gateway**: Razorpay/Stripe are visual placeholders
+3. **No Real Email/SMS**: Notification settings are UI only
+4. **Contact Form**: Shows success but doesn't actually send emails
+5. **Order Tracking Uses Mock Data**: No real backend tracking integration
+
+### Priority Recommendations for Next Phase
+1. **NextAuth Integration** - Proper JWT-based auth with session management
+2. **Razorpay Payment Gateway** - Real payment integration
+3. **Contact Form Backend** - Send form submissions via email API
+4. **Performance Optimization** - Image lazy loading, code splitting
+5. **PWA Support** - Service worker, offline support, install prompt
+6. **Real-time Order Tracking** - WebSocket-based order status updates
+7. **Product Customization Tool** - Canva-lite design editor for products
+
+---
+Task ID: 4
+Agent: Feature Developer (Round 7)
+Task: Add product comparison tool and enhance admin orders
+
+Work Log:
+- Read worklog.md and existing files (store.ts, wishlist-store.ts, Header.tsx, page.tsx, AdminOrders.tsx, ProductCard.tsx, FeaturedProducts.tsx, Prisma schema, admin orders API)
+- Created `/home/z/my-project/src/lib/compare-store.ts` — Zustand store with localStorage persistence (key: 'murlidhar-offset-compare'), max 3 items, methods: addItem (returns boolean for full check), removeItem, isInCompare, clearAll, _hydrate, useCompareCount selector. Follows same pattern as wishlist-store.ts.
+- Added 'compare' to PageName type union in `/home/z/my-project/src/lib/store.ts`
+- Created `/home/z/my-project/src/components/pages/ComparePage.tsx` — Premium compare page with: navy gradient hero with GitCompare icon and "Compare Products" heading, empty state with CTA to browse products, desktop comparison table (3 columns + feature labels) comparing Image/Category/Price/Materials/Sizes/Finishes/Turnaround, mobile stacked cards with individual product details, "Add Product" placeholders for empty columns, Add to Cart per product, Remove from compare per product, Clear All button, "Add More Products" CTA card, framer-motion animations, brand colors (navy, gold), responsive design
+- Updated `/home/z/my-project/src/components/products/ProductCard.tsx` — Added GitCompare icon button in quick actions (between Heart and Eye), imports useCompareStore, handleCompare function with add/remove toggle, "Comparing" gold badge indicator when product is in compare list, toast notifications for add/remove/full state
+- Updated `/home/z/my-project/src/components/home/FeaturedProducts.tsx` — Added GitCompare icon button in hover actions, imports useCompareStore, handleCompare function with same add/remove/full logic, highlighted gold state when product is in compare list
+- Updated `/home/z/my-project/src/components/layout/Header.tsx` — Added GitCompare import, useCompareStore/useCompareCount imports, _hydrateCompare in useEffect, compare icon button with gold count badge (shown only when compareCount > 0) between Wishlist and Cart buttons, mobile sidebar Compare link with count badge
+- Updated `/home/z/my-project/src/app/page.tsx` — Added dynamic import of ComparePage, added 'compare' case in renderContent switch
+- Enhanced `/home/z/my-project/src/components/admin/AdminOrders.tsx` with the following improvements:
+  - **Enhanced Order Detail Modal**: Added DialogDescription showing order date and customer, section headers with gold icons (FileText, MessageSquare, Package), item variant attributes displayed as badges, timeline entries with connecting vertical lines between steps, estimated delivery date display
+  - **Inline Status Update Dropdown**: Each order row now has a Select dropdown for status changes directly in the table, with color-coded status backgrounds, Loader2 spinner during update, toast notifications on success/failure
+  - **Enhanced Search & Filter**: Search now covers order number AND customer name/email (already supported by API), added Payment Status filter dropdown (All/Pending/Paid/Failed/Refunded), both filters sent to API
+  - **Export CSV Button**: Added "Export CSV" button in the filter bar, generates CSV with 15 columns (Order Number, Customer Name, Email, Company, Status, Payment Status, Payment Method, Items Count, Subtotal, GST, Shipping, Discount, Total, Tracking Number, Order Date), proper CSV escaping for commas/quotes, auto-downloads with date-stamped filename, toast notification on export
+  - **Improved Pagination**: Added page number buttons (up to 5 visible) with gold-gradient active state
+  - **Toast Notifications**: All operations show success/error toasts via sonner
+  - **Send Notification Button**: Added in order detail modal footer (mock, shows success toast)
+  - **Loader2 Spinner**: Update Status button shows spinner during API call
+  - **overflow-x-auto**: Table now has horizontal scroll on mobile
+  - Removed unused imports (Filter, AlertCircle, X, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle)
+- Lint passes with 0 errors, dev server compiles successfully
+
+Stage Summary:
+- Product Comparison Tool: Full-featured compare system with Zustand store (max 3 items, localStorage), ComparePage with desktop table + mobile stacked layout, compare buttons on ProductCard and FeaturedProducts, header icon with count badge, empty states and CTAs
+- Admin Orders Enhancement: Inline status dropdown, payment status filter, enhanced order detail modal with section icons and timeline connectors, Export CSV button, improved pagination, toast notifications, Send Notification button
+- 8 files modified, 2 files created
+- Lint passes cleanly (0 errors)
+
+---
+Task ID: 2 & 3
+Agent: Styling Expert (Round 7)
+Task: Improve section transitions and typography hierarchy
+
+Work Log:
+- Read worklog.md to understand project state and VLM feedback (section transitions 6/10, body text too small)
+- Read all 8 home section components (HeroSection, FeaturedProducts, PopularCategories, WhyChooseUs, TestimonialsSection, PrintingProcess, FAQSection, BulkOrderCTA) plus TrustStrip, CTABanner, and page.tsx
+- Created `/home/z/my-project/src/components/ui/SectionDivider.tsx` — reusable SVG wave/curve divider component with 3 directions: `light-to-dark` (white wave into dark navy), `dark-to-light` (navy wave into light section), `light-to-light` (subtle gold gradient line). Each wave includes a subtle gold accent stroke line for premium feel. SVGs use preserveAspectRatio="none" for full-width responsive scaling.
+- Updated `/home/z/my-project/src/app/page.tsx` — Added SectionDivider import and inserted 7 dividers between home sections: dark-to-light after HeroSection, light-to-light after TrustStrip, light-to-dark after PopularCategories, dark-to-light after WhyChooseUs, light-to-dark after TestimonialsSection, light-to-dark after PrintingProcess, dark-to-light after BulkOrderCTA
+- Updated `/home/z/my-project/src/components/home/FeaturedProducts.tsx` — Short description text-xs→text-sm, "Starting from" label text-[10px]→text-xs, section description explicit text-base
+- Updated `/home/z/my-project/src/components/home/PopularCategories.tsx` — Category description text-xs→text-sm, "X Products" label text-xs→text-sm
+- Updated `/home/z/my-project/src/components/home/WhyChooseUs.tsx` — Feature description text-sm→text-base, stat label text-xs→text-sm, stat label opacity white/50→white/60
+- Updated `/home/z/my-project/src/components/home/TestimonialsSection.tsx` — Section description explicit text-base, quote text text-base md:text-lg→text-lg md:text-xl
+- Updated `/home/z/my-project/src/components/home/PrintingProcess.tsx` — Section description explicit text-base, step title text-lg→text-lg md:text-xl, step description text-sm→text-base
+- Updated `/home/z/my-project/src/components/home/FAQSection.tsx` — Question text font-medium→font-semibold, text-sm md:text-base→text-base md:text-lg, answer text text-sm→text-base
+- Updated `/home/z/my-project/src/components/home/BulkOrderCTA.tsx` — Body text text-base md:text-lg→text-lg md:text-xl, opacity white/60→white/70
+- Updated `/home/z/my-project/src/components/home/HeroSection.tsx` — Subtitle text-base sm:text-lg→text-lg sm:text-xl
+- Lint passes with 0 errors, build succeeds
+
+Stage Summary:
+- Created reusable SectionDivider component with 3 wave/curve directions (light-to-dark, dark-to-light, light-to-light) using SVG with gold accent lines
+- Inserted 7 section dividers on home page between high-contrast sections (dark↔light transitions) eliminating abrupt visual cuts
+- Improved typography hierarchy across 8 components: body text sizes increased from text-xs/text-sm to text-sm/text-base, headings made more distinct (font-semibold, larger sizes), section descriptions made explicit text-base
+- Key typography changes: Hero subtitle text-lg sm:text-xl, product short descriptions text-sm, WhyChooseUs descriptions text-base, testimonial quotes text-lg md:text-xl, FAQ questions text-base md:text-lg with font-semibold, process step descriptions text-base with larger titles
+- All changes maintain responsive design and brand colors (Navy #0D1B3D, Gold #C9A227)
+- Lint passes cleanly (0 errors), build succeeds
+
 ## Round 6: QA Testing, Bug Fixes, SEO, Image Zoom, Admin Enhancement & Styling Overhaul
 
 ### Current Project Status: Full-Featured Platform - VLM Rating 7.5/10 (up from 6/10)

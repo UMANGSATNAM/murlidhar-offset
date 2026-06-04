@@ -16,6 +16,7 @@ import {
   LogIn,
   Sun,
   Moon,
+  GitCompare,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +30,7 @@ import {
 import { useNavigationStore, type PageName } from '@/lib/store'
 import { useCartStore, useCartItemCount } from '@/lib/cart-store'
 import { useWishlistStore, useWishlistCount } from '@/lib/wishlist-store'
+import { useCompareStore, useCompareCount } from '@/lib/compare-store'
 import { useTheme } from 'next-themes'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 import {
@@ -60,8 +62,10 @@ export default function Header() {
   const { navigate, page } = useNavigationStore()
   const cartCount = useCartItemCount()
   const wishlistCount = useWishlistCount()
+  const compareCount = useCompareCount()
   const _hydrate = useCartStore((s) => s._hydrate)
   const _hydrateWishlist = useWishlistStore((s) => s._hydrate)
+  const _hydrateCompare = useCompareStore((s) => s._hydrate)
   const { setTheme, resolvedTheme } = useTheme()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -71,7 +75,8 @@ export default function Header() {
   useEffect(() => {
     _hydrate()
     _hydrateWishlist()
-  }, [_hydrate, _hydrateWishlist])
+    _hydrateCompare()
+  }, [_hydrate, _hydrateWishlist, _hydrateCompare])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -264,6 +269,21 @@ export default function Header() {
               )}
             </Button>
 
+            {/* Compare */}
+            {compareCount > 0 && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate('compare')}
+                className="relative text-white/80 hover:text-gold hover:bg-white/10"
+              >
+                <GitCompare className="size-5" />
+                <Badge className="absolute -top-1 -right-1 size-5 p-0 flex items-center justify-center gold-gradient text-navy font-bold text-[10px] border-0">
+                  {compareCount}
+                </Badge>
+              </Button>
+            )}
+
             {/* Cart */}
             <Button
               variant="ghost"
@@ -452,7 +472,7 @@ export default function Header() {
                       setMobileOpen(false)
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center justify-between"
-                  >
+                    >
                     <span className="flex items-center gap-2">
                       <Heart className="size-4" />
                       Wishlist
@@ -463,6 +483,24 @@ export default function Header() {
                       </Badge>
                     )}
                   </button>
+
+                  {compareCount > 0 && (
+                    <button
+                      onClick={() => {
+                        navigate('compare')
+                        setMobileOpen(false)
+                      }}
+                      className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center justify-between"
+                    >
+                      <span className="flex items-center gap-2">
+                        <GitCompare className="size-4" />
+                        Compare
+                      </span>
+                      <Badge className="gold-gradient text-navy font-bold text-[10px] border-0">
+                        {compareCount} {compareCount === 1 ? 'item' : 'items'}
+                      </Badge>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {

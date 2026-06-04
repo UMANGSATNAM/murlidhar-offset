@@ -153,7 +153,7 @@ export default function FAQSection() {
                     : 'hover:border-gold/20 mb-1'
                 }`}
               >
-                <AccordionTrigger className="text-navy font-medium text-sm md:text-base hover:text-gold-dark hover:no-underline py-5 transition-colors px-4">
+                <AccordionTrigger className="text-navy font-semibold text-base md:text-lg hover:text-gold-dark hover:no-underline py-5 transition-colors px-4">
                   <span className="text-left flex items-center gap-3">
                     <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-300 ${
                       openItem === faq.id
@@ -165,7 +165,7 @@ export default function FAQSection() {
                     {faq.title}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-sm leading-relaxed pl-10 pr-4 pb-5">
+                <AccordionContent className="text-muted-foreground text-base leading-relaxed pl-10 pr-4 pb-5">
                   <AnimatePresence>
                     {openItem === faq.id && (
                       <motion.div

@@ -1,11 +1,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { ShoppingCart, Eye, Star, Heart } from 'lucide-react'
+import { ShoppingCart, Eye, Star, Heart, GitCompare } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
+import { useCompareStore } from '@/lib/compare-store'
 import { toast } from 'sonner'
 
 interface ProductCardProps {
@@ -37,6 +38,9 @@ interface ProductCardProps {
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const navigate = useNavigationStore((s) => s.navigate)
   const addItem = useCartStore((s) => s.addItem)
+  const compareAddItem = useCompareStore((s) => s.addItem)
+  const isInCompare = useCompareStore((s) => s.isInCompare)
+  const inCompare = isInCompare(product.id)
 
   // Parse images if it's a JSON string
   const images: string[] =
@@ -94,6 +98,36 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     toast.info('Added to Wishlist', {
       description: `${product.name} saved to your wishlist.`,
     })
+  }
+
+  const handleCompare = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (inCompare) {
+      useCompareStore.getState().removeItem(product.id)
+      toast.info('Removed from comparison')
+      return
+    }
+    const success = compareAddItem({
+      productId: product.id,
+      name: product.name,
+      price: product.basePrice,
+      image: mainImage,
+      slug: product.slug,
+      category: product.category?.name || 'Uncategorized',
+      materials: [],
+      sizes: [],
+      finishes: [],
+      turnaround: '3-5 Business Days',
+    })
+    if (!success) {
+      toast.error('Compare list is full', {
+        description: 'You can compare up to 3 products at a time. Remove one to add another.',
+      })
+    } else {
+      toast.success('Added to comparison', {
+        description: `${product.name} added. Click the compare icon in the header to view.`,
+      })
+    }
   }
 
   return (
@@ -158,12 +192,33 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            onClick={handleCompare}
+            className={`flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm shadow-md transition-colors ${
+              inCompare
+                ? 'bg-gold text-navy'
+                : 'bg-white/90 hover:bg-gold hover:text-navy'
+            }`}
+          >
+            <GitCompare className="h-4 w-4" />
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
             onClick={handleViewDetails}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
           >
             <Eye className="h-4 w-4" />
           </motion.button>
         </div>
+        {/* Compare badge indicator */}
+        {inCompare && (
+          <div className="absolute top-3 left-3">
+            <Badge className="gold-gradient text-navy font-semibold text-[10px] border-0 px-2 py-0.5 flex items-center gap-1">
+              <GitCompare className="size-3" />
+              Comparing
+            </Badge>
+          </div>
+        )}
 
         {/* Quick Add to Cart overlay - bottom */}
         <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">

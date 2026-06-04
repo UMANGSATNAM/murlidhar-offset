@@ -21,6 +21,7 @@ export type PageName =
   | 'admin-cms'
   | 'admin-settings'
   | 'admin-customers'
+  | 'compare'
 
 interface NavigateParams {
   productId?: string | null

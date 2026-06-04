@@ -215,11 +215,11 @@ export default function PopularCategories() {
                     <h3 className="font-semibold text-navy text-sm md:text-base mb-1 group-hover:text-gold-dark transition-colors">
                       {category.name}
                     </h3>
-                    <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                       {category.description || 'Premium quality printing'}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-sm text-muted-foreground">
                         {category.productCount} Products
                       </span>
                       <ArrowRight className="size-3.5 text-muted-foreground group-hover:text-gold group-hover:translate-x-1 transition-all duration-200" />

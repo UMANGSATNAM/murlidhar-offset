@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
-  Filter,
   Eye,
   ChevronLeft,
   ChevronRight,
@@ -16,6 +15,12 @@ import {
   MessageSquare,
   Package,
   IndianRupee,
+  Download,
+  Send,
+  FileText,
+  X,
+  Loader2,
+  AlertCircle,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -36,6 +41,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
 import {
@@ -45,7 +51,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Separator } from '@/components/ui/separator'
+import { toast } from 'sonner'
 
 interface OrderItem {
   id: string
@@ -132,6 +149,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState<string>('all')
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState<string>('all')
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [total, setTotal] = useState(0)
@@ -142,6 +160,9 @@ export default function AdminOrders() {
   const [newStatus, setNewStatus] = useState('')
   const [noteText, setNoteText] = useState('')
   const [updating, setUpdating] = useState(false)
+
+  // Inline status update
+  const [inlineUpdating, setInlineUpdating] = useState<string | null>(null)
 
   // Status counts
   const [statusCounts, setStatusCounts] = useState<Record<string, number>>({})
@@ -154,6 +175,7 @@ export default function AdminOrders() {
       params.set('limit', '10')
       if (search) params.set('search', search)
       if (filterStatus !== 'all') params.set('status', filterStatus)
+      if (filterPaymentStatus !== 'all') params.set('paymentStatus', filterPaymentStatus)
 
       const res = await fetch(`/api/admin/orders?${params}`)
       if (res.ok) {
@@ -161,16 +183,13 @@ export default function AdminOrders() {
         setOrders(data.orders)
         setTotalPages(data.pagination.totalPages)
         setTotal(data.pagination.total)
-
-        // Calculate status counts from a separate call if needed, or estimate
-        // For now, we'll count from what we have
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err)
     } finally {
       setLoading(false)
     }
-  }, [page, search, filterStatus])
+  }, [page, search, filterStatus, filterPaymentStatus])
 
   // Fetch status counts
   useEffect(() => {
@@ -227,14 +246,125 @@ export default function AdminOrders() {
         }),
       })
       if (res.ok) {
+        toast.success('Order status updated', {
+          description: `Order #${selectedOrder.orderNumber} status changed to ${newStatus}.`,
+        })
         setShowDetail(false)
         fetchOrders()
+      } else {
+        toast.error('Failed to update order status')
       }
     } catch (err) {
       console.error('Failed to update order:', err)
+      toast.error('Failed to update order status')
     } finally {
       setUpdating(false)
     }
+  }
+
+  // Inline status update from table
+  const handleInlineStatusUpdate = async (orderId: string, orderNumber: string, newStatusValue: string) => {
+    setInlineUpdating(orderId)
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          status: newStatusValue,
+          note: `Status changed to ${newStatusValue}`,
+        }),
+      })
+      if (res.ok) {
+        toast.success('Status updated', {
+          description: `Order #${orderNumber} status changed to ${newStatusValue}.`,
+        })
+        fetchOrders()
+      } else {
+        toast.error('Failed to update status')
+      }
+    } catch {
+      toast.error('Failed to update status')
+    } finally {
+      setInlineUpdating(null)
+    }
+  }
+
+  // Export CSV
+  const handleExportCSV = () => {
+    if (orders.length === 0) {
+      toast.error('No orders to export')
+      return
+    }
+
+    const headers = [
+      'Order Number',
+      'Customer Name',
+      'Customer Email',
+      'Company',
+      'Status',
+      'Payment Status',
+      'Payment Method',
+      'Items Count',
+      'Subtotal',
+      'GST',
+      'Shipping',
+      'Discount',
+      'Total',
+      'Tracking Number',
+      'Order Date',
+    ]
+
+    const rows = orders.map((order) => [
+      order.orderNumber,
+      order.user.name || 'N/A',
+      order.user.email,
+      order.user.companyName || 'N/A',
+      order.status,
+      order.paymentStatus,
+      order.paymentMethod || 'N/A',
+      order.items.length.toString(),
+      order.subtotal.toString(),
+      order.gstAmount.toString(),
+      order.shippingCost.toString(),
+      order.discountAmount.toString(),
+      order.totalAmount.toString(),
+      order.trackingNumber || 'N/A',
+      new Date(order.createdAt).toISOString(),
+    ])
+
+    const csvContent = [
+      headers.join(','),
+      ...rows.map((row) =>
+        row.map((cell) => {
+          // Escape commas and quotes in CSV
+          const str = String(cell)
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`
+          }
+          return str
+        }).join(',')
+      ),
+    ].join('\n')
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `murlidhar-orders-${new Date().toISOString().split('T')[0]}.csv`
+    link.click()
+    URL.revokeObjectURL(url)
+
+    toast.success('CSV exported', {
+      description: `${orders.length} orders exported successfully.`,
+    })
+  }
+
+  // Send notification (mock)
+  const handleSendNotification = (order: Order) => {
+    toast.success('Notification sent', {
+      description: `Order status notification sent to ${order.user.email}.`,
+    })
   }
 
   const statusStats = [
@@ -284,14 +414,14 @@ export default function AdminOrders() {
         })}
       </div>
 
-      {/* Filters */}
+      {/* Filters & Actions */}
       <Card className="premium-shadow border-0">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
-                placeholder="Search by order number..."
+                placeholder="Search by order number or customer..."
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value)
@@ -313,6 +443,26 @@ export default function AdminOrders() {
                 ))}
               </SelectContent>
             </Select>
+            <Select value={filterPaymentStatus} onValueChange={(v) => { setFilterPaymentStatus(v); setPage(1) }}>
+              <SelectTrigger className="w-full sm:w-40 h-9 bg-white">
+                <SelectValue placeholder="Payment Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Payment</SelectItem>
+                <SelectItem value="pending">Payment Pending</SelectItem>
+                <SelectItem value="paid">Paid</SelectItem>
+                <SelectItem value="failed">Failed</SelectItem>
+                <SelectItem value="refunded">Refunded</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={handleExportCSV}
+              className="h-9 border-gold/30 text-gold hover:bg-gold/10 font-semibold shrink-0"
+            >
+              <Download className="size-4 mr-1.5" />
+              Export CSV
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -320,103 +470,119 @@ export default function AdminOrders() {
       {/* Orders Table */}
       <Card className="premium-shadow border-0">
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50/80">
-                <TableHead className="text-xs font-semibold text-navy">Order #</TableHead>
-                <TableHead className="text-xs font-semibold text-navy">Customer</TableHead>
-                <TableHead className="text-xs font-semibold text-navy hidden sm:table-cell">Items</TableHead>
-                <TableHead className="text-xs font-semibold text-navy">Total</TableHead>
-                <TableHead className="text-xs font-semibold text-navy">Status</TableHead>
-                <TableHead className="text-xs font-semibold text-navy hidden md:table-cell">Date</TableHead>
-                <TableHead className="text-xs font-semibold text-navy text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <TableRow key={i}>
-                    {Array.from({ length: 7 }).map((_, j) => (
-                      <TableCell key={j}>
-                        <div className="h-5 bg-gray-200 rounded animate-pulse" />
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : orders.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-32 text-center">
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                      <ShoppingCart className="h-8 w-8" />
-                      <p className="text-sm">No orders found</p>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50/80">
+                  <TableHead className="text-xs font-semibold text-navy">Order #</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy">Customer</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy hidden sm:table-cell">Items</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy">Total</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy">Status</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy hidden md:table-cell">Date</TableHead>
+                  <TableHead className="text-xs font-semibold text-navy text-right">Actions</TableHead>
                 </TableRow>
-              ) : (
-                orders.map((order) => {
-                  const sc = statusConfig[order.status] || statusConfig.pending
-                  const pc = paymentStatusConfig[order.paymentStatus] || paymentStatusConfig.pending
-                  return (
-                    <TableRow
-                      key={order.id}
-                      className="hover:bg-gray-50/50 cursor-pointer"
-                      onClick={() => handleViewOrder(order)}
-                    >
-                      <TableCell className="font-medium text-navy text-sm">
-                        #{order.orderNumber}
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        <div>
-                          <p className="font-medium text-navy">
-                            {order.user.name || order.user.email}
-                          </p>
-                          {order.user.companyName && (
-                            <p className="text-xs text-muted-foreground">{order.user.companyName}</p>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">
-                        {order.items.length} item{order.items.length !== 1 ? 's' : ''}
-                      </TableCell>
-                      <TableCell className="text-sm font-semibold text-navy">
-                        {formatCurrency(order.totalAmount)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col gap-1">
-                          <Badge
-                            className={`text-[10px] px-2 py-0.5 font-medium ${sc.bg} ${sc.color} border-0`}
-                          >
-                            {order.status}
-                          </Badge>
-                          <Badge
-                            className={`text-[9px] px-1.5 py-0 ${pc.bg} ${pc.color} border-0 w-fit`}
-                          >
-                            {order.paymentStatus}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground hidden md:table-cell">
-                        {formatDate(order.createdAt)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-gold hover:text-gold-dark"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleViewOrder(order)
-                          }}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      {Array.from({ length: 7 }).map((_, j) => (
+                        <TableCell key={j}>
+                          <div className="h-5 bg-gray-200 rounded animate-pulse" />
+                        </TableCell>
+                      ))}
                     </TableRow>
-                  )
-                })
-              )}
-            </TableBody>
-          </Table>
+                  ))
+                ) : orders.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-32 text-center">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                        <ShoppingCart className="h-8 w-8" />
+                        <p className="text-sm">No orders found</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  orders.map((order) => {
+                    const sc = statusConfig[order.status] || statusConfig.pending
+                    const pc = paymentStatusConfig[order.paymentStatus] || paymentStatusConfig.pending
+                    return (
+                      <TableRow
+                        key={order.id}
+                        className="hover:bg-gray-50/50 cursor-pointer"
+                        onClick={() => handleViewOrder(order)}
+                      >
+                        <TableCell className="font-medium text-navy text-sm">
+                          #{order.orderNumber}
+                        </TableCell>
+                        <TableCell className="text-sm">
+                          <div>
+                            <p className="font-medium text-navy">
+                              {order.user.name || order.user.email}
+                            </p>
+                            {order.user.companyName && (
+                              <p className="text-xs text-muted-foreground">{order.user.companyName}</p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">
+                          {order.items.length} item{order.items.length !== 1 ? 's' : ''}
+                        </TableCell>
+                        <TableCell className="text-sm font-semibold text-navy">
+                          {formatCurrency(order.totalAmount)}
+                        </TableCell>
+                        <TableCell onClick={(e) => e.stopPropagation()}>
+                          <div className="flex flex-col gap-1">
+                            <Select
+                              value={order.status}
+                              onValueChange={(v) => handleInlineStatusUpdate(order.id, order.orderNumber, v)}
+                            >
+                              <SelectTrigger className={`h-7 w-auto min-w-[100px] text-[11px] font-medium border-0 ${sc.bg} ${sc.color} px-2 py-0 focus:ring-0`}>
+                                {inlineUpdating === order.id ? (
+                                  <Loader2 className="size-3 animate-spin" />
+                                ) : (
+                                  <SelectValue />
+                                )}
+                              </SelectTrigger>
+                              <SelectContent>
+                                {allStatuses.map((s) => (
+                                  <SelectItem key={s} value={s}>
+                                    {s.charAt(0).toUpperCase() + s.slice(1)}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Badge
+                              className={`text-[9px] px-1.5 py-0 ${pc.bg} ${pc.color} border-0 w-fit`}
+                            >
+                              {order.paymentStatus}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground hidden md:table-cell">
+                          {formatDate(order.createdAt)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gold hover:text-gold-dark"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleViewOrder(order)
+                            }}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
@@ -434,6 +600,30 @@ export default function AdminOrders() {
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
+                {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
+                  const pageNum =
+                    page <= 3
+                      ? i + 1
+                      : page >= totalPages - 2
+                        ? totalPages - 4 + i
+                        : page - 2 + i
+                  if (pageNum < 1 || pageNum > totalPages) return null
+                  return (
+                    <Button
+                      key={pageNum}
+                      variant={page === pageNum ? 'default' : 'outline'}
+                      size="icon"
+                      className={`h-8 w-8 ${
+                        page === pageNum
+                          ? 'gold-gradient text-navy font-semibold'
+                          : ''
+                      }`}
+                      onClick={() => setPage(pageNum)}
+                    >
+                      {pageNum}
+                    </Button>
+                  )
+                })}
                 <Button
                   variant="outline"
                   size="icon"
@@ -469,6 +659,9 @@ export default function AdminOrders() {
                     {selectedOrder.status}
                   </Badge>
                 </div>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  Order placed on {formatDate(selectedOrder.createdAt)} by {selectedOrder.user.name || selectedOrder.user.email}
+                </DialogDescription>
               </DialogHeader>
 
               <div className="space-y-6 py-4">
@@ -476,7 +669,10 @@ export default function AdminOrders() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Order Info */}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-navy">Order Information</h4>
+                    <h4 className="text-sm font-semibold text-navy flex items-center gap-2">
+                      <FileText className="size-4 text-gold" />
+                      Order Information
+                    </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Order Date</span>
@@ -504,12 +700,21 @@ export default function AdminOrders() {
                           <span className="font-medium text-gold">{selectedOrder.trackingNumber}</span>
                         </div>
                       )}
+                      {selectedOrder.estimatedDelivery && (
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">Est. Delivery</span>
+                          <span className="font-medium">{formatDate(selectedOrder.estimatedDelivery)}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Customer Info */}
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-navy">Customer Information</h4>
+                    <h4 className="text-sm font-semibold text-navy flex items-center gap-2">
+                      <MessageSquare className="size-4 text-gold" />
+                      Customer Information
+                    </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Name</span>
@@ -552,7 +757,10 @@ export default function AdminOrders() {
 
                 {/* Items */}
                 <div className="space-y-3">
-                  <h4 className="text-sm font-semibold text-navy">Order Items</h4>
+                  <h4 className="text-sm font-semibold text-navy flex items-center gap-2">
+                    <Package className="size-4 text-gold" />
+                    Order Items ({selectedOrder.items.length})
+                  </h4>
                   <div className="space-y-2">
                     {selectedOrder.items.map((item) => (
                       <div
@@ -575,6 +783,15 @@ export default function AdminOrders() {
                           <p className="text-xs text-muted-foreground">
                             Qty: {item.quantity} × {formatCurrency(item.price)}
                           </p>
+                          {item.attrs && Object.keys(item.attrs).length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {Object.entries(item.attrs).map(([key, val]) => (
+                                <Badge key={key} variant="outline" className="text-[9px] px-1 py-0 border-gold/20">
+                                  {val}
+                                </Badge>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <span className="text-sm font-semibold text-navy">
                           {formatCurrency(item.total)}
@@ -618,13 +835,18 @@ export default function AdminOrders() {
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-navy">Order Timeline</h4>
                     <div className="space-y-3">
-                      {selectedOrder.timeline.map((entry) => {
-                        const sc = statusConfig[entry.status] || statusConfig.pending
-                        const Icon = sc.icon
+                      {selectedOrder.timeline.map((entry, idx) => {
+                        const esc = statusConfig[entry.status] || statusConfig.pending
+                        const Icon = esc.icon
                         return (
                           <div key={entry.id} className="flex items-start gap-3">
-                            <div className={`rounded-full p-1.5 ${sc.bg} mt-0.5`}>
-                              <Icon className={`h-3.5 w-3.5 ${sc.color}`} />
+                            <div className="flex flex-col items-center">
+                              <div className={`rounded-full p-1.5 ${esc.bg} mt-0.5`}>
+                                <Icon className={`h-3.5 w-3.5 ${esc.color}`} />
+                              </div>
+                              {idx < selectedOrder.timeline.length - 1 && (
+                                <div className="w-px h-6 bg-gray-200 mt-1" />
+                              )}
                             </div>
                             <div>
                               <p className="text-sm font-medium text-navy capitalize">
@@ -670,7 +892,7 @@ export default function AdminOrders() {
                     <div className="space-y-2">
                       <Label className="text-sm">Change Status</Label>
                       <Select value={newStatus} onValueChange={setNewStatus}>
-                        <SelectTrigger>
+                        <SelectTrigger className="focus:border-gold">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -696,7 +918,17 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              <DialogFooter className="border-t pt-4 gap-2">
+              <DialogFooter className="border-t pt-4 gap-2 flex-wrap">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    handleSendNotification(selectedOrder)
+                  }}
+                  className="text-navy"
+                >
+                  <Send className="mr-2 h-4 w-4" />
+                  Send Notification
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => window.print()}
@@ -710,7 +942,14 @@ export default function AdminOrders() {
                   disabled={updating || newStatus === selectedOrder.status}
                   className="gold-gradient text-navy font-semibold hover:opacity-90"
                 >
-                  {updating ? 'Updating...' : 'Update Status'}
+                  {updating ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Update Status'
+                  )}
                 </Button>
               </DialogFooter>
             </>

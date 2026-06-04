@@ -173,7 +173,7 @@ export default function WhyChooseUs() {
                 <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-gold-light transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-white/50 text-sm leading-relaxed mb-3">
+                <p className="text-white/50 text-base leading-relaxed mb-3">
                   {feature.description}
                 </p>
                 {/* Animated stat */}
@@ -184,7 +184,7 @@ export default function WhyChooseUs() {
                     <span className="text-gold font-bold text-2xl gold-gradient-text">
                       <AnimatedCounter value={feature.stat.value} suffix={feature.stat.suffix} />
                     </span>
-                    <span className="text-white/50 text-xs uppercase tracking-wider font-medium">
+                    <span className="text-white/60 text-sm uppercase tracking-wider font-medium">
                       {feature.stat.label}
                     </span>
                   </div>

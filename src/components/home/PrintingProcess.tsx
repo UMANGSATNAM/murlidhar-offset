@@ -75,7 +75,7 @@ export default function PrintingProcess() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
+            className="text-muted-foreground text-base max-w-2xl mx-auto"
           >
             From design to delivery — our streamlined 4-step process ensures
             your printing experience is smooth and hassle-free.
@@ -136,10 +136,10 @@ export default function PrintingProcess() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-navy font-bold text-lg mb-2 group-hover:text-gold-dark transition-colors">
+                <h3 className="text-navy font-bold text-lg md:text-xl mb-2 group-hover:text-gold-dark transition-colors">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground text-sm leading-relaxed max-w-[250px] mx-auto">
+                <p className="text-muted-foreground text-base leading-relaxed max-w-[250px] mx-auto">
                   {step.description}
                 </p>
 
