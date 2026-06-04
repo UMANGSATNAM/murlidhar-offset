@@ -35,10 +35,10 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 
 const STEPS = [
-  { id: 1, label: 'Address', icon: MapPin },
-  { id: 2, label: 'Payment', icon: CreditCard },
-  { id: 3, label: 'Review', icon: ClipboardCheck },
-  { id: 4, label: 'Confirmation', icon: CheckCircle2 },
+  { id: 1, label: 'Shipping', icon: MapPin, shortLabel: 'Address' },
+  { id: 2, label: 'Payment', icon: CreditCard, shortLabel: 'Payment' },
+  { id: 3, label: 'Review', icon: ClipboardCheck, shortLabel: 'Review' },
+  { id: 4, label: 'Confirmation', icon: CheckCircle2, shortLabel: 'Done' },
 ]
 
 interface AddressForm {
@@ -96,6 +96,9 @@ export default function CheckoutPage() {
   // Confirmation state
   const [orderNumber, setOrderNumber] = useState('')
   const [estimatedDelivery, setEstimatedDelivery] = useState('')
+
+  // Mobile order summary toggle
+  const [mobileSummaryOpen, setMobileSummaryOpen] = useState(false)
 
   useEffect(() => {
     useCartStore.getState()._hydrate()
@@ -304,6 +307,21 @@ export default function CheckoutPage() {
             <span className="font-semibold">Total</span>
             <span className="text-lg font-bold gold-gradient-text">₹{totalVal.toLocaleString()}</span>
           </div>
+
+          {/* Estimated Delivery Date */}
+          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-gold/5 border border-gold/10 mt-2">
+            <Truck className="size-4 text-gold shrink-0" />
+            <div>
+              <p className="text-[10px] text-muted-foreground">Estimated Delivery</p>
+              <p className="text-xs font-semibold text-foreground">
+                {(() => {
+                  const d = new Date()
+                  d.setDate(d.getDate() + 5)
+                  return d.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })
+                })()}
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -321,7 +339,7 @@ export default function CheckoutPage() {
           <span className="text-foreground font-medium">Checkout</span>
         </nav>
 
-        {/* Step Indicator */}
+        {/* Step Indicator - Progress Stepper */}
         <div className="mb-8">
           <div className="flex items-center justify-between max-w-lg mx-auto">
             {STEPS.map((step, index) => (
@@ -332,14 +350,14 @@ export default function CheckoutPage() {
                       currentStep > step.id
                         ? 'bg-green-500 text-white'
                         : currentStep === step.id
-                          ? 'bg-navy text-gold gold-shadow'
+                          ? 'gold-gradient text-navy gold-shadow animate-gold-pulse-sm'
                           : 'bg-muted text-muted-foreground'
                     }`}
                   >
                     {currentStep > step.id ? (
                       <CheckCircle2 className="size-5" />
                     ) : (
-                      <step.icon className="size-5" />
+                      <span className="text-sm font-bold">{step.id}</span>
                     )}
                   </div>
                   <span className={`text-[10px] sm:text-xs mt-1 font-medium ${
@@ -350,12 +368,66 @@ export default function CheckoutPage() {
                 </div>
                 {index < STEPS.length - 1 && (
                   <div className={`w-8 sm:w-16 h-0.5 mx-2 mb-5 transition-all duration-300 ${
-                    currentStep > step.id ? 'bg-green-500' : 'bg-border'
+                    currentStep > step.id ? 'bg-gold' : 'bg-border'
                   }`} />
                 )}
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Mobile Order Summary Toggle */}
+        <div className="lg:hidden mb-6">
+          <button
+            onClick={() => setMobileSummaryOpen(!mobileSummaryOpen)}
+            className="w-full flex items-center justify-between p-3 rounded-xl bg-card premium-shadow gold-border"
+          >
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="size-4 text-gold" />
+              <span className="text-sm font-semibold text-foreground">Order Summary</span>
+              <Badge variant="secondary" className="text-[10px] bg-gold/10 text-gold-dark">{items.length} items</Badge>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold gold-gradient-text">₹{totalVal.toLocaleString()}</span>
+              <ChevronRight className={`size-4 text-muted-foreground transition-transform ${mobileSummaryOpen ? 'rotate-90' : ''}`} />
+            </div>
+          </button>
+          <AnimatePresence>
+            {mobileSummaryOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="overflow-hidden"
+              >
+                <div className="p-4 bg-card rounded-b-xl border border-t-0 border-gold/15">
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {items.map((item) => (
+                      <div key={item.id} className="flex items-center gap-2 text-sm">
+                        <span className="flex-1 truncate">{item.name} × {item.quantity}</span>
+                        <span className="font-medium">₹{(item.price * item.quantity).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Separator className="my-3 bg-gold/10" />
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold">Total</span>
+                    <span className="text-lg font-bold gold-gradient-text">₹{totalVal.toLocaleString()}</span>
+                  </div>
+                  {/* Estimated Delivery */}
+                  <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
+                    <Truck className="size-3.5 text-gold" />
+                    <span>Estimated delivery: {currentStep === 4 && estimatedDelivery ? estimatedDelivery : (() => {
+                      const d = new Date()
+                      d.setDate(d.getDate() + 5)
+                      return d.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })
+                    })()}</span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         <AnimatePresence mode="wait">
@@ -810,15 +882,17 @@ export default function CheckoutPage() {
                   </Button>
 
                   {/* Trust Badges */}
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center gap-4 flex-wrap">
                     {[
-                      { icon: Shield, label: 'Secure Payment' },
+                      { icon: Shield, label: 'Secure Checkout' },
                       { icon: Lock, label: 'SSL Encrypted' },
-                      { icon: RotateCcw, label: 'Money Back' },
+                      { icon: RotateCcw, label: 'Money Back Guarantee' },
                     ].map((badge) => (
-                      <div key={badge.label} className="flex items-center gap-1 text-muted-foreground">
-                        <badge.icon className="size-3.5 text-gold" />
-                        <span className="text-[10px]">{badge.label}</span>
+                      <div key={badge.label} className="flex items-center gap-1.5 text-muted-foreground">
+                        <div className="w-6 h-6 rounded-full bg-gold/10 flex items-center justify-center">
+                          <badge.icon className="size-3 text-gold" />
+                        </div>
+                        <span className="text-[10px] font-medium">{badge.label}</span>
                       </div>
                     ))}
                   </div>

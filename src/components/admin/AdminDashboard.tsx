@@ -20,6 +20,8 @@ import {
   Truck,
   UserPlus,
   Image,
+  FileText,
+  Settings,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -275,18 +277,11 @@ export default function AdminDashboard() {
 
   const quickActions = [
     {
-      label: 'Add New Product',
+      label: 'Add Product',
       icon: Plus,
       page: 'admin-products' as const,
       variant: 'default' as const,
       className: 'gold-gradient text-navy font-semibold hover:opacity-90',
-    },
-    {
-      label: 'Create Coupon',
-      icon: Tag,
-      page: 'admin-settings' as const,
-      variant: 'outline' as const,
-      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
     },
     {
       label: 'View Orders',
@@ -296,7 +291,28 @@ export default function AdminDashboard() {
       className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
     },
     {
-      label: 'Send Notification',
+      label: 'Manage CMS',
+      icon: FileText,
+      page: 'admin-cms' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
+    },
+    {
+      label: 'Settings',
+      icon: Settings,
+      page: 'admin-settings' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
+    },
+    {
+      label: 'Create Coupon',
+      icon: Tag,
+      page: 'admin-settings' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
+    },
+    {
+      label: 'Notify',
       icon: Bell,
       page: 'admin-cms' as const,
       variant: 'outline' as const,
@@ -331,6 +347,36 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Welcome Header Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="navy-gradient rounded-xl p-5 sm:p-6 premium-shadow relative overflow-hidden"
+      >
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gold rounded-full -translate-y-1/2 translate-x-1/3 blur-3xl" />
+        </div>
+        <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-white">
+              Welcome back, <span className="gold-gradient-text">Admin</span>
+            </h2>
+            <p className="text-white/60 text-sm mt-1">
+              {new Date().toLocaleDateString('en-IN', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </p>
+          </div>
+          <Badge className="bg-gold/20 text-gold border-gold/30 text-xs">
+            Dashboard Overview
+          </Badge>
+        </div>
+      </motion.div>
+
       {/* Stats Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card, index) => {
@@ -342,7 +388,10 @@ export default function AdminDashboard() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1, duration: 0.4 }}
             >
-              <Card className="premium-shadow hover-lift border-0 overflow-hidden">
+              <Card className="premium-shadow hover-lift overflow-hidden relative">
+                {/* Gradient border effect */}
+                <div className="absolute inset-0 rounded-lg p-[1.5px] bg-gradient-to-br from-navy via-gold/60 to-navy pointer-events-none" />
+                <div className="relative bg-card rounded-[6px] h-full">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="space-y-2">
@@ -366,11 +415,27 @@ export default function AdminDashboard() {
                         <span className="text-xs text-muted-foreground">vs last month</span>
                       </div>
                     </div>
-                    <div className={`rounded-xl p-3 ${card.iconBg}`}>
-                      <Icon className={`h-6 w-6 ${card.color}`} />
+                    <div className="flex flex-col items-end gap-2">
+                      <div className={`rounded-xl p-3 ${card.iconBg}`}>
+                        <Icon className={`h-6 w-6 ${card.color}`} />
+                      </div>
+                      {/* Mini sparkline */}
+                      <svg width="60" height="20" viewBox="0 0 60 20" className="opacity-60">
+                        <path
+                          d={card.trendUp
+                            ? "M0 16 Q10 14 15 12 T30 8 T45 5 T60 2"
+                            : "M0 4 Q10 6 15 8 T30 12 T45 15 T60 18"
+                          }
+                          fill="none"
+                          stroke={card.trendUp ? '#22c55e' : '#ef4444'}
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </div>
                   </div>
                 </CardContent>
+                </div>
               </Card>
             </motion.div>
           )
@@ -552,7 +617,7 @@ export default function AdminDashboard() {
                     </TableRow>
                   ) : (
                     recentOrders.slice(0, 5).map((order) => (
-                      <TableRow key={order.id} className="hover:bg-gray-50/50">
+                      <TableRow key={order.id} className="hover:bg-gold/5 transition-colors">
                         <TableCell className="font-medium text-navy text-sm">
                           #{order.orderNumber}
                         </TableCell>
@@ -600,7 +665,7 @@ export default function AdminDashboard() {
                 <ZapIcon className="h-4 w-4 text-gold" />
                 Quick Actions
               </h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 {quickActions.map((action) => {
                   const ActionIcon = action.icon
                   return (

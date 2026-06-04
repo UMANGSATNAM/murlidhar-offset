@@ -103,15 +103,23 @@ function OptionSelector({
         {options.map((option) => (
           <motion.button
             key={option}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => onSelect(option)}
-            className={`px-3.5 py-2 rounded-lg text-sm font-medium border transition-all ${
+            className={`relative px-3.5 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
               selected === option
                 ? 'gold-gradient text-navy border-gold gold-shadow'
                 : 'border-border bg-background text-foreground hover:border-gold/40 hover:bg-gold/5'
             }`}
           >
+            {selected === option && (
+              <motion.div
+                layoutId={`ring-${label}`}
+                className="absolute inset-0 rounded-lg border-2 border-gold/40 pointer-events-none"
+                initial={false}
+                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              />
+            )}
             {option}
           </motion.button>
         ))}

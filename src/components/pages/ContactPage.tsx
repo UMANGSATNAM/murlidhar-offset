@@ -25,6 +25,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { useNavigationStore } from '@/lib/store'
+import { toast } from 'sonner'
 
 const contactInfo = [
   {
@@ -89,24 +90,88 @@ export default function ContactPage() {
   })
   const [submitted, setSubmitted] = useState(false)
   const [sending, setSending] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      newErrors.name = 'Name is required (min 2 characters)'
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!emailRegex.test(formData.email.trim())) {
+      newErrors.email = 'Please enter a valid email address'
+    }
+
+    if (!formData.subject.trim()) {
+      newErrors.subject = 'Subject is required'
+    }
+
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      newErrors.message = 'Message is required (min 10 characters)'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      toast.error('Please fix the errors below')
+      return
+    }
+
     setSending(true)
-    // Simulate sending
-    await new Promise((r) => setTimeout(r, 1500))
-    setSending(false)
-    setSubmitted(true)
-    setTimeout(() => {
-      setSubmitted(false)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        const errorMsg = data.errors
+          ? data.errors.join(', ')
+          : data.error || 'Failed to send message'
+        toast.error(errorMsg)
+        return
+      }
+
+      toast.success('Message sent successfully!', {
+        description: 'Our team will get back to you within 2 business hours.',
+      })
+      setSubmitted(true)
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' })
-    }, 4000)
+      setErrors({})
+      setTimeout(() => {
+        setSubmitted(false)
+      }, 4000)
+    } catch {
+      toast.error('Something went wrong. Please try again later.')
+    } finally {
+      setSending(false)
+    }
   }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+    // Clear error for this field on change
+    if (errors[e.target.name]) {
+      setErrors((prev) => {
+        const next = { ...prev }
+        delete next[e.target.name]
+        return next
+      })
+    }
   }
 
   return (
@@ -277,8 +342,11 @@ export default function ContactPage() {
                             onChange={handleChange}
                             placeholder="John Doe"
                             required
-                            className="border-border/50 focus:border-gold/50"
+                            className={`border-border/50 focus:border-gold/50 ${errors.name ? 'border-red-400 focus:border-red-500' : ''}`}
                           />
+                          {errors.name && (
+                            <p className="text-xs text-red-500">{errors.name}</p>
+                          )}
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="email">Email Address *</Label>
@@ -290,8 +358,11 @@ export default function ContactPage() {
                             onChange={handleChange}
                             placeholder="john@example.com"
                             required
-                            className="border-border/50 focus:border-gold/50"
+                            className={`border-border/50 focus:border-gold/50 ${errors.email ? 'border-red-400 focus:border-red-500' : ''}`}
                           />
+                          {errors.email && (
+                            <p className="text-xs text-red-500">{errors.email}</p>
+                          )}
                         </div>
                       </div>
 
@@ -316,7 +387,7 @@ export default function ContactPage() {
                             value={formData.subject}
                             onChange={handleChange}
                             required
-                            className="flex h-10 w-full rounded-md border border-border/50 bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 focus-visible:ring-offset-2 focus-visible:border-gold/50"
+                            className={`flex h-10 w-full rounded-md border ${errors.subject ? 'border-red-400' : 'border-border/50'} bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 focus-visible:ring-offset-2 focus-visible:border-gold/50`}
                           >
                             <option value="">Select a subject</option>
                             {subjectOptions.map((opt) => (
@@ -325,6 +396,9 @@ export default function ContactPage() {
                               </option>
                             ))}
                           </select>
+                          {errors.subject && (
+                            <p className="text-xs text-red-500">{errors.subject}</p>
+                          )}
                         </div>
                       </div>
 
@@ -338,8 +412,11 @@ export default function ContactPage() {
                           placeholder="Tell us about your project, requirements, or any questions you have..."
                           required
                           rows={5}
-                          className="border-border/50 focus:border-gold/50 resize-none"
+                          className={`border-border/50 focus:border-gold/50 resize-none ${errors.message ? 'border-red-400 focus:border-red-500' : ''}`}
                         />
+                        {errors.message && (
+                          <p className="text-xs text-red-500">{errors.message}</p>
+                        )}
                       </div>
 
                       <Button

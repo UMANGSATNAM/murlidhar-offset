@@ -14,6 +14,7 @@ import WhatsAppButton from '@/components/layout/WhatsAppButton'
 import AnnouncementBar from '@/components/home/AnnouncementBar'
 import SearchModal from '@/components/layout/SearchModal'
 import NotificationPopup from '@/components/layout/NotificationPopup'
+import Breadcrumb from '@/components/layout/Breadcrumb'
 import SectionDivider from '@/components/ui/SectionDivider'
 
 // Home sections - dynamic imports for performance
@@ -131,6 +132,18 @@ const SampleRequestPage = dynamic(
 // Live Chat Widget - dynamic import
 const LiveChatWidget = dynamic(
   () => import('@/components/layout/LiveChatWidget'),
+  { ssr: false }
+)
+
+// Cookie Consent - dynamic import
+const CookieConsent = dynamic(
+  () => import('@/components/layout/CookieConsent'),
+  { ssr: false }
+)
+
+// Scroll Progress - dynamic import
+const ScrollProgress = dynamic(
+  () => import('@/components/layout/ScrollProgress'),
   { ssr: false }
 )
 
@@ -252,11 +265,17 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      {/* Scroll Progress */}
+      <ScrollProgress />
+
       {/* Announcement Bar - above header */}
       <AnnouncementBar />
 
       {/* Header */}
       <Header />
+
+      {/* Breadcrumb - only for non-home and non-admin pages */}
+      {page !== 'home' && !isAdmin && <Breadcrumb />}
 
       {/* Main content */}
       <main className="flex-1 flex flex-col">
@@ -282,6 +301,9 @@ export default function Home() {
 
       {/* Live Chat Widget */}
       <LiveChatWidget />
+
+      {/* Cookie Consent Banner */}
+      <CookieConsent />
 
       {/* Global modals & popups */}
       <SearchModal />
