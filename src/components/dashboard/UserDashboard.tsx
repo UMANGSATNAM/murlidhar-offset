@@ -27,9 +27,12 @@ import {
   Eye,
   EyeOff,
   Lock,
+  RotateCcw,
+  ShoppingBag as ShoppingBagIcon,
 } from 'lucide-react'
 import { useNavigationStore } from '@/lib/store'
 import { useAuthStore } from '@/lib/auth-store'
+import { useWishlistStore } from '@/lib/wishlist-store'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -85,6 +88,7 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: React.Ele
 export default function UserDashboard() {
   const { navigate } = useNavigationStore()
   const { user, isLoggedIn, logout } = useAuthStore()
+  const wishlistItems = useWishlistStore((s) => s.items)
   const [activeTab, setActiveTab] = useState<DashboardTab>('overview')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -356,30 +360,56 @@ export default function UserDashboard() {
                     transition={{ duration: 0.3 }}
                     className="space-y-6"
                   >
-                    {/* Welcome Banner */}
-                    <Card className="navy-gradient overflow-hidden">
-                      <CardContent className="p-6">
-                        <h2 className="text-xl font-bold text-white mb-1">Welcome back, {user?.name?.split(' ')[0] || 'there'}! 👋</h2>
-                        <p className="text-white/70 text-sm">Manage your orders, designs, and account settings from your dashboard.</p>
-                      </CardContent>
+                    {/* Welcome Banner with Gold Gradient */}
+                    <Card className="overflow-hidden premium-shadow-lg" >
+                      <div className="relative navy-gradient p-6 sm:p-8">
+                        {/* Decorative gold corner */}
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-gold/20 to-transparent rounded-bl-full" />
+                        <div className="relative z-10">
+                          <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                            Welcome back, <span className="gold-gradient-text">{user?.name?.split(' ')[0] || 'there'}</span>! 👋
+                          </h2>
+                          <p className="text-white/70 text-sm">Manage your orders, designs, and account settings from your dashboard.</p>
+                          <div className="flex gap-3 mt-4">
+                            <Button
+                              size="sm"
+                              onClick={() => navigate('products')}
+                              className="gold-gradient gold-shadow text-navy font-semibold h-9 text-xs"
+                            >
+                              <ShoppingBag className="size-3.5 mr-1" />
+                              Shop Now
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setActiveTab('orders')}
+                              className="border-white/20 text-white hover:bg-white/10 h-9 text-xs"
+                            >
+                              <Package className="size-3.5 mr-1" />
+                              My Orders
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </Card>
 
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {/* Quick Stats Cards */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       {[
-                        { label: 'Total Orders', value: totalOrders, icon: Package, color: 'text-gold' },
-                        { label: 'Pending Orders', value: pendingOrders, icon: Clock, color: 'text-yellow-600' },
-                        { label: 'Total Spent', value: `₹${totalSpent.toLocaleString()}`, icon: IndianRupee, color: 'text-green-600' },
+                        { label: 'Total Orders', value: totalOrders, icon: Package, color: 'text-gold', bg: 'bg-gold/10' },
+                        { label: 'Wishlist Items', value: wishlistItems.length, icon: Heart, color: 'text-red-500', bg: 'bg-red-50' },
+                        { label: 'Pending Deliveries', value: pendingOrders, icon: Truck, color: 'text-purple-600', bg: 'bg-purple-50' },
+                        { label: 'Total Spent', value: `₹${totalSpent.toLocaleString()}`, icon: IndianRupee, color: 'text-green-600', bg: 'bg-green-50' },
                       ].map((stat) => (
                         <Card key={stat.label} className="premium-shadow hover-lift">
-                          <CardContent className="p-5">
+                          <CardContent className="p-4 sm:p-5">
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</p>
-                                <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground font-medium uppercase tracking-wider">{stat.label}</p>
+                                <p className="text-xl sm:text-2xl font-bold text-foreground mt-1">{stat.value}</p>
                               </div>
-                              <div className="w-10 h-10 rounded-lg bg-gold-muted flex items-center justify-center">
-                                <stat.icon className={`size-5 ${stat.color}`} />
+                              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg ${stat.bg} flex items-center justify-center`}>
+                                <stat.icon className={`size-4 sm:size-5 ${stat.color}`} />
                               </div>
                             </div>
                           </CardContent>
@@ -507,6 +537,16 @@ export default function UserDashboard() {
                                       <Eye className="size-3.5 mr-1" />
                                       Details
                                     </Button>
+                                    {order.status === 'delivered' && (
+                                      <Button
+                                        size="sm"
+                                        className="gold-gradient gold-shadow text-navy font-semibold h-8 text-xs"
+                                        onClick={() => navigate('products')}
+                                      >
+                                        <RotateCcw className="size-3 mr-1" />
+                                        Reorder
+                                      </Button>
+                                    )}
                                   </div>
                                 </div>
 

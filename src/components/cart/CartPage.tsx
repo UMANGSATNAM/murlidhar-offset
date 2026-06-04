@@ -14,6 +14,8 @@ import {
   ArrowLeft,
   Gift,
   Truck,
+  Calendar,
+  Sparkles,
 } from 'lucide-react'
 import { useCartStore, useCartSubtotal, useCartGstAmount, useCartItemCount } from '@/lib/cart-store'
 import { useNavigationStore } from '@/lib/store'
@@ -72,6 +74,11 @@ export default function CartPage() {
   const shipping = subtotalVal >= FREE_SHIPPING_THRESHOLD ? 0 : (items.length > 0 ? SHIPPING_COST : 0)
   const totalVal = subtotalVal + gstVal + shipping - discount
 
+  // Estimated delivery date
+  const estimatedDelivery = new Date()
+  estimatedDelivery.setDate(estimatedDelivery.getDate() + 5)
+  const deliveryStr = estimatedDelivery.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })
+
   const handleApplyCoupon = () => {
     setCouponError('')
     if (!couponCode.trim()) {
@@ -126,6 +133,10 @@ export default function CartPage() {
     setSavedItems(savedItems.filter(i => i.id !== id))
   }
 
+  // Free shipping progress
+  const shippingProgress = Math.min((subtotalVal / FREE_SHIPPING_THRESHOLD) * 100, 100)
+  const amountForFreeShipping = Math.max(FREE_SHIPPING_THRESHOLD - subtotalVal, 0)
+
   // Empty cart state
   if (items.length === 0 && savedItems.length === 0) {
     return (
@@ -144,13 +155,32 @@ export default function CartPage() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center justify-center py-20"
           >
+            {/* Sad cart animation */}
             <div className="relative mb-8">
-              <div className="w-32 h-32 rounded-full bg-gold-muted flex items-center justify-center">
+              <motion.div
+                className="w-36 h-36 rounded-full bg-gold-muted flex items-center justify-center"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 <ShoppingCart className="size-16 text-gold" />
-              </div>
-              <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-background border-2 border-gold flex items-center justify-center">
-                <span className="text-xs font-bold text-gold">0</span>
-              </div>
+              </motion.div>
+              <motion.div
+                className="absolute -top-1 -right-1 w-9 h-9 rounded-full bg-background border-2 border-gold flex items-center justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', delay: 0.3 }}
+              >
+                <span className="text-sm font-bold text-gold">0</span>
+              </motion.div>
+              {/* Sad face overlay */}
+              <motion.div
+                className="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <span className="text-lg">😢</span>
+              </motion.div>
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">Your Cart is Empty</h2>
             <p className="text-muted-foreground text-center max-w-md mb-8">
@@ -163,6 +193,44 @@ export default function CartPage() {
               <ShoppingBag className="size-5 mr-2" />
               Shop Now
             </Button>
+
+            {/* You Might Also Like Section */}
+            <motion.div
+              className="mt-16 w-full max-w-3xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <div className="flex items-center gap-2 mb-6 justify-center">
+                <Sparkles className="size-5 text-gold" />
+                <h3 className="text-lg font-semibold text-foreground">You Might Also Like</h3>
+                <div className="h-0.5 w-16 gold-gradient rounded-full" />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { name: 'Business Cards', price: '₹499', emoji: '💳' },
+                  { name: 'Wedding Cards', price: '₹1,499', emoji: '💒' },
+                  { name: 'Brochures', price: '₹799', emoji: '📄' },
+                  { name: 'Stickers', price: '₹299', emoji: '🏷️' },
+                ].map((product, idx) => (
+                  <motion.button
+                    key={product.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 + idx * 0.1 }}
+                    whileHover={{ y: -4 }}
+                    onClick={() => navigate('products')}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card premium-shadow gold-border hover:gold-border-glow transition-smooth"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-gold-muted flex items-center justify-center text-xl">
+                      {product.emoji}
+                    </div>
+                    <p className="text-sm font-medium text-foreground">{product.name}</p>
+                    <p className="text-xs text-gold font-semibold">{product.price}</p>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -191,6 +259,35 @@ export default function CartPage() {
               {itemCount} {itemCount === 1 ? 'item' : 'items'}
             </Badge>
           </div>
+
+          {/* Free Shipping Progress Bar */}
+          {items.length > 0 && shipping > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 rounded-xl bg-gold/5 border border-gold/15"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Truck className="size-4 text-gold" />
+                  <span className="font-medium text-foreground">
+                    {amountForFreeShipping > 0
+                      ? `Add ₹${amountForFreeShipping.toLocaleString()} more for FREE shipping!`
+                      : 'You qualify for FREE shipping!'}
+                  </span>
+                </div>
+                <span className="text-xs text-muted-foreground">₹{subtotalVal.toLocaleString()} / ₹{FREE_SHIPPING_THRESHOLD}</span>
+              </div>
+              <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full gold-gradient"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${shippingProgress}%` }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                />
+              </div>
+            </motion.div>
+          )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
@@ -262,7 +359,7 @@ export default function CartPage() {
                               <div className="flex items-center border border-border rounded-lg overflow-hidden">
                                 <button
                                   onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                                  className="h-8 w-8 flex items-center justify-center hover:bg-muted transition-colors"
+                                  className="h-8 w-8 flex items-center justify-center hover:bg-gold/10 hover:text-gold transition-colors"
                                   aria-label="Decrease quantity"
                                 >
                                   <Minus className="size-3.5" />
@@ -272,7 +369,7 @@ export default function CartPage() {
                                 </span>
                                 <button
                                   onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                                  className="h-8 w-8 flex items-center justify-center hover:bg-muted transition-colors"
+                                  className="h-8 w-8 flex items-center justify-center hover:bg-gold/10 hover:text-gold transition-colors"
                                   aria-label="Increase quantity"
                                 >
                                   <Plus className="size-3.5" />
@@ -397,15 +494,6 @@ export default function CartPage() {
                       )}
                     </div>
 
-                    {shipping > 0 && (
-                      <div className="bg-gold-muted rounded-lg p-3 text-xs">
-                        <p className="text-gold-dark font-medium flex items-center gap-1">
-                          <Gift className="size-3" />
-                          Add ₹{(FREE_SHIPPING_THRESHOLD - subtotalVal).toLocaleString()} more for FREE shipping!
-                        </p>
-                      </div>
-                    )}
-
                     {/* Discount */}
                     {discount > 0 && (
                       <div className="flex justify-between text-sm">
@@ -420,6 +508,15 @@ export default function CartPage() {
                     <div className="flex justify-between items-center">
                       <span className="font-semibold text-foreground">Total</span>
                       <span className="text-xl font-bold gold-gradient-text">₹{totalVal.toLocaleString()}</span>
+                    </div>
+
+                    {/* Estimated Delivery */}
+                    <div className="flex items-center gap-2 p-3 rounded-lg bg-gold/5 border border-gold/10">
+                      <Calendar className="size-4 text-gold shrink-0" />
+                      <div>
+                        <p className="text-xs text-muted-foreground">Estimated Delivery</p>
+                        <p className="text-sm font-semibold text-foreground">{deliveryStr}</p>
+                      </div>
                     </div>
 
                     <Separator />
@@ -451,7 +548,7 @@ export default function CartPage() {
                             variant="outline"
                             size="sm"
                             onClick={handleApplyCoupon}
-                            className="h-9 px-3"
+                            className="h-9 px-3 border-gold/30 text-gold hover:bg-gold/10"
                           >
                             Apply
                           </Button>

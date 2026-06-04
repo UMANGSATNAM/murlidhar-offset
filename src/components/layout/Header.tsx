@@ -14,6 +14,8 @@ import {
   LayoutDashboard,
   Shield,
   LogIn,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -27,6 +29,8 @@ import {
 import { useNavigationStore, type PageName } from '@/lib/store'
 import { useCartStore, useCartItemCount } from '@/lib/cart-store'
 import { useWishlistStore, useWishlistCount } from '@/lib/wishlist-store'
+import { useTheme } from 'next-themes'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -58,6 +62,7 @@ export default function Header() {
   const wishlistCount = useWishlistCount()
   const _hydrate = useCartStore((s) => s._hydrate)
   const _hydrateWishlist = useWishlistStore((s) => s._hydrate)
+  const { setTheme, resolvedTheme } = useTheme()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [catDropdown, setCatDropdown] = useState(false)
@@ -241,6 +246,9 @@ export default function Header() {
               <Search className="size-5" />
             </Button>
 
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Wishlist */}
             <Button
               variant="ghost"
@@ -416,6 +424,27 @@ export default function Header() {
                   </button>
 
                   <div className="border-t border-white/10 my-2" />
+
+                  {/* Mobile theme toggle */}
+                  <button
+                    onClick={() => {
+                      const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+                      setTheme(newTheme)
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center gap-2"
+                  >
+                    {resolvedTheme === 'dark' ? (
+                      <>
+                        <Sun className="size-4" />
+                        <span>Light Mode</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="size-4" />
+                        <span>Dark Mode</span>
+                      </>
+                    )}
+                  </button>
 
                   <button
                     onClick={() => {

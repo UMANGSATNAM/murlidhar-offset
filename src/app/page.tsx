@@ -108,6 +108,18 @@ const AboutPage = dynamic(
   { ssr: false }
 )
 
+// Order Tracking page - dynamic import
+const OrderTrackingPage = dynamic(
+  () => import('@/components/pages/OrderTrackingPage'),
+  { ssr: false }
+)
+
+// Policy pages - dynamic import
+const PolicyPage = dynamic(
+  () => import('@/components/pages/PolicyPage'),
+  { ssr: false }
+)
+
 // Admin - dynamic import
 const AdminLayout = dynamic(
   () => import('@/components/admin/AdminLayout'),
@@ -189,6 +201,14 @@ export default function Home() {
         return <ContactPage />
       case 'about':
         return <AboutPage />
+      case 'order-tracking':
+        return <OrderTrackingPage />
+      case 'privacy':
+        return <PolicyPage type="privacy" />
+      case 'terms':
+        return <PolicyPage type="terms" />
+      case 'refund':
+        return <PolicyPage type="refund" />
       default:
         return <HomePageContent />
     }

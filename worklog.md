@@ -1,5 +1,94 @@
 # Murlidhar Offset - Project Worklog
 
+## Round 5: Dark Mode, Order Tracking, Policy Pages & Deep Styling Polish
+
+### Current Project Status: Full-Featured Platform - VLM Rating 7.5/10
+The platform now includes dark mode support, order tracking, legal policy pages, enhanced footer, and comprehensive styling improvements across Auth, Cart, Checkout, Dashboard, and Product Detail pages.
+
+---
+
+### Round 5 Completed Work
+
+#### Dark Mode Toggle (Task 4)
+- Installed next-themes v0.4.6
+- Created ThemeToggle.tsx with animated Sun/Moon rotation transitions
+- Added ThemeProvider in layout.tsx with class-based dark mode
+- Toggle in header (desktop) and mobile sidebar
+- Brand colors (navy, gold) remain consistent; only shadcn/ui generic colors change
+
+#### Order Tracking Page (Task 5)
+- Full tracking page with search by order number (MO-XXXX format)
+- Animated 6-step timeline with green checkmarks, gold pulse current step
+- Visual progress bar, order details, shipping address
+- "How It Works" guide when not tracking
+- Quick demo button for sample order MO-1042
+
+#### Policy Pages (Task 8)
+- Reusable PolicyPage component with type prop ('privacy' | 'terms' | 'refund')
+- Privacy Policy: 7 sections (data collection, cookies, rights, security)
+- Terms of Service: 8 sections (orders, pricing, IP, India governing law)
+- Refund Policy: 8 sections (7-day window, non-refundable items, return process)
+- All content India-specific for a printing company
+
+#### Enhanced Footer (Task 7)
+- Newsletter signup bar with email input + subscribe button
+- Trust badges strip (Free Shipping, Secure Payments, 24hr Turnaround, ISO Certified)
+- More Quick Links: About Us, Contact Us, Wishlist, Track Order
+- Accepted Payments: Visa, Mastercard, UPI, Razorpay, COD badges
+- Policy buttons now navigate to proper pages
+
+#### Deep Styling Polish (Task 9) — 5 Key Pages
+- **AuthPage**: Premium background pattern, animated logo, social login (Google/Facebook), "Benefits" section, password strength indicator, form validation feedback
+- **CartPage**: Animated empty state, "You Might Also Like" section, free shipping progress bar, coupon code input, estimated delivery date
+- **CheckoutPage**: Sticky order summary sidebar, brand-colored payment cards, trust badges, coupon code in review, "Need Help" link
+- **UserDashboard**: Gold gradient welcome banner, 4 stat cards (orders/wishlist/deliveries/spent), reorder button
+- **ProductDetail**: WhatsApp share button, bulk order callout, estimated savings display, specs grid layout
+
+---
+
+### VLM Design Quality Progress
+| Round | Rating | Key Improvement |
+|-------|--------|----------------|
+| Round 1 | 7/10 | Good foundation, MO placeholders |
+| Round 2 | 8/10 | Social proof, trust badges, announcement bar |
+| Round 3 | 8/10 | AI product images, hero printing press bg |
+| Round 4 | 7.5/10 | Feature expansion, micro-interactions, new pages |
+| Round 5 | 7.5/10 | Dark mode, order tracking, policy pages, deep page polish |
+
+---
+
+### Project Statistics (Updated)
+- **120+** TypeScript/TSX files
+- **90+** UI components
+- **15** API routes
+- **20+** database models
+- **13** AI-generated product images
+- **12** product categories with full data
+- **48** product variants
+- **11** page types (Home, Products, Product Detail, Cart, Checkout, Auth, Dashboard, Wishlist, About, Contact, Order Tracking)
+- **3** policy pages (Privacy, Terms, Refund)
+- **6** admin sub-pages
+- **1** theme toggle (light/dark mode)
+
+---
+
+### Unresolved Issues & Risks
+1. **No Real Authentication**: Auth store uses localStorage only, not JWT/NextAuth
+2. **No Payment Gateway**: Razorpay/Stripe are visual placeholders
+3. **No Real Email/SMS**: Notification settings are UI only
+4. **Contact Form**: Shows success but doesn't actually send emails
+5. **Order Tracking Uses Mock Data**: No real backend tracking integration
+
+### Priority Recommendations for Next Phase
+1. **NextAuth Integration** - Proper JWT-based auth with session management
+2. **Razorpay Payment Gateway** - Real payment integration
+3. **Contact Form Backend** - Send form submissions via email API
+4. **Real Order Tracking** - Connect to shipping provider APIs (DTDC/Delhivery)
+5. **SEO Optimization** - Sitemap, robots.txt, structured data
+6. **Product Image Upload** - Admin can upload product images
+7. **Performance Optimization** - Image lazy loading, code splitting
+8. **PWA Support** - Service worker, offline support
+
 ## Round 4: Major Feature Expansion, Styling Polish & New Pages
 
 ### Current Project Status: Feature-Rich & Visually Premium - VLM Rating 7.5/10
@@ -111,6 +200,30 @@ VLM feedback: *"Effectively communicates premium positioning through dark color 
 - **7** page types (Home, Products, Product Detail, Cart, Checkout, Auth, Dashboard)
 - **4** new pages (About, Contact, Wishlist, + Recently Viewed section)
 - **6** admin sub-pages (Dashboard, Products, Orders, Customers, CMS, Settings)
+
+---
+
+Task ID: 9
+Agent: Styling Polish Expert
+Task: Improve styling on key pages
+
+Work Log:
+- Enhanced AuthPage.tsx: Added premium background with animated dot pattern and gradient overlay, decorative floating blur elements, animated logo with spring animation, social login buttons (Google with brand colors + Facebook with brand blue + Guest), "Benefits of signing up" section on right side for desktop (Free Design Support, Order Tracking, Bulk Discounts, GST Invoicing) with staggered card animations, trust indicator "10,000+ businesses" badge, improved tab switch animation with spring layoutId transition, full form validation visual feedback (red/green borders on blur), password strength indicator (4-level bar), confirm password mismatch detection, field-level error messages
+- Enhanced CartPage.tsx: Added animated empty cart state with bouncing cart icon and sad face overlay, "You Might Also Like" section when cart is empty (4 product cards with emojis and gold styling), free shipping progress bar with animated fill when cart is below ₹999, estimated delivery date in order summary (5 days from now), coupon code input with gold-themed apply button, enhanced quantity +/- buttons with hover:bg-gold/10 effect
+- Enhanced CheckoutPage.tsx: Added sticky order summary sidebar on steps 1-3 (desktop), showing mini item list, subtotal/GST/shipping/total breakdown; payment method cards with brand colors (Razorpay #072654, COD green) with brand-specific radio indicators and COD fee badge; coupon code input in review step with apply/remove functionality; trust badges below Place Order button (Secure Payment, SSL Encrypted, Money Back); "Need Help? Call us" link at bottom
+- Enhanced UserDashboard.tsx: Upgraded welcome banner with gold gradient decorative corner, user name highlighted with gold-gradient-text, action buttons (Shop Now + My Orders); expanded stats cards from 3 to 4 in 2x2 grid (Total Orders, Wishlist Items, Pending Deliveries, Total Spent) with color-coded icon backgrounds; added Reorder button for delivered orders with RotateCcw icon and gold gradient; imported useWishlistStore for wishlist count
+- Enhanced ProductDetail.tsx: Added bulk order callout (green background when 100+ pcs selected), bulk order info callout with Info icon and discount percentage, estimated savings display when compare price exists, WhatsApp share button with official WhatsApp SVG icon and green hover color, product specifications in 2-column grid layout with icon badges instead of plain list
+- All changes use framer-motion for animations, brand colors (Navy #0D1B3D, Gold #C9A227), shadcn/ui components, and existing CSS utility classes
+- Lint passes with 0 errors
+
+Stage Summary:
+- 5 key pages enhanced with premium styling, micro-interactions, and UX improvements
+- AuthPage: Background pattern, animated logo, social login, benefits section, form validation feedback with password strength
+- CartPage: Animated empty state, "You Might Also Like" section, free shipping progress bar, estimated delivery date
+- CheckoutPage: Sticky order summary sidebar, brand-colored payment cards, trust badges, coupon code in review, help link
+- UserDashboard: Gold-gradient welcome banner, 4 stat cards with color-coded icons, reorder button for delivered orders
+- ProductDetail: WhatsApp share, bulk order callout, estimated savings display, specs grid layout
+- All changes responsive, brand-consistent, and lint-clean
 
 ---
 
@@ -332,4 +445,56 @@ Stage Summary:
 - Notification settings organized into 3 distinct channel sub-sections (Email, SMS, WhatsApp)
 - Save Changes button on each settings tab shows toast notifications via sonner
 - All changes maintain consistent brand styling (gold-gradient, navy-gradient, premium-shadow)
+- Lint passes cleanly
+
+---
+Task ID: 4 & 7
+Agent: Dark Mode + Footer Developer
+Task: Add Dark Mode toggle and enhance Footer
+
+Work Log:
+- Installed `next-themes@0.4.6` via `bun add next-themes`
+- Updated `/home/z/my-project/src/app/layout.tsx` - Imported ThemeProvider from next-themes, wrapped {children} and Toaster with `<ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>`. The html tag already had `suppressHydrationWarning`.
+- Created `/home/z/my-project/src/components/layout/ThemeToggle.tsx` - Client component using `useTheme()` from next-themes with framer-motion AnimatePresence. Shows Moon icon in light mode (click to go dark) and Sun icon in dark mode (click to go light). Smooth rotation animation (rotate 90/-90, scale 0→1, opacity transitions) on toggle. Uses mounted state to avoid hydration mismatch. Styled as ghost icon button matching header text colors.
+- Updated `/home/z/my-project/src/components/layout/Header.tsx` - Imported ThemeToggle component and useTheme hook. Added `<ThemeToggle />` button in the right section between Search and Wishlist buttons. Added mobile theme toggle in the sidebar between Contact Us and Wishlist links, using `resolvedTheme` from useTheme to show Sun/Moon icon with "Light Mode"/"Dark Mode" label. Added Sun and Moon lucide icon imports.
+- Updated `/home/z/my-project/src/components/layout/Footer.tsx` - Major enhancement:
+  - Added newsletter signup section ABOVE the main footer grid: full-width bar with navy-gradient background, "Stay Updated" heading with gold-gradient-text, subtitle about exclusive offers, email Input + Subscribe button (gold-gradient, hover-shimmer) with form validation and toast success/error messages via sonner
+  - Added trust badges strip: 4 badges (Free Shipping, Secure Payments, 24hr Turnaround, ISO Certified) with gold icon circles in a 2x2 mobile / 4-col desktop grid
+  - Added more Quick Links: About Us (→ 'about' page), Contact Us (→ 'contact' page), Wishlist (→ 'wishlist' page) in addition to existing product links
+  - Added "Accepted Payments" section in the Contact column: 5 payment method badges (Visa, Mastercard, UPI, Razorpay, COD) with icons and gold hover effect
+  - All new sections use existing brand styling (gold-gradient, gold-gradient-text, navy-gradient, premium-shadow, hover-shimmer)
+  - Responsive: mobile stacks vertically, desktop side-by-side for newsletter
+- Fixed ESLint errors: React 19 strict lint rules don't allow setState in effects or ref access during render. Removed mounted state tracking from Header (not needed for mobile toggle since resolvedTheme defaults correctly). All lint passes with 0 errors.
+
+Stage Summary:
+- Dark mode fully functional with next-themes ThemeProvider
+- Animated ThemeToggle component with Sun/Moon rotation transitions
+- Desktop: toggle button in header between Search and Wishlist
+- Mobile: theme toggle option in sidebar between Contact Us and Wishlist
+- Dark mode only affects generic shadcn/ui colors (bg-background, text-foreground, bg-card, etc.) — brand colors (bg-navy, text-gold, gold-gradient, navy-gradient) are unchanged
+- Footer enhanced with newsletter signup bar, trust badges strip, additional quick links (About Us, Contact Us, Wishlist), and accepted payment methods (Visa, Mastercard, UPI, Razorpay, COD)
+- Newsletter form validates email and shows success toast via sonner
+- Lint passes cleanly, dev server compiles successfully
+
+---
+Task ID: 5 & 8
+Agent: Order Tracking + Policy Pages Developer
+Task: Add Order Tracking and Policy pages
+
+Work Log:
+- Added 'order-tracking', 'privacy', 'terms', 'refund' to PageName type union in `/home/z/my-project/src/lib/store.ts`
+- Created `/home/z/my-project/src/components/pages/OrderTrackingPage.tsx` — Full order tracking page with: navy gradient hero section with Package icon, search section with MO-XXXX format input validation, quick demo button for sample order MO-1042, animated tracking timeline with 6 steps (Order Placed ✓, Design Review ✓, In Production ● current with gold pulse, Quality Check, Shipped, Delivered), visual progress bar with gold gradient fill, completed steps show green check + date/time, current step shows animated gold pulse + "IN PROGRESS" badge + contextual info card, order details section with items list + shipping address + payment method, "How It Works" 3-step guide when not tracking, production timeline and shipping partner info cards, framer-motion animations throughout, brand colors (navy, gold, white)
+- Created `/home/z/my-project/src/components/pages/PolicyPage.tsx` — Reusable policy page component accepting `type: 'privacy' | 'terms' | 'refund'` prop, with: navy gradient hero with appropriate icon/badge/subtitle, quick navigation bar for jumping to sections, content sections rendered as cards with numbered gold gradient badges, Privacy Policy (7 sections: data collection, usage, cookies, third parties, rights, security, contact), Terms of Service (8 sections: acceptance, orders, pricing, artwork, IP, shipping, liability, governing law — India), Refund Policy (8 sections: eligibility, process with 7-day window, non-refundable items, return shipping, replacement, timeline, partial refunds, contact), last updated date, related policies cross-navigation cards, contact CTA card, framer-motion entrance animations, brand colors
+- Updated `/home/z/my-project/src/app/page.tsx` — Added dynamic imports for OrderTrackingPage and PolicyPage, added cases for 'order-tracking', 'privacy', 'terms', 'refund' in renderContent switch
+- Updated `/home/z/my-project/src/components/layout/Footer.tsx` — Added "Track Order" link in Quick Links section that navigates to 'order-tracking', made Privacy Policy, Terms of Service, and Refund Policy buttons navigate to their respective pages using navigate() from store
+- Lint passes with 0 errors, 0 warnings
+
+Stage Summary:
+- Order Tracking page fully functional with search, mock data, animated timeline, and order details
+- Three policy pages (Privacy, Terms, Refund) implemented as a single reusable PolicyPage component with type prop
+- Footer Quick Links now includes "Track Order" navigation
+- Footer bottom bar policy buttons now navigate to respective policy pages (previously non-functional)
+- All content is India-specific and relevant to a printing company (GST, Razorpay, DTDC/Delhivery shipping, Indian governing law)
+- Framer-motion animations on all sections with whileInView triggers
+- Consistent brand styling (gold-gradient, navy-gradient, premium-shadow, glass-gold badges)
 - Lint passes cleanly
