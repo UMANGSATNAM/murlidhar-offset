@@ -26,7 +26,20 @@ export default function HeroSection() {
   const { navigate } = useNavigationStore()
 
   return (
-    <section className="relative min-h-[100vh] hero-gradient overflow-hidden flex items-center">
+    <section className="relative min-h-[100vh] overflow-hidden flex items-center">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="/products/hero-printing-press.png"
+          alt="Murlidhar Offset Printing Press"
+          className="h-full w-full object-cover"
+        />
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-navy/85" />
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/70" />
+      </div>
+
       {/* Animated background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large decorative circle */}
@@ -142,17 +155,17 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right side visual - decorative print shapes */}
+          {/* Right side visual - Product showcase with real images */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
             className="hidden lg:flex items-center justify-center relative"
           >
-            <div className="relative w-[400px] h-[400px]">
-              {/* Stacked cards effect */}
+            <div className="relative w-[420px] h-[420px]">
+              {/* Stacked cards effect with real product images */}
               <motion.div
-                className="absolute inset-0 rounded-2xl glass-card rotate-6 flex items-center justify-center"
+                className="absolute inset-0 rounded-2xl glass-card rotate-6 overflow-hidden"
                 animate={{ y: [-4, 4, -4] }}
                 transition={{
                   duration: 4,
@@ -160,21 +173,16 @@ export default function HeroSection() {
                   ease: 'easeInOut',
                 }}
               >
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 mx-auto rounded-xl gold-gradient flex items-center justify-center mb-4">
-                    <span className="text-navy font-bold text-2xl">MO</span>
-                  </div>
-                  <h3 className="text-navy font-bold text-xl mb-2">
-                    Business Cards
-                  </h3>
-                  <p className="text-navy/60 text-sm">
-                    Starting from ₹199
-                  </p>
+                <img src="/products/wedding-cards.png" alt="Wedding Cards" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <h3 className="text-white font-bold text-lg drop-shadow-lg">Wedding Cards</h3>
+                  <p className="text-white/80 text-sm drop-shadow-md">Premium Collection</p>
                 </div>
               </motion.div>
 
               <motion.div
-                className="absolute inset-0 rounded-2xl glass-card -rotate-3 flex items-center justify-center"
+                className="absolute inset-0 rounded-2xl glass-card -rotate-3 overflow-hidden"
                 animate={{ y: [4, -4, 4] }}
                 transition={{
                   duration: 5,
@@ -182,21 +190,16 @@ export default function HeroSection() {
                   ease: 'easeInOut',
                 }}
               >
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 mx-auto rounded-xl gold-gradient flex items-center justify-center mb-4">
-                    <span className="text-navy font-bold text-2xl">MO</span>
-                  </div>
-                  <h3 className="text-navy font-bold text-xl mb-2">
-                    Wedding Cards
-                  </h3>
-                  <p className="text-navy/60 text-sm">
-                    Premium Collection
-                  </p>
+                <img src="/products/brochures.png" alt="Brochures" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <h3 className="text-white font-bold text-lg drop-shadow-lg">Brochures</h3>
+                  <p className="text-white/80 text-sm drop-shadow-md">Professional Quality</p>
                 </div>
               </motion.div>
 
               <motion.div
-                className="absolute inset-0 rounded-2xl glass-card flex items-center justify-center premium-shadow-lg"
+                className="absolute inset-0 rounded-2xl overflow-hidden premium-shadow-lg"
                 animate={{ y: [-6, 6, -6] }}
                 transition={{
                   duration: 4.5,
@@ -204,16 +207,14 @@ export default function HeroSection() {
                   ease: 'easeInOut',
                 }}
               >
-                <div className="text-center p-8">
-                  <div className="w-20 h-20 mx-auto rounded-xl gold-gradient flex items-center justify-center mb-4 premium-shadow">
-                    <span className="text-navy font-bold text-2xl">MO</span>
+                <img src="/products/business-cards.png" alt="Business Cards" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="w-14 h-14 rounded-xl gold-gradient flex items-center justify-center mb-3 premium-shadow">
+                    <span className="text-navy font-bold text-lg">MO</span>
                   </div>
-                  <h3 className="text-navy font-bold text-xl mb-2">
-                    Premium Prints
-                  </h3>
-                  <p className="text-navy/60 text-sm">
-                    Unmatched Quality
-                  </p>
+                  <h3 className="text-white font-bold text-xl drop-shadow-lg">Business Cards</h3>
+                  <p className="text-white/80 text-sm drop-shadow-md">Starting from ₹299</p>
                 </div>
               </motion.div>
             </div>
