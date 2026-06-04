@@ -70,16 +70,16 @@ const fallbackCategories: Category[] = [
   { id: '8', name: 'Envelopes', slug: 'envelopes', description: 'Premium business envelopes', image: null, icon: 'mail', productCount: 8 },
 ]
 
-const colorPalettes = [
-  { bg: 'bg-navy/5', hover: 'hover:bg-navy/10', iconBg: 'bg-navy/10', iconColor: 'text-navy' },
-  { bg: 'bg-gold/5', hover: 'hover:bg-gold/10', iconBg: 'bg-gold/15', iconColor: 'text-gold-dark' },
-  { bg: 'bg-navy/5', hover: 'hover:bg-navy/10', iconBg: 'bg-navy/10', iconColor: 'text-navy' },
-  { bg: 'bg-gold/5', hover: 'hover:bg-gold/10', iconBg: 'bg-gold/15', iconColor: 'text-gold-dark' },
-  { bg: 'bg-navy/5', hover: 'hover:bg-navy/10', iconBg: 'bg-navy/10', iconColor: 'text-navy' },
-  { bg: 'bg-gold/5', hover: 'hover:bg-gold/10', iconBg: 'bg-gold/15', iconColor: 'text-gold-dark' },
-  { bg: 'bg-navy/5', hover: 'hover:bg-navy/10', iconBg: 'bg-navy/10', iconColor: 'text-navy' },
-  { bg: 'bg-gold/5', hover: 'hover:bg-gold/10', iconBg: 'bg-gold/15', iconColor: 'text-gold-dark' },
-]
+const categoryImages: Record<string, string> = {
+  'business-cards': '/products/business-cards.png',
+  'wedding-cards': '/products/wedding-cards.png',
+  'letterheads': '/products/letter-pads.png',
+  'brochures': '/products/brochures.png',
+  'packaging': '/products/packaging.png',
+  'stickers': '/products/stickers.png',
+  'banners': '/products/flex-banners.png',
+  'envelopes': '/products/letter-pads.png',
+}
 
 export default function PopularCategories() {
   const { navigate } = useNavigationStore()
@@ -168,7 +168,7 @@ export default function PopularCategories() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {categories.map((category, index) => {
               const Icon = getIcon(category, index)
-              const palette = colorPalettes[index % colorPalettes.length]
+              const catImage = categoryImages[category.slug] || category.image
               return (
                 <motion.div
                   key={category.id}
@@ -176,28 +176,51 @@ export default function PopularCategories() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  whileHover={{ y: -4, scale: 1.02 }}
+                  whileHover={{ y: -6, scale: 1.02 }}
                   onClick={() =>
                     navigate('products', { categorySlug: category.slug })
                   }
-                  className={`group cursor-pointer rounded-xl p-5 md:p-6 ${palette.bg} ${palette.hover} border border-transparent hover:border-gold/20 transition-all duration-300 gold-border-glow-hover`}
+                  className="group cursor-pointer rounded-xl overflow-hidden border border-transparent hover:border-gold/30 transition-all duration-300 gold-glow-hover border-glow-animate card-hover-lift relative"
                 >
-                  <div
-                    className={`w-12 h-12 rounded-xl ${palette.iconBg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
-                  >
-                    <Icon className={`size-6 ${palette.iconColor}`} />
-                  </div>
-                  <h3 className="font-semibold text-navy text-sm md:text-base mb-1 group-hover:text-gold-dark transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
-                    {category.description || 'Premium quality printing'}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground">
-                      {category.productCount} Products
-                    </span>
-                    <ArrowRight className="size-3.5 text-muted-foreground group-hover:text-gold group-hover:translate-x-1 transition-all duration-200" />
+                  {/* Background image with overlay */}
+                  {catImage && (
+                    <div className="absolute inset-0">
+                      <img
+                        src={catImage}
+                        alt={category.name}
+                        className="w-full h-full object-cover opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 to-gold/5 group-hover:from-white/90 group-hover:via-white/85 group-hover:to-gold/10 transition-all duration-500" />
+                    </div>
+                  )}
+
+                  {/* Content */}
+                  <div className={`relative p-5 md:p-6 ${!catImage ? 'bg-navy/5 hover:bg-navy/10' : ''} transition-all duration-300`}>
+                    <div className="flex items-start justify-between mb-4">
+                      <motion.div
+                        className="w-12 h-12 rounded-xl bg-navy/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-gold/15 transition-all duration-300"
+                        whileHover={{ rotate: [0, -10, 10, 0] }}
+                        transition={{ duration: 0.4 }}
+                      >
+                        <Icon className="size-6 text-navy group-hover:text-gold-dark transition-colors duration-300" />
+                      </motion.div>
+                      {/* Product count badge */}
+                      <div className="px-2.5 py-1 rounded-full gold-gradient text-navy text-[10px] font-bold shadow-sm">
+                        {category.productCount}
+                      </div>
+                    </div>
+                    <h3 className="font-semibold text-navy text-sm md:text-base mb-1 group-hover:text-gold-dark transition-colors">
+                      {category.name}
+                    </h3>
+                    <p className="text-muted-foreground text-xs mb-3 line-clamp-2">
+                      {category.description || 'Premium quality printing'}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-muted-foreground">
+                        {category.productCount} Products
+                      </span>
+                      <ArrowRight className="size-3.5 text-muted-foreground group-hover:text-gold group-hover:translate-x-1 transition-all duration-200" />
+                    </div>
                   </div>
                 </motion.div>
               )

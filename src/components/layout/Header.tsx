@@ -10,6 +10,10 @@ import {
   ChevronDown,
   Phone,
   Printer,
+  Heart,
+  LayoutDashboard,
+  Shield,
+  LogIn,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -20,8 +24,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { useNavigationStore } from '@/lib/store'
+import { useNavigationStore, type PageName } from '@/lib/store'
 import { useCartStore, useCartItemCount } from '@/lib/cart-store'
+import { useWishlistStore, useWishlistCount } from '@/lib/wishlist-store'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 const navLinks = [
   { label: 'Home', page: 'home' as const },
@@ -42,7 +55,9 @@ const categoryLinks = [
 export default function Header() {
   const { navigate, page } = useNavigationStore()
   const cartCount = useCartItemCount()
+  const wishlistCount = useWishlistCount()
   const _hydrate = useCartStore((s) => s._hydrate)
+  const _hydrateWishlist = useWishlistStore((s) => s._hydrate)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [catDropdown, setCatDropdown] = useState(false)
@@ -50,7 +65,8 @@ export default function Header() {
 
   useEffect(() => {
     _hydrate()
-  }, [_hydrate])
+    _hydrateWishlist()
+  }, [_hydrate, _hydrateWishlist])
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -71,7 +87,7 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const handleNavClick = (p: 'home' | 'products') => {
+  const handleNavClick = (p: PageName) => {
     navigate(p)
     setMobileOpen(false)
   }
@@ -191,9 +207,9 @@ export default function Header() {
             </div>
 
             <button
-              onClick={() => navigate('home')}
+              onClick={() => navigate('about')}
               className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 gold-underline-hover ${
-                page === 'home' && false
+                page === 'about'
                   ? 'text-gold'
                   : 'text-white/80 hover:text-white'
               }`}
@@ -201,8 +217,12 @@ export default function Header() {
               About
             </button>
             <button
-              onClick={() => navigate('home')}
-              className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 gold-underline-hover text-white/80 hover:text-white`}
+              onClick={() => navigate('contact')}
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 gold-underline-hover ${
+                page === 'contact'
+                  ? 'text-gold'
+                  : 'text-white/80 hover:text-white'
+              }`}
             >
               Contact
             </button>
@@ -221,6 +241,21 @@ export default function Header() {
               <Search className="size-5" />
             </Button>
 
+            {/* Wishlist */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('wishlist')}
+              className="relative text-white/80 hover:text-gold hover:bg-white/10"
+            >
+              <Heart className="size-5" />
+              {wishlistCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 size-5 p-0 flex items-center justify-center gold-gradient text-navy font-bold text-[10px] border-0">
+                  {wishlistCount}
+                </Badge>
+              )}
+            </Button>
+
             {/* Cart */}
             <Button
               variant="ghost"
@@ -236,15 +271,44 @@ export default function Header() {
               )}
             </Button>
 
-            {/* User */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('auth')}
-              className="hidden md:flex text-white/80 hover:text-gold hover:bg-white/10"
-            >
-              <User className="size-5" />
-            </Button>
+            {/* User - Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="hidden md:flex text-white/80 hover:text-gold hover:bg-white/10"
+                >
+                  <User className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => navigate('dashboard')}
+                  className="cursor-pointer"
+                >
+                  <LayoutDashboard className="size-4 mr-2" />
+                  My Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => navigate('admin')}
+                  className="cursor-pointer"
+                >
+                  <Shield className="size-4 mr-2" />
+                  Admin Panel
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => navigate('auth')}
+                  className="cursor-pointer"
+                >
+                  <LogIn className="size-4 mr-2" />
+                  Login / Register
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* Mobile menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -326,12 +390,62 @@ export default function Header() {
 
                   <button
                     onClick={() => {
+                      navigate('about')
+                      setMobileOpen(false)
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                      page === 'about'
+                        ? 'bg-gold/15 text-gold'
+                        : 'text-white/80 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    About Us
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('contact')
+                      setMobileOpen(false)
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all ${
+                      page === 'contact'
+                        ? 'bg-gold/15 text-gold'
+                        : 'text-white/80 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    Contact Us
+                  </button>
+
+                  <div className="border-t border-white/10 my-2" />
+
+                  <button
+                    onClick={() => {
+                      navigate('wishlist')
+                      setMobileOpen(false)
+                    }}
+                    className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Heart className="size-4" />
+                      Wishlist
+                    </span>
+                    {wishlistCount > 0 && (
+                      <Badge className="gold-gradient text-navy font-bold text-[10px] border-0">
+                        {wishlistCount} {wishlistCount === 1 ? 'item' : 'items'}
+                      </Badge>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => {
                       navigate('cart')
                       setMobileOpen(false)
                     }}
                     className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-white/80 hover:bg-white/5 hover:text-white transition-all flex items-center justify-between"
                   >
-                    <span>Cart</span>
+                    <span className="flex items-center gap-2">
+                      <ShoppingCart className="size-4" />
+                      Cart
+                    </span>
                     {cartCount > 0 && (
                       <Badge className="gold-gradient text-navy font-bold text-[10px] border-0">
                         {cartCount} items

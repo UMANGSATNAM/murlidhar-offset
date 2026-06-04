@@ -13,6 +13,13 @@ import {
   ArrowRight,
   Plus,
   Eye,
+  Tag,
+  Bell,
+  CreditCard,
+  Upload,
+  Truck,
+  UserPlus,
+  Image,
 } from 'lucide-react'
 import {
   AreaChart,
@@ -25,8 +32,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  BarChart,
-  Bar,
 } from 'recharts'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -72,6 +77,16 @@ interface TopProduct {
   orderCount: number
 }
 
+interface ActivityItem {
+  id: string
+  type: 'order' | 'payment' | 'design' | 'shipment' | 'customer'
+  description: string
+  timeAgo: string
+  icon: React.ElementType
+  iconBg: string
+  iconColor: string
+}
+
 const statusColors: Record<string, string> = {
   pending: 'bg-yellow-100 text-yellow-800',
   confirmed: 'bg-blue-100 text-blue-800',
@@ -84,6 +99,82 @@ const statusColors: Record<string, string> = {
 }
 
 const pieColors = ['#0D1B3D', '#C9A227', '#1A2D52', '#D4B54E', '#4B5563', '#6B7280']
+
+// Mock activity feed data
+const mockActivities: ActivityItem[] = [
+  {
+    id: '1',
+    type: 'order',
+    description: 'New order #MO-1048 placed by Rajesh Kumar',
+    timeAgo: '2 min ago',
+    icon: ShoppingCart,
+    iconBg: 'bg-green-100',
+    iconColor: 'text-green-600',
+  },
+  {
+    id: '2',
+    type: 'payment',
+    description: 'Payment of ₹12,450 received for order #MO-1042',
+    timeAgo: '15 min ago',
+    icon: CreditCard,
+    iconBg: 'bg-blue-100',
+    iconColor: 'text-blue-600',
+  },
+  {
+    id: '3',
+    type: 'design',
+    description: 'Design uploaded for Wedding Cards order #MO-1039',
+    timeAgo: '32 min ago',
+    icon: Upload,
+    iconBg: 'bg-purple-100',
+    iconColor: 'text-purple-600',
+  },
+  {
+    id: '4',
+    type: 'shipment',
+    description: 'Order #MO-1035 shipped via Delhivery Express',
+    timeAgo: '1 hr ago',
+    icon: Truck,
+    iconBg: 'bg-cyan-100',
+    iconColor: 'text-cyan-600',
+  },
+  {
+    id: '5',
+    type: 'customer',
+    description: 'New customer Priya Sharma registered',
+    timeAgo: '2 hr ago',
+    icon: UserPlus,
+    iconBg: 'bg-amber-100',
+    iconColor: 'text-amber-600',
+  },
+  {
+    id: '6',
+    type: 'order',
+    description: 'New order #MO-1047 placed by Amit Patel',
+    timeAgo: '3 hr ago',
+    icon: ShoppingCart,
+    iconBg: 'bg-green-100',
+    iconColor: 'text-green-600',
+  },
+  {
+    id: '7',
+    type: 'payment',
+    description: 'Payment of ₹8,200 received for order #MO-1041',
+    timeAgo: '4 hr ago',
+    icon: CreditCard,
+    iconBg: 'bg-blue-100',
+    iconColor: 'text-blue-600',
+  },
+  {
+    id: '8',
+    type: 'design',
+    description: 'Design approved for Brochures order #MO-1038',
+    timeAgo: '5 hr ago',
+    icon: Image,
+    iconBg: 'bg-purple-100',
+    iconColor: 'text-purple-600',
+  },
+]
 
 export default function AdminDashboard() {
   const { navigate } = useNavigationStore()
@@ -179,6 +270,37 @@ export default function AdminDashboard() {
       color: 'text-amber-600',
       bgColor: 'bg-amber-50',
       iconBg: 'bg-amber-100',
+    },
+  ]
+
+  const quickActions = [
+    {
+      label: 'Add New Product',
+      icon: Plus,
+      page: 'admin-products' as const,
+      variant: 'default' as const,
+      className: 'gold-gradient text-navy font-semibold hover:opacity-90',
+    },
+    {
+      label: 'Create Coupon',
+      icon: Tag,
+      page: 'admin-settings' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
+    },
+    {
+      label: 'View Orders',
+      icon: Eye,
+      page: 'admin-orders' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
+    },
+    {
+      label: 'Send Notification',
+      icon: Bell,
+      page: 'admin-cms' as const,
+      variant: 'outline' as const,
+      className: 'border-white/20 text-white hover:bg-white/10 hover:text-white',
     },
   ]
 
@@ -384,7 +506,7 @@ export default function AdminDashboard() {
         </motion.div>
       </div>
 
-      {/* Bottom Row: Recent Orders + Top Products */}
+      {/* Bottom Row: Recent Orders + Activity Feed + Quick Actions */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Recent Orders */}
         <motion.div
@@ -464,80 +586,147 @@ export default function AdminDashboard() {
           </Card>
         </motion.div>
 
-        {/* Top Products + Quick Actions */}
+        {/* Right Column: Quick Actions + Activity Feed */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7, duration: 0.4 }}
           className="space-y-6"
         >
-          {/* Top Products */}
-          <Card className="premium-shadow border-0">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-navy text-base font-semibold">
-                Best Sellers
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-3">
-                {topProducts.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    No sales data yet
-                  </p>
-                ) : (
-                  topProducts.slice(0, 5).map((item, index) => (
-                    <div
-                      key={item.product?.id || index}
-                      className="flex items-center gap-3"
+          {/* Quick Actions */}
+          <Card className="premium-shadow border-0 bg-navy text-white overflow-hidden">
+            <CardContent className="p-5">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                <ZapIcon className="h-4 w-4 text-gold" />
+                Quick Actions
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {quickActions.map((action) => {
+                  const ActionIcon = action.icon
+                  return (
+                    <Button
+                      key={action.label}
+                      variant={action.variant}
+                      className={`justify-start ${action.className} h-10 text-xs`}
+                      size="sm"
+                      onClick={() => navigate(action.page)}
                     >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy/5 text-xs font-bold text-navy">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-navy truncate">
-                          {item.product?.name || 'Unknown Product'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.totalQuantity} sold
-                        </p>
-                      </div>
-                      <span className="text-sm font-semibold text-gold">
-                        {formatCurrency(item.totalRevenue)}
-                      </span>
-                    </div>
-                  ))
-                )}
+                      <ActionIcon className="mr-1.5 h-3.5 w-3.5" />
+                      {action.label}
+                    </Button>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
 
-          {/* Quick Actions */}
-          <Card className="premium-shadow border-0 bg-navy text-white">
-            <CardContent className="p-5">
-              <h3 className="text-sm font-semibold mb-3">Quick Actions</h3>
-              <div className="space-y-2">
-                <Button
-                  className="w-full justify-start gold-gradient text-navy font-semibold hover:opacity-90"
-                  size="sm"
-                  onClick={() => navigate('admin-products')}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Product
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full justify-start border-white/20 text-white hover:bg-white/10 hover:text-white"
-                  size="sm"
-                  onClick={() => navigate('admin-orders')}
-                >
-                  <Eye className="mr-2 h-4 w-4" />
-                  View All Orders
-                </Button>
+          {/* Activity Feed */}
+          <Card className="premium-shadow border-0">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-navy text-base font-semibold">
+                  Activity Feed
+                </CardTitle>
+                <Badge variant="secondary" className="text-[10px] bg-gold/10 text-gold-dark">
+                  Live
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-0 max-h-80 overflow-y-auto pr-1 custom-scrollbar">
+                {mockActivities.map((activity, index) => {
+                  const ActivityIcon = activity.icon
+                  return (
+                    <motion.div
+                      key={activity.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05, duration: 0.3 }}
+                      className="flex items-start gap-3 py-2.5 border-b border-gray-100 last:border-0"
+                    >
+                      <div className={`rounded-lg p-1.5 shrink-0 ${activity.iconBg}`}>
+                        <ActivityIcon className={`h-3.5 w-3.5 ${activity.iconColor}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-navy leading-relaxed">
+                          {activity.description}
+                        </p>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">
+                          {activity.timeAgo}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )
+                })}
               </div>
             </CardContent>
           </Card>
         </motion.div>
       </div>
+
+      {/* Best Sellers */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.4 }}
+      >
+        <Card className="premium-shadow border-0">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-navy text-base font-semibold">
+              Best Sellers
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {topProducts.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4 col-span-full">
+                  No sales data yet
+                </p>
+              ) : (
+                topProducts.slice(0, 5).map((item, index) => (
+                  <div
+                    key={item.product?.id || index}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50/50 border border-gray-100"
+                  >
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy/5 text-xs font-bold text-navy shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-navy truncate">
+                        {item.product?.name || 'Unknown Product'}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {item.totalQuantity} sold
+                      </p>
+                    </div>
+                    <span className="text-sm font-semibold text-gold">
+                      {formatCurrency(item.totalRevenue)}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
+  )
+}
+
+// Simple Zap icon component for Quick Actions header
+function ZapIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+    </svg>
   )
 }

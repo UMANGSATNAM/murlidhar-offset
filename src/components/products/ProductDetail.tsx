@@ -32,6 +32,8 @@ import {
 } from '@/components/ui/accordion'
 import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
+import { useWishlistStore } from '@/lib/wishlist-store'
+import { useRecentlyViewedStore } from '@/lib/recently-viewed-store'
 import { toast } from 'sonner'
 import DynamicPricing, { SelectedConfig } from './DynamicPricing'
 import ProductCard from './ProductCard'
@@ -108,12 +110,17 @@ interface Product {
 export default function ProductDetail() {
   const { productId, navigate } = useNavigationStore()
   const addItem = useCartStore((s) => s.addItem)
+  const toggleWishlistItem = useWishlistStore((s) => s.toggleItem)
+  const wishlistItems = useWishlistStore((s) => s.items)
+  const _hydrateWishlist = useWishlistStore((s) => s._hydrate)
+  const addRecentlyViewed = useRecentlyViewedStore((s) => s.addItem)
+  const recentlyViewedItems = useRecentlyViewedStore((s) => s.items)
+  const _hydrateRecentlyViewed = useRecentlyViewedStore((s) => s._hydrate)
 
   const [product, setProduct] = useState<Product | null>(null)
   const [reviewStats, setReviewStats] = useState({ average: 0, count: 0 })
   const [loading, setLoading] = useState(true)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [isWishlisted, setIsWishlisted] = useState(false)
   const [activeTab, setActiveTab] = useState('description')
   const [priceConfig, setPriceConfig] = useState<SelectedConfig | null>(null)
   const [relatedProducts, setRelatedProducts] = useState<Array<Record<string, unknown>>>([])
@@ -139,6 +146,20 @@ export default function ProductDetail() {
       if (data.product) {
         setProduct(data.product as Product)
         setReviewStats(data.reviewStats || { average: 0, count: 0 })
+        // Add to recently viewed
+        const p = data.product as Product
+        const parsedImages: string[] =
+          typeof p.images === 'string'
+            ? JSON.parse(p.images || '[]')
+            : p.images || []
+        addRecentlyViewed({
+          productId: p.id,
+          name: p.name,
+          price: p.basePrice,
+          image: parsedImages[0] || '',
+          slug: p.slug,
+          category: p.category?.name || 'Uncategorized',
+        })
       }
     } catch {
       toast.error('Failed to load product')
@@ -150,6 +171,11 @@ export default function ProductDetail() {
   useEffect(() => {
     fetchProduct()
   }, [fetchProduct])
+
+  useEffect(() => {
+    _hydrateWishlist()
+    _hydrateRecentlyViewed()
+  }, [_hydrateWishlist, _hydrateRecentlyViewed])
 
   // Fetch related products
   useEffect(() => {
@@ -567,9 +593,16 @@ export default function ProductDetail() {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setIsWishlisted(!isWishlisted)
+                    const wasWishlisted = wishlistItems.some((i) => i.productId === product.id)
+                    toggleWishlistItem({
+                      productId: product.id,
+                      name: product.name,
+                      price: product.basePrice,
+                      image: images[0] || '',
+                      slug: product.slug,
+                    })
                     toast.success(
-                      isWishlisted ? 'Removed from Wishlist' : 'Added to Wishlist',
+                      wasWishlisted ? 'Removed from Wishlist' : 'Added to Wishlist',
                       {
                         description: product.name,
                       }
@@ -579,12 +612,12 @@ export default function ProductDetail() {
                 >
                   <Heart
                     className={`h-5 w-5 mr-2 transition-colors ${
-                      isWishlisted
+                      wishlistItems.some((i) => i.productId === product.id)
                         ? 'fill-red-500 text-red-500'
                         : ''
                     }`}
                   />
-                  {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
+                  {wishlistItems.some((i) => i.productId === product.id) ? 'Wishlisted' : 'Add to Wishlist'}
                 </Button>
                 <Button
                   variant="ghost"
@@ -961,46 +994,59 @@ export default function ProductDetail() {
         )}
 
         {/* Recently Viewed Section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mt-12 sm:mt-16 mb-8"
-        >
-          <div className="flex items-center gap-2 mb-6">
-            <Clock className="h-5 w-5 text-gold" />
-            <h2 className="text-lg font-semibold text-foreground">
-              You Might Also Like
-            </h2>
-            <div className="h-0.5 flex-1 gold-gradient rounded-full opacity-20" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {[
-              'Business Cards',
-              'Wedding Cards',
-              'Brochures',
-              'Letterheads',
-              'Envelopes',
-              'Stickers',
-            ].map((name, idx) => (
-              <motion.button
-                key={name}
-                whileHover={{ y: -3 }}
-                onClick={() => navigate('products')}
-                className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card premium-shadow gold-border hover:gold-border-glow transition-smooth"
-              >
-                <div className="h-12 w-12 rounded-full bg-gradient-to-br from-navy to-navy-light flex items-center justify-center">
-                  <span className="text-gold text-sm font-bold">
-                    {name[0]}
-                  </span>
-                </div>
-                <span className="text-xs font-medium text-foreground text-center">
-                  {name}
-                </span>
-              </motion.button>
-            ))}
-          </div>
-        </motion.div>
+        {recentlyViewedItems.filter((rv) => rv.productId !== product.id).length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-12 sm:mt-16 mb-8"
+          >
+            <div className="flex items-center gap-2 mb-6">
+              <Clock className="h-5 w-5 text-gold" />
+              <h2 className="text-lg font-semibold text-foreground">
+                Recently Viewed
+              </h2>
+              <div className="h-0.5 flex-1 gold-gradient rounded-full opacity-20" />
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {recentlyViewedItems
+                .filter((rv) => rv.productId !== product.id)
+                .slice(0, 6)
+                .map((rv) => (
+                  <motion.button
+                    key={rv.productId}
+                    whileHover={{ y: -3 }}
+                    onClick={() =>
+                      navigate('product-detail', { productId: rv.productId })
+                    }
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-card premium-shadow gold-border hover:gold-border-glow transition-smooth"
+                  >
+                    {rv.image ? (
+                      <div className="h-12 w-12 rounded-full overflow-hidden border border-gold/20">
+                        <img
+                          src={rv.image}
+                          alt={rv.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-navy to-navy-light flex items-center justify-center">
+                        <span className="text-gold text-sm font-bold">
+                          {rv.name[0]}
+                        </span>
+                      </div>
+                    )}
+                    <span className="text-xs font-medium text-foreground text-center line-clamp-1">
+                      {rv.name}
+                    </span>
+                    <span className="text-[10px] text-gold font-semibold">
+                      ₹{rv.price.toLocaleString('en-IN')}
+                    </span>
+                  </motion.button>
+                ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   )

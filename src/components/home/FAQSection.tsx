@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Accordion,
   AccordionContent,
@@ -77,6 +77,7 @@ const fallbackFAQs: FAQ[] = [
 
 export default function FAQSection() {
   const [faqs, setFaqs] = useState<FAQ[]>([])
+  const [openItem, setOpenItem] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchFAQs() {
@@ -134,23 +135,47 @@ export default function FAQSection() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full"
+            onValueChange={(val) => setOpenItem(val || null)}
+          >
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={faq.id}
                 value={faq.id}
-                className="border-border/60 hover:border-gold/30 transition-colors"
+                className={`border-border/60 transition-all duration-300 ${
+                  openItem === faq.id
+                    ? 'border-gold/30 bg-gold/[0.03] rounded-lg gold-border-glow mb-2'
+                    : 'hover:border-gold/20 mb-1'
+                }`}
               >
-                <AccordionTrigger className="text-navy font-medium text-sm md:text-base hover:text-gold-dark hover:no-underline py-5 transition-colors">
+                <AccordionTrigger className="text-navy font-medium text-sm md:text-base hover:text-gold-dark hover:no-underline py-5 transition-colors px-4">
                   <span className="text-left flex items-center gap-3">
-                    <span className="w-7 h-7 rounded-lg bg-gold/10 flex items-center justify-center text-gold text-xs font-bold shrink-0">
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 transition-all duration-300 ${
+                      openItem === faq.id
+                        ? 'gold-gradient text-navy'
+                        : 'bg-gold/10 text-gold'
+                    }`}>
                       {String(index + 1).padStart(2, '0')}
                     </span>
                     {faq.title}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-sm leading-relaxed pl-10">
-                  {faq.content}
+                <AccordionContent className="text-muted-foreground text-sm leading-relaxed pl-10 pr-4 pb-5">
+                  <AnimatePresence>
+                    {openItem === faq.id && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -5 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {faq.content}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </AccordionContent>
               </AccordionItem>
             ))}

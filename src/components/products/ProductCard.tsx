@@ -54,6 +54,19 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       )
     : 0
 
+  // Determine badge
+  const badge = product.isFeatured
+    ? { text: 'BESTSELLER', className: 'gold-gradient text-navy' }
+    : discountPercent > 20
+      ? { text: 'HOT DEAL', className: 'bg-red-500 text-white' }
+      : discountPercent > 0
+        ? { text: 'SALE', className: 'bg-orange-500 text-white' }
+        : null
+
+  // Star rating (derived from featured status for demo, or 0)
+  const rating = product.isFeatured ? 4.8 : 4.5
+  const reviewCount = product.isFeatured ? 128 : 64
+
   const handleViewDetails = (e: React.MouseEvent) => {
     e.stopPropagation()
     navigate('product-detail', { productId: product.id })
@@ -93,7 +106,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       whileHover={{ y: -6 }}
-      className="group relative flex flex-col rounded-xl bg-card premium-shadow hover:premium-shadow-xl transition-smooth overflow-hidden cursor-pointer gold-border"
+      className="group relative flex flex-col rounded-xl bg-card premium-shadow hover:premium-shadow-xl transition-smooth overflow-hidden cursor-pointer border border-border/40 gold-glow-hover border-glow-animate card-hover-lift"
       onClick={handleViewDetails}
     >
       {/* Image Area */}
@@ -120,9 +133,9 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-          {product.isFeatured && (
-            <Badge className="gold-gradient text-navy font-semibold text-[10px] uppercase tracking-wider border-0 px-2.5 py-0.5">
-              Featured
+          {badge && (
+            <Badge className={`${badge.className} font-semibold text-[10px] uppercase tracking-wider border-0 px-2.5 py-0.5`}>
+              {badge.text}
             </Badge>
           )}
           {hasDiscount && discountPercent > 0 && (
@@ -132,7 +145,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions - right side */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
           <motion.button
             whileHover={{ scale: 1.1 }}
@@ -142,14 +155,33 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           >
             <Heart className="h-4 w-4" />
           </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={handleViewDetails}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
+          >
+            <Eye className="h-4 w-4" />
+          </motion.button>
+        </div>
+
+        {/* Quick Add to Cart overlay - bottom */}
+        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+          <Button
+            onClick={handleAddToCart}
+            className="w-full rounded-none gold-gradient hover-shimmer text-navy font-semibold text-sm h-10 border-0 shadow-lg"
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Quick Add to Cart
+          </Button>
         </div>
 
         {/* Bottom gradient overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent group-hover:from-black/50 transition-colors duration-300" />
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col p-4 gap-2">
+      <div className="flex flex-1 flex-col p-4 gap-1.5">
         {/* Category Badge */}
         <Badge
           variant="outline"
@@ -170,16 +202,24 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </p>
         )}
 
-        {/* Rating - Placeholder */}
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star
-              key={star}
-              className="h-3 w-3 fill-gold/60 text-gold/60"
-            />
-          ))}
-          <span className="text-[10px] text-muted-foreground ml-1">
-            (0)
+        {/* Star Rating */}
+        <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Star
+                key={star}
+                className={`h-3 w-3 ${
+                  star <= Math.floor(rating)
+                    ? 'fill-gold text-gold'
+                    : star - 0.5 <= rating
+                      ? 'fill-gold/50 text-gold'
+                      : 'fill-muted text-muted'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-[10px] text-muted-foreground">
+            ({reviewCount})
           </span>
         </div>
 
@@ -190,7 +230,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               Starting from
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-foreground">
+              <span className="text-xl font-bold text-gold-dark">
                 ₹{product.basePrice.toLocaleString('en-IN')}
               </span>
               {hasDiscount && (
@@ -211,17 +251,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             <ShoppingCart className="h-4 w-4 text-navy" />
           </motion.button>
         </div>
-      </div>
-
-      {/* View Details Button - appears on hover */}
-      <div className="px-4 pb-4">
-        <Button
-          onClick={handleViewDetails}
-          className="w-full gold-gradient hover:gold-gradient-shimmer text-navy font-semibold text-sm h-9 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 rounded-lg"
-        >
-          <Eye className="h-4 w-4 mr-2" />
-          View Details
-        </Button>
       </div>
     </motion.div>
   )

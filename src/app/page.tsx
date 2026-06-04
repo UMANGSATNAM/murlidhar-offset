@@ -55,6 +55,10 @@ const FAQSection = dynamic(
   () => import('@/components/home/FAQSection'),
   { ssr: false }
 )
+const RecentlyViewedSection = dynamic(
+  () => import('@/components/home/RecentlyViewedSection'),
+  { ssr: false }
+)
 
 // Product pages - dynamic imports
 const ProductCatalog = dynamic(
@@ -88,6 +92,22 @@ const UserDashboard = dynamic(
   { ssr: false }
 )
 
+// Wishlist - dynamic import
+const WishlistPage = dynamic(
+  () => import('@/components/pages/WishlistPage'),
+  { ssr: false }
+)
+
+// Contact & About pages - dynamic imports
+const ContactPage = dynamic(
+  () => import('@/components/pages/ContactPage'),
+  { ssr: false }
+)
+const AboutPage = dynamic(
+  () => import('@/components/pages/AboutPage'),
+  { ssr: false }
+)
+
 // Admin - dynamic import
 const AdminLayout = dynamic(
   () => import('@/components/admin/AdminLayout'),
@@ -117,6 +137,7 @@ function HomePageContent() {
       <HeroSection />
       <TrustStrip />
       <FeaturedProducts />
+      <RecentlyViewedSection />
       <PopularCategories />
       <CTABanner />
       <WhyChooseUs />
@@ -162,6 +183,12 @@ export default function Home() {
         return <AuthPage />
       case 'dashboard':
         return <UserDashboard />
+      case 'wishlist':
+        return <WishlistPage />
+      case 'contact':
+        return <ContactPage />
+      case 'about':
+        return <AboutPage />
       default:
         return <HomePageContent />
     }

@@ -15,6 +15,9 @@ export default function BulkOrderCTA() {
       <div className="absolute inset-0 navy-gradient" />
       <div className="absolute inset-0 hero-gradient opacity-60" />
 
+      {/* Animated dot pattern */}
+      <div className="absolute inset-0 pointer-events-none animate-dot-pattern opacity-30" />
+
       {/* Decorative elements */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
@@ -34,7 +37,7 @@ export default function BulkOrderCTA() {
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gold-gradient mb-6 premium-shadow"
+          className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gold-gradient mb-6 premium-shadow animate-gold-pulse-sm"
         >
           <Printer className="size-8 text-navy" />
         </motion.div>
@@ -70,7 +73,7 @@ export default function BulkOrderCTA() {
         >
           <Button
             onClick={() => navigate('products')}
-            className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-opacity gold-shadow h-auto"
+            className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
           >
             Get Custom Quote
             <ArrowRight className="size-4 ml-2" />
@@ -78,7 +81,7 @@ export default function BulkOrderCTA() {
           <a href="tel:+919876543210">
             <Button
               variant="outline"
-              className="border-white/30 text-white hover:bg-white/10 hover:text-white font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent"
+              className="border-white/30 text-white hover:bg-white/10 hover:text-white font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent hover-shimmer"
             >
               <Phone className="size-4 mr-2" />
               Call Us Now
@@ -94,22 +97,12 @@ export default function BulkOrderCTA() {
           transition={{ delay: 0.4 }}
           className="flex flex-wrap items-center justify-center gap-6 mt-10 text-white/40 text-xs"
         >
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-            Free Design Support
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-            Bulk Discounts
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-            GST Invoicing
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-            Pan-India Delivery
-          </span>
+          {['Free Design Support', 'Bulk Discounts', 'GST Invoicing', 'Pan-India Delivery'].map((text) => (
+            <span key={text} className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
+              {text}
+            </span>
+          ))}
         </motion.div>
       </div>
     </section>

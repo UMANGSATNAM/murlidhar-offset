@@ -1,7 +1,7 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight, Sparkles, Truck, Clock, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
@@ -13,6 +13,8 @@ const stats = [
   { value: '24hr', label: 'Delivery', icon: Truck },
 ]
 
+const rotatingWords = ['Print', 'Story', 'Vision', 'Brand', 'Dream']
+
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number) => ({
@@ -22,8 +24,47 @@ const fadeInUp = {
   }),
 }
 
+// Particle component for background
+function Particles() {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {Array.from({ length: 20 }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full bg-gold/20"
+          style={{
+            width: Math.random() * 4 + 2,
+            height: Math.random() * 4 + 2,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -(Math.random() * 60 + 20)],
+            x: [0, (Math.random() - 0.5) * 40],
+            opacity: [0, 0.8, 0],
+          }}
+          transition={{
+            duration: Math.random() * 6 + 4,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+            ease: 'easeInOut',
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 export default function HeroSection() {
   const { navigate } = useNavigationStore()
+  const [wordIndex, setWordIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setWordIndex((prev) => (prev + 1) % rotatingWords.length)
+    }, 2500)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section className="relative min-h-[100vh] overflow-hidden flex items-center">
@@ -54,27 +95,8 @@ export default function HeroSection() {
           transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
         />
 
-        {/* Small decorative circles */}
-        <motion.div
-          className="absolute top-1/4 left-10 w-2 h-2 rounded-full bg-gold/30"
-          animate={{ y: [-10, 10, -10] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute top-1/3 right-20 w-3 h-3 rounded-full bg-gold/20"
-          animate={{ y: [10, -10, 10] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute bottom-1/3 left-1/4 w-1.5 h-1.5 rounded-full bg-gold/25"
-          animate={{ y: [-8, 8, -8] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute top-1/2 right-1/3 w-2.5 h-2.5 rounded-full bg-gold/15"
-          animate={{ y: [6, -6, 6] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
+        {/* Floating particles */}
+        <Particles />
 
         {/* Gold gradient orb */}
         <div className="absolute top-20 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
@@ -106,7 +128,7 @@ export default function HeroSection() {
               Premium Offset Printing Since 2009
             </motion.div>
 
-            {/* Heading */}
+            {/* Heading with rotating word */}
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,7 +136,20 @@ export default function HeroSection() {
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-6"
             >
               <span className="text-white">Where Every </span>
-              <span className="gold-gradient-text">Print</span>
+              <span className="relative inline-block min-w-[180px] sm:min-w-[220px] lg:min-w-[260px]">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={wordIndex}
+                    initial={{ y: 30, opacity: 0, filter: 'blur(8px)' }}
+                    animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+                    exit={{ y: -30, opacity: 0, filter: 'blur(8px)' }}
+                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="text-gradient-animate inline-block"
+                  >
+                    {rotatingWords[wordIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
               <br />
               <span className="text-white">Tells a </span>
               <span className="gold-gradient-text">Story</span>
@@ -141,14 +176,14 @@ export default function HeroSection() {
             >
               <Button
                 onClick={() => navigate('products')}
-                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-opacity gold-shadow h-auto"
+                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
               >
                 Shop Now
                 <ArrowRight className="size-4 ml-1" />
               </Button>
               <Button
                 variant="outline"
-                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300"
+                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300 hover-shimmer"
               >
                 Get Custom Quote
               </Button>
@@ -237,7 +272,7 @@ export default function HeroSection() {
               animate="visible"
               className="flex flex-col items-center p-5 rounded-xl glass-gold group hover:bg-gold/10 transition-all duration-300"
             >
-              <stat.icon className="size-5 text-gold mb-2" />
+              <stat.icon className="size-5 text-gold mb-2 group-hover:scale-110 transition-transform duration-300" />
               <span className="text-2xl md:text-3xl font-bold text-white mb-1">
                 {stat.value}
               </span>

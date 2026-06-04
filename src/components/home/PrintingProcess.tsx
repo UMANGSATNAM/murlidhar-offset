@@ -80,8 +80,21 @@ export default function PrintingProcess() {
 
         {/* Process steps */}
         <div className="relative">
-          {/* Connecting line - desktop */}
-          <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-gold/10 via-gold/30 to-gold/10 -translate-y-1/2" />
+          {/* Connecting dotted line - desktop */}
+          <div className="hidden md:flex absolute top-1/2 left-[12.5%] right-[12.5%] -translate-y-1/2 items-center justify-between z-0">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="flex-1 flex items-center mx-4">
+                <div className="w-full border-t-2 border-dashed border-gold/20" />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.5 + i * 0.2 }}
+                  className="w-3 h-3 rounded-full bg-gold/20 -ml-1.5 shrink-0"
+                />
+              </div>
+            ))}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6 relative">
             {steps.map((step, index) => (
@@ -99,12 +112,23 @@ export default function PrintingProcess() {
                     whileHover={{ scale: 1.08 }}
                     className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white border-2 border-gold/30 flex items-center justify-center mx-auto relative z-10 group-hover:border-gold group-hover:gold-shadow transition-all duration-300 premium-shadow"
                   >
-                    <step.icon className="size-8 md:size-9 text-navy group-hover:text-gold transition-colors duration-300" />
+                    <motion.div
+                      whileHover={{ rotate: 360 }}
+                      transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    >
+                      <step.icon className="size-8 md:size-9 text-navy group-hover:text-gold transition-colors duration-300" />
+                    </motion.div>
                   </motion.div>
-                  {/* Step number */}
-                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full gold-gradient flex items-center justify-center text-navy font-bold text-xs z-20 premium-shadow">
+                  {/* Step number with gold circle and pulse animation */}
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.15, type: 'spring', stiffness: 300 }}
+                    className="absolute -top-2 -right-2 w-8 h-8 rounded-full gold-gradient flex items-center justify-center text-navy font-bold text-xs z-20 premium-shadow animate-gold-pulse-sm"
+                  >
                     {step.number}
-                  </span>
+                  </motion.span>
                 </div>
 
                 {/* Content */}
@@ -115,10 +139,10 @@ export default function PrintingProcess() {
                   {step.description}
                 </p>
 
-                {/* Arrow for mobile */}
+                {/* Connecting dotted line for mobile */}
                 {index < steps.length - 1 && (
                   <div className="md:hidden flex justify-center my-4">
-                    <div className="w-0.5 h-8 bg-gradient-to-b from-gold/30 to-gold/10" />
+                    <div className="w-0.5 h-8 border-l-2 border-dashed border-gold/30" />
                   </div>
                 )}
               </motion.div>

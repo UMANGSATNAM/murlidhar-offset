@@ -148,27 +148,36 @@ export default function TestimonialsSection() {
             <AnimatePresence mode="wait">
               <motion.div
                 key={current}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.4, ease: 'easeInOut' }}
-                className="bg-navy rounded-2xl p-8 md:p-10 relative overflow-hidden"
+                initial={{ opacity: 0, x: 50, scale: 0.98 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -50, scale: 0.98 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="bg-navy rounded-2xl p-8 md:p-10 relative overflow-hidden gold-border-glow"
               >
-                {/* Decorative quote marks */}
-                <Quote className="absolute top-4 left-4 size-16 text-gold/10 fill-gold/10" />
-                <Quote className="absolute bottom-4 right-4 size-16 text-gold/10 fill-gold/10 rotate-180" />
+                {/* Decorative quote marks with gold styling */}
+                <Quote className="absolute top-4 left-4 size-20 text-gold/8 fill-gold/8" />
+                <Quote className="absolute bottom-4 right-4 size-20 text-gold/8 fill-gold/8 rotate-180" />
+
+                {/* Gold accent line */}
+                <div className="absolute top-0 left-8 right-8 h-0.5 bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 
                 {/* Stars */}
                 <div className="flex items-center gap-1 mb-6 relative z-10">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
+                    <motion.div
                       key={i}
-                      className={`size-4 ${
-                        i < rating
-                          ? 'text-gold fill-gold'
-                          : 'text-white/20 fill-white/20'
-                      }`}
-                    />
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 + i * 0.05 }}
+                    >
+                      <Star
+                        className={`size-4 ${
+                          i < rating
+                            ? 'text-gold fill-gold'
+                            : 'text-white/20 fill-white/20'
+                        }`}
+                      />
+                    </motion.div>
                   ))}
                 </div>
 
@@ -179,14 +188,14 @@ export default function TestimonialsSection() {
 
                 {/* Author */}
                 <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-12 h-12 rounded-full gold-gradient flex items-center justify-center text-navy font-bold text-lg">
+                  <div className="w-12 h-12 rounded-full gold-gradient flex items-center justify-center text-navy font-bold text-lg ring-2 ring-gold/30 ring-offset-2 ring-offset-navy">
                     {(testimonial.metadata?.name || 'A')[0].toUpperCase()}
                   </div>
                   <div>
                     <h4 className="text-white font-semibold">
                       {testimonial.metadata?.name || 'Anonymous'}
                     </h4>
-                    <p className="text-white/50 text-sm">
+                    <p className="text-gold/60 text-sm">
                       {testimonial.metadata?.company || ''}
                     </p>
                   </div>
@@ -197,14 +206,14 @@ export default function TestimonialsSection() {
             {/* Navigation arrows */}
             <button
               onClick={prev}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-10 h-10 rounded-full bg-white premium-shadow flex items-center justify-center text-navy hover:text-gold transition-colors z-20"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-12 w-10 h-10 rounded-full bg-white premium-shadow flex items-center justify-center text-navy hover:text-gold hover:scale-110 transition-all z-20"
               aria-label="Previous testimonial"
             >
               <ChevronLeft className="size-5" />
             </button>
             <button
               onClick={next}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-10 h-10 rounded-full bg-white premium-shadow flex items-center justify-center text-navy hover:text-gold transition-colors z-20"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-12 w-10 h-10 rounded-full bg-white premium-shadow flex items-center justify-center text-navy hover:text-gold hover:scale-110 transition-all z-20"
               aria-label="Next testimonial"
             >
               <ChevronRight className="size-5" />

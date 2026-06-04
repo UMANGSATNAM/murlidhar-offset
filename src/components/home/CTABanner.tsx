@@ -1,17 +1,46 @@
 'use client'
 
-import React from 'react'
-import { motion } from 'framer-motion'
+import React, { useEffect, useRef, useState } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { ArrowRight, Printer, MessageSquareQuote } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
 
 const stats = [
-  { value: '500+', label: 'Products' },
-  { value: '15+', label: 'Years' },
-  { value: '10K+', label: 'Customers' },
-  { value: '99%', label: 'Satisfaction' },
+  { value: 500, suffix: '+', label: 'Products' },
+  { value: 15, suffix: '+', label: 'Years' },
+  { value: 10, suffix: 'K+', label: 'Customers' },
+  { value: 99, suffix: '%', label: 'Satisfaction' },
 ]
+
+// Animated counter component
+function AnimatedCounter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const isInView = useInView(ref, { once: true })
+
+  useEffect(() => {
+    if (!isInView) return
+    let start = 0
+    const increment = value / (duration * 60)
+    const timer = setInterval(() => {
+      start += increment
+      if (start >= value) {
+        setCount(value)
+        clearInterval(timer)
+      } else {
+        setCount(Math.floor(start))
+      }
+    }, 1000 / 60)
+    return () => clearInterval(timer)
+  }, [isInView, value, duration])
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {count.toLocaleString()}{suffix}
+    </span>
+  )
+}
 
 export default function CTABanner() {
   const { navigate } = useNavigationStore()
@@ -20,6 +49,9 @@ export default function CTABanner() {
     <section className="relative overflow-hidden">
       {/* Main container */}
       <div className="relative bg-navy-gradient py-16 sm:py-20 lg:py-24">
+        {/* Animated dot pattern background */}
+        <div className="absolute inset-0 pointer-events-none animate-dot-pattern opacity-40" />
+
         {/* Decorative gold pattern overlay - CSS-based */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           {/* Diamond pattern */}
@@ -71,14 +103,14 @@ export default function CTABanner() {
               </div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
                 <span className="text-white">Ready to </span>
-                <span className="gold-gradient-text">Print?</span>
+                <span className="text-gradient-animate">Print?</span>
               </h2>
               <p className="text-white/60 mt-3 text-sm sm:text-base max-w-md">
                 From concept to delivery — we make premium printing effortless.
               </p>
             </motion.div>
 
-            {/* Center - Glass stats card */}
+            {/* Center - Glass stats card with count-up */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -98,7 +130,7 @@ export default function CTABanner() {
                       className="text-center"
                     >
                       <div className="text-2xl lg:text-3xl font-bold text-gold">
-                        {stat.value}
+                        <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                       </div>
                       <div className="text-white/50 text-xs mt-1 uppercase tracking-wider">
                         {stat.label}
@@ -119,14 +151,14 @@ export default function CTABanner() {
             >
               <Button
                 onClick={() => navigate('products')}
-                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-opacity gold-shadow h-auto"
+                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
               >
                 Shop Now
                 <ArrowRight className="size-4 ml-2" />
               </Button>
               <Button
                 variant="outline"
-                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300"
+                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300 hover-shimmer"
               >
                 <MessageSquareQuote className="size-4 mr-2" />
                 Get Custom Quote
