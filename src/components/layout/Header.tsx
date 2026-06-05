@@ -12,7 +12,7 @@ import {
   Printer,
   Heart,
   LayoutDashboard,
-  Shield,
+
   LogIn,
   Sun,
   Moon,
@@ -326,14 +326,7 @@ export default function Header() {
                   <LayoutDashboard className="size-4 mr-2" />
                   My Dashboard
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => navigate('admin')}
-                  className="cursor-pointer"
-                >
-                  <Shield className="size-4 mr-2" />
-                  Admin Panel
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+
                 <DropdownMenuItem
                   onClick={() => navigate('auth')}
                   className="cursor-pointer"

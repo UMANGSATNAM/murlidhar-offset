@@ -27,6 +27,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { toast } from 'sonner'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface SettingField {
   value: string | number | boolean
@@ -180,7 +181,7 @@ export default function AdminSettings() {
   const fetchSettings = async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/settings')
+      const res = await adminFetch('/api/settings')
       if (res.ok) {
         const data = await res.json()
         setSettings(data.settings || {})
@@ -238,7 +239,7 @@ export default function AdminSettings() {
         }
       })
 
-      const res = await fetch('/api/settings', {
+      const res = await adminFetch('/api/settings', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ settings: updates }),

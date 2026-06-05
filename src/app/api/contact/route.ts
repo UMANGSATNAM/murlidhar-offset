@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-
-// Use a fresh PrismaClient to ensure schema changes are picked up
-const prisma = new PrismaClient()
+import { db } from '@/lib/db'
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Store the submission in the database
-    const submission = await prisma.contactSubmission.create({
+    const submission = await db.contactSubmission.create({
       data: {
         name: name.trim(),
         email: email.trim(),
@@ -84,13 +81,13 @@ export async function GET(request: NextRequest) {
     }
 
     const [submissions, total] = await Promise.all([
-      prisma.contactSubmission.findMany({
+      db.contactSubmission.findMany({
         where,
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),
-      prisma.contactSubmission.count({ where }),
+      db.contactSubmission.count({ where }),
     ])
 
     return NextResponse.json({

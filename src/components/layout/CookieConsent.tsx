@@ -73,6 +73,14 @@ export default function CookieConsent() {
   }
 
   const handleDismiss = () => {
+    // Also store consent as accepted when user closes the banner via X button
+    storeConsent({
+      essential: true,
+      analytics: false,
+      marketing: false,
+      accepted: true,
+      timestamp: new Date().toISOString(),
+    })
     setVisible(false)
   }
 

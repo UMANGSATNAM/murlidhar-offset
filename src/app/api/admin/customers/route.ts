@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyAdminAuth } from '@/lib/admin-api-auth'
 
 // GET /api/admin/customers - List all customers
 export async function GET(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')

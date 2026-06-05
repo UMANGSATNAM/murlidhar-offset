@@ -1,7 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyAdminAuth } from '@/lib/admin-api-auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     // Get total revenue
     const revenueResult = await db.order.aggregate({

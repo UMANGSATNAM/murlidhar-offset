@@ -44,6 +44,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Separator } from '@/components/ui/separator'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface CmsItem {
   id: string
@@ -111,7 +112,7 @@ export default function AdminCMS() {
   const fetchSection = async (section: string) => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/cms?section=${section}`)
+      const res = await adminFetch(`/api/cms?section=${section}`)
       if (res.ok) {
         const data = await res.json()
         setItems(data.contents || [])
@@ -153,7 +154,7 @@ export default function AdminCMS() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const res = await fetch('/api/cms', {
+      const res = await adminFetch('/api/cms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editItem),
@@ -171,7 +172,7 @@ export default function AdminCMS() {
 
   const handleToggleActive = async (item: CmsItem) => {
     try {
-      await fetch('/api/cms', {
+      await adminFetch('/api/cms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -202,7 +203,7 @@ export default function AdminCMS() {
     // Update sort order for swapped items
     newItems.forEach((item, i) => {
       if (i === index || i === swapIndex) {
-        fetch('/api/cms', {
+        adminFetch('/api/cms', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

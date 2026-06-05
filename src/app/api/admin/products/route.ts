@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyAdminAuth } from '@/lib/admin-api-auth'
 
 // GET /api/admin/products - List all products (including inactive)
 export async function GET(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
@@ -84,6 +87,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/admin/products - Create a new product
 export async function POST(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const body = await request.json()
     const {
@@ -217,6 +222,8 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/admin/products - Update a product
 export async function PATCH(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const body = await request.json()
     const { id, ...updateData } = body
@@ -278,6 +285,8 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/admin/products - Delete a product
 export async function DELETE(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

@@ -132,7 +132,9 @@ export default function TestimonialsSection() {
 
   const testimonial = testimonials[current]
   const rating = testimonial.metadata?.rating || 5
-  const nameInitial = (testimonial.metadata?.name || 'A')[0].toUpperCase()
+  // Use realistic Indian business name as fallback if name is blank/missing
+  const displayName = testimonial.metadata?.name?.trim() || testimonial.title?.replace(/^(Exceptional|Fast|Best|Creative|Pan-India|Outstanding|Premium|Reliable|Superb|Excellent)\s*/i, '').trim() || 'Valued Customer'
+  const nameInitial = displayName[0].toUpperCase()
   const colorClass = avatarColors[nameInitial] || 'from-gold to-gold-dark'
 
   return (
@@ -238,7 +240,7 @@ export default function TestimonialsSection() {
                   </div>
                   <div>
                     <h4 className="text-white font-semibold text-lg">
-                      {testimonial.metadata?.name || 'Anonymous'}
+                      {displayName}
                     </h4>
                     <p className="text-gold/70 text-sm font-medium">
                       {testimonial.metadata?.company || ''}

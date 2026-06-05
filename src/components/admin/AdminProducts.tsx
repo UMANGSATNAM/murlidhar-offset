@@ -72,6 +72,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { toast } from 'sonner'
+import { adminFetch } from '@/lib/admin-fetch'
 
 // ==================== TYPES ====================
 
@@ -245,7 +246,7 @@ export default function AdminProducts() {
       if (filterStatus !== 'all') params.set('status', filterStatus)
       if (filterCategory !== 'all') params.set('category', filterCategory)
 
-      const res = await fetch(`/api/admin/products?${params}`)
+      const res = await adminFetch(`/api/admin/products?${params}`)
       if (res.ok) {
         const data = await res.json()
         setProducts(data.products)
@@ -262,7 +263,7 @@ export default function AdminProducts() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/categories')
+      const res = await adminFetch('/api/categories')
       if (res.ok) {
         const data = await res.json()
         setCategories(data.categories || data || [])
@@ -274,7 +275,7 @@ export default function AdminProducts() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/products?limit=1000')
+      const res = await adminFetch('/api/admin/products?limit=1000')
       if (res.ok) {
         const data = await res.json()
         const allProducts: Product[] = data.products
@@ -401,7 +402,7 @@ export default function AdminProducts() {
       }
 
       const isEdit = !!editingProduct
-      const res = await fetch('/api/admin/products', {
+      const res = await adminFetch('/api/admin/products', {
         method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isEdit ? { id: editingProduct.id, ...payload } : payload),
@@ -426,7 +427,7 @@ export default function AdminProducts() {
 
   const handleToggleActive = async (product: Product) => {
     try {
-      const res = await fetch(`/api/admin/products`, {
+      const res = await adminFetch(`/api/admin/products`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: product.id, isActive: !product.isActive }),
@@ -445,7 +446,7 @@ export default function AdminProducts() {
   const handleDelete = async () => {
     if (!deleteId) return
     try {
-      const res = await fetch(`/api/admin/products?id=${deleteId}`, {
+      const res = await adminFetch(`/api/admin/products?id=${deleteId}`, {
         method: 'DELETE',
       })
       if (res.ok) {
@@ -493,7 +494,7 @@ export default function AdminProducts() {
     setBulkLoading(true)
     try {
       const promises = Array.from(selectedIds).map((id) =>
-        fetch(`/api/admin/products`, {
+        adminFetch(`/api/admin/products`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id, isActive: action === 'activate' }),
@@ -552,7 +553,7 @@ export default function AdminProducts() {
   const fetchVariants = async (productId: string) => {
     setVariantsLoading(true)
     try {
-      const res = await fetch(`/api/admin/products/variants?productId=${productId}`)
+      const res = await adminFetch(`/api/admin/products/variants?productId=${productId}`)
       if (res.ok) {
         const data = await res.json()
         setVariants(data.variants)
@@ -610,7 +611,7 @@ export default function AdminProducts() {
     setVariantSaving(true)
     try {
       const isEdit = !!editingVariant
-      const res = await fetch('/api/admin/products/variants', {
+      const res = await adminFetch('/api/admin/products/variants', {
         method: isEdit ? 'PATCH' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(
@@ -638,7 +639,7 @@ export default function AdminProducts() {
   const handleDeleteVariant = async () => {
     if (!deleteVariantId || !selectedProductId) return
     try {
-      const res = await fetch(`/api/admin/products/variants?id=${deleteVariantId}`, {
+      const res = await adminFetch(`/api/admin/products/variants?id=${deleteVariantId}`, {
         method: 'DELETE',
       })
       if (res.ok) {

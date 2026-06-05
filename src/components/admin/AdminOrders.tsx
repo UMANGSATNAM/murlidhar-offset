@@ -63,6 +63,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Separator } from '@/components/ui/separator'
 import { toast } from 'sonner'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface OrderItem {
   id: string
@@ -177,7 +178,7 @@ export default function AdminOrders() {
       if (filterStatus !== 'all') params.set('status', filterStatus)
       if (filterPaymentStatus !== 'all') params.set('paymentStatus', filterPaymentStatus)
 
-      const res = await fetch(`/api/admin/orders?${params}`)
+      const res = await adminFetch(`/api/admin/orders?${params}`)
       if (res.ok) {
         const data = await res.json()
         setOrders(data.orders)
@@ -195,7 +196,7 @@ export default function AdminOrders() {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const res = await fetch('/api/admin/dashboard')
+        const res = await adminFetch('/api/admin/dashboard')
         if (res.ok) {
           const data = await res.json()
           setStatusCounts(data.stats?.ordersByStatus || {})
@@ -236,7 +237,7 @@ export default function AdminOrders() {
     if (!selectedOrder || !newStatus) return
     setUpdating(true)
     try {
-      const res = await fetch('/api/admin/orders', {
+      const res = await adminFetch('/api/admin/orders', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -266,7 +267,7 @@ export default function AdminOrders() {
   const handleInlineStatusUpdate = async (orderId: string, orderNumber: string, newStatusValue: string) => {
     setInlineUpdating(orderId)
     try {
-      const res = await fetch('/api/admin/orders', {
+      const res = await adminFetch('/api/admin/orders', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

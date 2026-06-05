@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import {
   Award,
@@ -57,31 +57,34 @@ const features = [
   },
 ]
 
-// Animated counter component
+// Animated counter component — starts at target value so users never see "0"
 function AnimatedCounter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
-  const [count, setCount] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(ref, { once: true })
+  const hasAnimated = useRef(false)
+  const spanRef = useRef<HTMLSpanElement>(null)
+  const isInView = useInView(spanRef, { once: true })
 
   useEffect(() => {
-    if (!isInView) return
+    if (!isInView || hasAnimated.current || !spanRef.current) return
+    hasAnimated.current = true
+    // Animate from 0 to target value by updating the DOM directly
+    spanRef.current.textContent = `0${suffix}`
     let start = 0
     const increment = value / (duration * 60)
     const timer = setInterval(() => {
       start += increment
       if (start >= value) {
-        setCount(value)
+        if (spanRef.current) spanRef.current.textContent = `${value.toLocaleString()}${suffix}`
         clearInterval(timer)
       } else {
-        setCount(Math.floor(start))
+        if (spanRef.current) spanRef.current.textContent = `${Math.floor(start).toLocaleString()}${suffix}`
       }
     }, 1000 / 60)
     return () => clearInterval(timer)
-  }, [isInView, value, duration])
+  }, [isInView, value, duration, suffix])
 
   return (
-    <span ref={ref} className="tabular-nums">
-      {count.toLocaleString()}{suffix}
+    <span ref={spanRef} className="tabular-nums">
+      {value.toLocaleString()}{suffix}
     </span>
   )
 }

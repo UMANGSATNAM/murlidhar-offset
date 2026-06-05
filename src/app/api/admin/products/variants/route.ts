@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyAdminAuth } from '@/lib/admin-api-auth'
 
 // GET /api/admin/products/variants?productId=xxx
 export async function GET(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const productId = searchParams.get('productId')
@@ -36,6 +39,8 @@ export async function GET(request: NextRequest) {
 
 // POST /api/admin/products/variants - Create a new variant
 export async function POST(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const body = await request.json()
     const { productId, name, sku, price, stock, isActive, image, attrs } = body
@@ -72,6 +77,8 @@ export async function POST(request: NextRequest) {
 
 // PATCH /api/admin/products/variants - Update a variant
 export async function PATCH(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const body = await request.json()
     const { id, ...updateData } = body
@@ -128,6 +135,8 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE /api/admin/products/variants?id=xxx
 export async function DELETE(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const id = searchParams.get('id')

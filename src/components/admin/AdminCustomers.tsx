@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
+import { adminFetch } from '@/lib/admin-fetch'
 
 interface Customer {
   id: string
@@ -76,7 +77,7 @@ export default function AdminCustomers() {
 
       // Since there's no dedicated admin/customers endpoint, we'll use the dashboard data
       // or create a simple fetch. For now, let's use a workaround.
-      const res = await fetch(`/api/admin/dashboard`)
+      const res = await adminFetch(`/api/admin/dashboard`)
       if (res.ok) {
         // We'll need to add a proper customers endpoint
         // For now, we'll show a placeholder
@@ -84,7 +85,7 @@ export default function AdminCustomers() {
       
       // Attempt to fetch from a potential endpoint
       try {
-        const custRes = await fetch(`/api/admin/customers?${params}`)
+        const custRes = await adminFetch(`/api/admin/customers?${params}`)
         if (custRes.ok) {
           const data = await custRes.json()
           setCustomers(data.customers || [])

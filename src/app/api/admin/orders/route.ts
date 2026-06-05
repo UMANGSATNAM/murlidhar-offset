@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { verifyAdminAuth } from '@/lib/admin-api-auth'
 
 // GET /api/admin/orders - List all orders with filtering
 export async function GET(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const { searchParams } = new URL(request.url)
     const page = parseInt(searchParams.get('page') || '1')
@@ -118,6 +121,8 @@ export async function GET(request: NextRequest) {
 
 // PATCH /api/admin/orders - Update order status
 export async function PATCH(request: NextRequest) {
+  const authError = verifyAdminAuth(request)
+  if (authError) return authError
   try {
     const body = await request.json()
     const { orderId, status, paymentStatus, trackingNumber, trackingUrl, note, estimatedDelivery } = body
