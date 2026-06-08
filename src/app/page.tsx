@@ -10,36 +10,24 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import WhatsAppButton from '@/components/layout/WhatsAppButton'
 
-// New layout components
-import AnnouncementBar from '@/components/home/AnnouncementBar'
+// Layout utilities
 import SearchModal from '@/components/layout/SearchModal'
 import NotificationPopup from '@/components/layout/NotificationPopup'
 import Breadcrumb from '@/components/layout/Breadcrumb'
 import SectionDivider from '@/components/ui/SectionDivider'
 
 // Home sections - dynamic imports for performance
+// Order matches reference site: Hero → Heritage → Services → Finishes → Process → Who We Print For → Gallery → CTA
 const HeroSection = dynamic(
   () => import('@/components/home/HeroSection'),
   { ssr: false }
 )
-const FeaturedProducts = dynamic(
-  () => import('@/components/home/FeaturedProducts'),
-  { ssr: false }
-)
-const TrustStrip = dynamic(
-  () => import('@/components/home/TrustStrip'),
+const WhyChooseUs = dynamic(
+  () => import('@/components/home/WhyChooseUs'),
   { ssr: false }
 )
 const PopularCategories = dynamic(
   () => import('@/components/home/PopularCategories'),
-  { ssr: false }
-)
-const CTABanner = dynamic(
-  () => import('@/components/home/CTABanner'),
-  { ssr: false }
-)
-const WhyChooseUs = dynamic(
-  () => import('@/components/home/WhyChooseUs'),
   { ssr: false }
 )
 const TestimonialsSection = dynamic(
@@ -50,16 +38,16 @@ const PrintingProcess = dynamic(
   () => import('@/components/home/PrintingProcess'),
   { ssr: false }
 )
+const CTABanner = dynamic(
+  () => import('@/components/home/CTABanner'),
+  { ssr: false }
+)
+const FeaturedProducts = dynamic(
+  () => import('@/components/home/FeaturedProducts'),
+  { ssr: false }
+)
 const BulkOrderCTA = dynamic(
   () => import('@/components/home/BulkOrderCTA'),
-  { ssr: false }
-)
-const FAQSection = dynamic(
-  () => import('@/components/home/FAQSection'),
-  { ssr: false }
-)
-const RecentlyViewedSection = dynamic(
-  () => import('@/components/home/RecentlyViewedSection'),
   { ssr: false }
 )
 
@@ -159,44 +147,46 @@ const AdminLayout = dynamic(
   { ssr: false }
 )
 
-// Placeholder for pages not yet built
-function PlaceholderPage({ name }: { name: string }) {
-  return (
-    <div className="flex-1 flex items-center justify-center py-20">
-      <div className="text-center">
-        <div className="w-16 h-16 rounded-2xl gold-gradient flex items-center justify-center mx-auto mb-4 premium-shadow">
-          <span className="text-navy font-bold text-xl">MO</span>
-        </div>
-        <h2 className="text-2xl font-bold text-navy mb-2">{name}</h2>
-        <p className="text-muted-foreground">
-          This page is coming soon. Stay tuned!
-        </p>
-      </div>
-    </div>
-  )
-}
-
 function HomePageContent() {
   return (
     <>
+      {/* Hero - Where ink meets intention */}
       <HeroSection />
-      <SectionDivider direction="dark-to-light" />
-      <TrustStrip />
+
       <SectionDivider direction="light-to-light" />
-      <FeaturedProducts />
-      <RecentlyViewedSection />
-      <PopularCategories />
-      <SectionDivider direction="light-to-dark" />
-      <CTABanner />
+
+      {/* Heritage - Our story & values */}
       <WhyChooseUs />
-      <SectionDivider direction="dark-to-light" />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* What We Print - Services grid */}
+      <PopularCategories />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* Specialty Finishes - Foil, emboss, UV, etc. */}
       <TestimonialsSection />
-      <SectionDivider direction="light-to-dark" />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* How We Work - 4-step process */}
       <PrintingProcess />
-      <SectionDivider direction="light-to-dark" />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* Who We Print For - Industry cards + stats */}
+      <CTABanner />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* Recent Work - Gallery showcase */}
+      <FeaturedProducts />
+
+      <SectionDivider direction="light-to-light" />
+
+      {/* Start a Print - CTA / Contact */}
       <BulkOrderCTA />
-      <SectionDivider direction="dark-to-light" />
-      <FAQSection />
     </>
   )
 }
@@ -217,7 +207,6 @@ export default function Home() {
         return (
           <div className="relative">
             <ProductCatalog />
-            {/* AI Quote Estimator - positioned as a floating sidebar on desktop */}
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 pb-8">
               <div className="max-w-md mx-auto lg:mx-0 lg:absolute lg:right-8 lg:top-8 lg:w-96">
                 <AIQuoteEstimator />
@@ -267,9 +256,6 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-background">
       {/* Scroll Progress */}
       <ScrollProgress />
-
-      {/* Announcement Bar - above header */}
-      <AnnouncementBar />
 
       {/* Header */}
       <Header />

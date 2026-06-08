@@ -1,247 +1,368 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
-  CreditCard,
-  Heart,
-  FileText,
   BookOpen,
-  Package,
-  Sticker,
   Megaphone,
+  BookMarked,
+  CalendarDays,
+  CreditCard,
+  FileText,
   Mail,
+  Receipt,
+  Package,
   Tag,
-  Layers,
-  Newspaper,
-  Award,
-  ArrowRight,
+  Sticker,
+  Heart,
+  PartyPopper,
+  Maximize2,
+  Palette,
+  Shirt,
 } from 'lucide-react'
-import { useNavigationStore } from '@/lib/store'
-import ScrollReveal from '@/components/ui/ScrollReveal'
 
-const iconMap: Record<string, React.ElementType> = {
-  'credit-card': CreditCard,
-  heart: Heart,
-  'file-text': FileText,
-  'book-open': BookOpen,
-  package: Package,
-  sticker: Sticker,
-  megaphone: Megaphone,
-  mail: Mail,
-  tag: Tag,
-  layers: Layers,
-  newspaper: Newspaper,
-  award: Award,
+// ─── Service Data ───────────────────────────────────────────
+
+type ServiceCategory = 'all' | 'commercial' | 'stationery' | 'packaging' | 'events' | 'branding'
+
+interface Service {
+  id: number
+  title: string
+  description: string
+  icon: React.ElementType
+  category: ServiceCategory[]
 }
 
-const defaultIcons = [
-  CreditCard,
-  Heart,
-  FileText,
-  BookOpen,
-  Package,
-  Sticker,
-  Megaphone,
-  Mail,
-  Tag,
-  Layers,
-  Newspaper,
-  Award,
+const services: Service[] = [
+  {
+    id: 1,
+    title: 'Brochure Printing',
+    description: 'Bi-fold, tri-fold, gate-fold and saddle-stitched — for product catalogues, corporate decks and showcase booklets.',
+    icon: BookOpen,
+    category: ['all', 'commercial'],
+  },
+  {
+    id: 2,
+    title: 'Flyers & Pamphlets',
+    description: 'Single-leaf and folded leaflets for promotions, festivals, real-estate launches and door-drop campaigns.',
+    icon: Megaphone,
+    category: ['all', 'commercial'],
+  },
+  {
+    id: 3,
+    title: 'Catalogues & Books',
+    description: 'Perfect-bound product catalogues, lookbooks and annual reports printed on premium paper stocks.',
+    icon: BookMarked,
+    category: ['all', 'commercial'],
+  },
+  {
+    id: 4,
+    title: 'Festival & Promo Posters',
+    description: 'Diwali, Navratri, brand campaigns and storefront posters — printed at striking sizes with vivid colour.',
+    icon: CalendarDays,
+    category: ['all', 'events'],
+  },
+  {
+    id: 5,
+    title: 'Visiting Cards',
+    description: 'From clean matte business cards to rounded-corner, foil-stamped, suede-laminated calling cards.',
+    icon: CreditCard,
+    category: ['all', 'stationery'],
+  },
+  {
+    id: 6,
+    title: 'Letterheads',
+    description: 'A4 corporate letterheads on Bond, Conqueror or executive-grade paper — single or two-colour pre-print.',
+    icon: FileText,
+    category: ['all', 'stationery'],
+  },
+  {
+    id: 7,
+    title: 'Envelopes',
+    description: 'Window, regular, cloth-lined and custom-size envelopes — printed and pasted in-house.',
+    icon: Mail,
+    category: ['all', 'stationery'],
+  },
+  {
+    id: 8,
+    title: 'Bill Books & Invoices',
+    description: 'Carbonless duplicate & triplicate bill books, numbered, perforated and bound for daily business use.',
+    icon: Receipt,
+    category: ['all', 'commercial'],
+  },
+  {
+    id: 9,
+    title: 'Mono Cartons & Boxes',
+    description: 'Folding cartons and product boxes for FMCG, pharma and beauty — die-cut, glued and quality-checked.',
+    icon: Package,
+    category: ['all', 'packaging'],
+  },
+  {
+    id: 10,
+    title: 'Product Labels',
+    description: 'High-resolution paper, vinyl and metallised labels — pharmaceutical, food, beverage and industrial use.',
+    icon: Tag,
+    category: ['all', 'packaging'],
+  },
+  {
+    id: 11,
+    title: 'Stickers',
+    description: 'Die-cut, kiss-cut and roll-form stickers — gloss, matte, transparent and holographic finishes.',
+    icon: Sticker,
+    category: ['all', 'packaging'],
+  },
+  {
+    id: 12,
+    title: 'Wedding Cards',
+    description: 'Traditional, modern, foil-stamped and laser-cut wedding stationery — set in Gujarati, Hindi or English.',
+    icon: Heart,
+    category: ['all', 'events'],
+  },
+  {
+    id: 13,
+    title: 'Invitation Cards',
+    description: 'Engagement, housewarming, mundan, satsang & corporate invitations — printed on premium card stock.',
+    icon: PartyPopper,
+    category: ['all', 'events'],
+  },
+  {
+    id: 14,
+    title: 'Flex & Vinyl Banners',
+    description: 'Hoardings, store backdrops, wedding stage banners — large-format prints in vivid weather-tough colour.',
+    icon: Maximize2,
+    category: ['all', 'events'],
+  },
+  {
+    id: 15,
+    title: 'Logo & Identity Design',
+    description: 'Brand marks, full identity systems and print-ready artwork — ready for every surface that follows.',
+    icon: Palette,
+    category: ['all', 'branding'],
+  },
+  {
+    id: 16,
+    title: 'T-Shirt Printing',
+    description: 'Screen, DTF and sublimation printing for staff uniforms, event tees, college merch and brand drops.',
+    icon: Shirt,
+    category: ['all', 'branding'],
+  },
 ]
 
-interface Category {
-  id: string
-  name: string
-  slug: string
-  description: string | null
-  image: string | null
-  icon: string | null
-  productCount: number
-}
-
-const fallbackCategories: Category[] = [
-  { id: '1', name: 'Business Cards', slug: 'business-cards', description: 'Professional cards that make an impression', image: null, icon: 'credit-card', productCount: 24 },
-  { id: '2', name: 'Wedding Cards', slug: 'wedding-cards', description: 'Elegant invitations for your special day', image: null, icon: 'heart', productCount: 18 },
-  { id: '3', name: 'Letterheads', slug: 'letterheads', description: 'Corporate stationery with your brand', image: null, icon: 'file-text', productCount: 12 },
-  { id: '4', name: 'Brochures', slug: 'brochures', description: 'Marketing materials that convert', image: null, icon: 'book-open', productCount: 16 },
-  { id: '5', name: 'Packaging', slug: 'packaging', description: 'Custom packaging for your products', image: null, icon: 'package', productCount: 20 },
-  { id: '6', name: 'Stickers & Labels', slug: 'stickers', description: 'Eye-catching stickers and labels', image: null, icon: 'sticker', productCount: 14 },
-  { id: '7', name: 'Banners & Posters', slug: 'banners', description: 'Large format printing solutions', image: null, icon: 'megaphone', productCount: 10 },
-  { id: '8', name: 'Envelopes', slug: 'envelopes', description: 'Premium business envelopes', image: null, icon: 'mail', productCount: 8 },
+const categoryTabs: { key: ServiceCategory; label: string }[] = [
+  { key: 'all', label: 'All Services' },
+  { key: 'commercial', label: 'Commercial' },
+  { key: 'stationery', label: 'Stationery' },
+  { key: 'packaging', label: 'Packaging' },
+  { key: 'events', label: 'Events' },
+  { key: 'branding', label: 'Branding' },
 ]
 
-const categoryImages: Record<string, string> = {
-  'business-cards': '/products/business-cards.png',
-  'wedding-cards': '/products/wedding-cards.png',
-  'letterheads': '/products/letter-pads.png',
-  'brochures': '/products/brochures.png',
-  'packaging': '/products/packaging.png',
-  'stickers': '/products/stickers.png',
-  'banners': '/products/flex-banners.png',
-  'envelopes': '/products/letter-pads.png',
+// ─── Animation Variants ─────────────────────────────────────
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.1,
+    },
+  },
 }
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.45,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.2 },
+  },
+}
+
+// ─── Component ──────────────────────────────────────────────
 
 export default function PopularCategories() {
-  const { navigate } = useNavigationStore()
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
+  const [activeCategory, setActiveCategory] = useState<ServiceCategory>('all')
 
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const res = await fetch('/api/categories')
-        const data = await res.json()
-        if (data.categories && data.categories.length > 0) {
-          setCategories(data.categories)
-        } else {
-          setCategories(fallbackCategories)
-        }
-      } catch {
-        setCategories(fallbackCategories)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchCategories()
-  }, [])
-
-  const getIcon = (category: Category, index: number) => {
-    if (category.icon && iconMap[category.icon]) {
-      return iconMap[category.icon]
-    }
-    return defaultIcons[index % defaultIcons.length]
-  }
+  const filteredServices =
+    activeCategory === 'all'
+      ? services
+      : services.filter((s) => s.category.includes(activeCategory))
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-white to-gray-50/50 relative">
-      {/* Subtle top gold divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
+    <section
+      className="py-16 md:py-24 relative"
+      style={{ backgroundColor: '#0D1A2E' }}
+    >
+      {/* Top ink-line divider */}
+      <div className="absolute top-0 left-0 right-0 ink-line" />
 
-      <ScrollReveal variant="fade-right" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-muted text-gold text-xs font-semibold mb-4"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-            CATEGORIES
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-navy mb-3"
-          >
-            Browse by Category
-          </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-0.5 gold-gradient mx-auto mb-4"
-          />
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground max-w-2xl mx-auto"
-          >
-            Explore our wide range of printing categories — from business
-            essentials to celebration stationery.
-          </motion.p>
-        </div>
+      {/* Subtle background pattern */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(201,162,39,0.5) 1px, transparent 1px)',
+          backgroundSize: '48px 48px',
+        }}
+      />
 
-        {/* Categories grid */}
-        {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-xl bg-muted/30 animate-pulse h-40"
-              />
-            ))}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        {/* ── Section Header ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-12 md:mb-16"
+        >
+          {/* Small gold label */}
+          <div className="inline-flex items-center gap-2 mb-5">
+            <span className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A227]/60" />
+            <span className="text-[#C9A227] text-xs font-semibold uppercase tracking-[0.2em]">
+              Our Services
+            </span>
+            <span className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A227]/60" />
           </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {categories.map((category, index) => {
-              const Icon = getIcon(category, index)
-              const catImage = categoryImages[category.slug] || category.image
+
+          {/* Heading — Playfair Display serif */}
+          <h2
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#E2E8F0] mb-5"
+            style={{ fontFamily: "var(--font-display), 'Playfair Display', ui-serif, Georgia, serif" }}
+          >
+            What We Print
+          </h2>
+
+          {/* Gold underline accent */}
+          <div className="flex justify-center mb-6">
+            <div className="h-[2px] w-16 bg-gradient-to-r from-transparent via-[#C9A227] to-transparent" />
+          </div>
+
+          {/* Subheading */}
+          <p className="text-[#94A3B8] text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+            A complete printing studio, under one roof. From the smallest visiting card to a
+            thousand-unit packaging run, our services cover every category an Indian business
+            needs — designed, printed, and finished in-house.
+          </p>
+        </motion.div>
+
+        {/* ── Category Filter Tabs ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+          className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 md:mb-14"
+        >
+          {categoryTabs.map((tab) => {
+            const isActive = activeCategory === tab.key
+            return (
+              <button
+                key={tab.key}
+                onClick={() => setActiveCategory(tab.key)}
+                className={`
+                  relative px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium
+                  transition-all duration-300 cursor-pointer
+                  ${
+                    isActive
+                      ? 'text-[#0B1628] bg-[#C9A227] shadow-lg shadow-[#C9A227]/20'
+                      : 'text-[#94A3B8] bg-transparent border border-[#1E3048] hover:border-[#C9A227]/40 hover:text-[#E2E8F0]'
+                  }
+                `}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeServiceTab"
+                    className="absolute inset-0 rounded-full bg-[#C9A227]"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            )
+          })}
+        </motion.div>
+
+        {/* ── Service Cards Grid ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeCategory}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5"
+          >
+            {filteredServices.map((service) => {
+              const Icon = service.icon
               return (
                 <motion.div
-                  key={category.id}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  whileHover={{ y: -6, scale: 1.02 }}
-                  onClick={() =>
-                    navigate('products', { categorySlug: category.slug })
-                  }
-                  className="group cursor-pointer rounded-xl overflow-hidden border border-border/40 hover:border-gold/40 transition-all duration-300 gold-glow-hover card-hover-lift relative bg-white"
+                  key={service.id}
+                  variants={cardVariants}
+                  layout
+                  whileHover={{ y: -4, transition: { duration: 0.25 } }}
+                  className="group relative rounded-lg overflow-hidden cursor-pointer
+                    bg-[#162032] border border-[#1E3048]/60
+                    hover:border-[#C9A227]/30
+                    transition-colors duration-300"
                 >
-                  {/* Subtle background pattern */}
-                  <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
+                  {/* Gold left border accent on hover */}
+                  <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#C9A227] scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top rounded-l-lg" />
+
+                  {/* Subtle hover glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                     style={{
-                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #C9A227 20px, #C9A227 21px)',
+                      background: 'radial-gradient(ellipse at 10% 50%, rgba(201,162,39,0.06) 0%, transparent 70%)',
                     }}
                   />
 
-                  {/* Background image with overlay */}
-                  {catImage && (
-                    <div className="absolute inset-0">
-                      <img
-                        src={catImage}
-                        alt={category.name}
-                        className="w-full h-full object-cover opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/90 to-gold/5 group-hover:from-white/90 group-hover:via-white/85 group-hover:to-gold/10 transition-all duration-500" />
-                    </div>
-                  )}
-
-                  {/* Gold top accent line on hover */}
-                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-gold/0 to-transparent group-hover:via-gold/60 transition-all duration-500" />
-
-                  {/* Content */}
-                  <div className={`relative p-5 md:p-6 transition-all duration-300`}>
-                    <div className="flex items-start justify-between mb-4">
-                      <motion.div
-                        className="w-12 h-12 rounded-xl bg-gradient-to-br from-navy/[0.06] to-gold/[0.06] flex items-center justify-center group-hover:scale-110 group-hover:bg-gradient-to-br group-hover:from-gold/20 group-hover:to-gold/10 transition-all duration-300 shadow-sm"
-                        whileHover={{ rotate: [0, -10, 10, 0] }}
-                        transition={{ duration: 0.4 }}
+                  <div className="p-5 md:p-6 relative">
+                    {/* Icon */}
+                    <div className="flex items-start gap-4 mb-3">
+                      <div
+                        className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center
+                          bg-[#1E3048]/60 group-hover:bg-[#C9A227]/15
+                          transition-colors duration-300"
                       >
-                        <Icon className="size-6 text-navy group-hover:text-gold-dark transition-colors duration-300" />
-                      </motion.div>
-                      {/* Product count badge */}
-                      <div className="px-2.5 py-1 rounded-full bg-gradient-to-r from-gold via-gold-light to-gold text-navy text-[10px] font-bold shadow-sm premium-shadow group-hover:gold-shadow transition-all duration-300">
-                        {category.productCount}
+                        <Icon className="w-5 h-5 text-[#94A3B8] group-hover:text-[#C9A227] transition-colors duration-300" />
                       </div>
                     </div>
-                    <h3 className="font-semibold text-navy text-sm md:text-base mb-1 group-hover:text-gold-dark transition-colors">
-                      {category.name}
+
+                    {/* Title */}
+                    <h3 className="text-[#E2E8F0] font-semibold text-sm md:text-base mb-2 group-hover:text-white transition-colors duration-300">
+                      {service.title}
                     </h3>
-                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                      {category.description || 'Premium quality printing'}
+
+                    {/* Description */}
+                    <p className="text-[#64748B] text-xs sm:text-[13px] leading-relaxed line-clamp-3">
+                      {service.description}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        {category.productCount} Products
-                      </span>
-                      <ArrowRight className="size-3.5 text-muted-foreground group-hover:text-gold group-hover:translate-x-1 transition-all duration-200" />
-                    </div>
                   </div>
                 </motion.div>
               )
             })}
-          </div>
-        )}
-      </ScrollReveal>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* ── Bottom subtle accent ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5, duration: 0.6 }}
+          className="flex justify-center mt-12 md:mt-16"
+        >
+          <div className="h-px w-32 bg-gradient-to-r from-transparent via-[#1E3048] to-transparent" />
+        </motion.div>
+      </div>
     </section>
   )
 }

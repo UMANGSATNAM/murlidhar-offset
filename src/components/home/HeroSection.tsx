@@ -1,288 +1,224 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowRight, Sparkles, Truck, Clock, Users } from 'lucide-react'
+import React from 'react'
+import { motion } from 'framer-motion'
+import { ChevronRight, MessageCircle, Printer, Package, Award, CheckCircle2, Layers } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
 
 const stats = [
-  { value: '10,000+', label: 'Happy Customers', icon: Users },
-  { value: '500+', label: 'Products', icon: Sparkles },
-  { value: '15+', label: 'Years Experience', icon: Clock },
-  { value: '24hr', label: 'Delivery', icon: Truck },
+  { value: '25+', label: 'Print Categories', icon: Layers },
+  { value: '1000+', label: 'Projects Delivered', icon: Package },
+  { value: 'Industry-Approved', label: 'FMCG · Pharma', icon: Award },
+  { value: 'Premium', label: 'Offset Press', icon: Printer },
+  { value: 'Included', label: 'Pre-press & Proofing', icon: CheckCircle2 },
 ]
 
-const rotatingWords = ['Print', 'Design', 'Vision', 'Brand', 'Dream']
+const serviceBadges = [
+  'Brochures',
+  'Wedding Invitations',
+  'Mono Cartons',
+  'Foil Stamping',
+  'Pharmaceutical Labels',
+  'Festival Posters',
+  'Annual Reports',
+  'Spot UV',
+  'Business Cards',
+  'Flex Banners',
+  'Letter Pads',
+  'Stickers',
+  'Bill Books',
+  'Envelope Printing',
+  'Danglers',
+  'Catalogues',
+]
 
-const fadeInUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
     opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] },
-  }),
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
 }
 
-// Particle component for background
-function Particles() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {Array.from({ length: 20 }).map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute rounded-full bg-gold/20"
-          style={{
-            width: Math.random() * 4 + 2,
-            height: Math.random() * 4 + 2,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -(Math.random() * 60 + 20)],
-            x: [0, (Math.random() - 0.5) * 40],
-            opacity: [0, 0.8, 0],
-          }}
-          transition={{
-            duration: Math.random() * 6 + 4,
-            repeat: Infinity,
-            delay: Math.random() * 5,
-            ease: 'easeInOut',
-          }}
-        />
-      ))}
-    </div>
-  )
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const fadeInVariant = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const scaleInVariant = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function HeroSection() {
   const { navigate } = useNavigationStore()
-  const [wordIndex, setWordIndex] = useState(0)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setWordIndex((prev) => (prev + 1) % rotatingWords.length)
-    }, 2500)
-    return () => clearInterval(interval)
-  }, [])
 
   return (
-    <section className="relative min-h-[100vh] overflow-hidden flex items-center">
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
-          src="/products/hero-printing-press.png"
-          alt="Murlidhar Offset Printing Press"
-          className="h-full w-full object-cover"
-        />
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-navy/85" />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-navy via-navy/90 to-navy/70" />
-      </div>
+    <section className="relative min-h-screen overflow-hidden flex flex-col bg-[#0B1628]">
+      {/* Subtle geometric line pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(201,162,39,0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(201,162,39,0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '80px 80px',
+        }}
+      />
 
-      {/* Animated background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Large decorative circle */}
+      {/* Subtle radial glow accents */}
+      <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-[#C9A227]/[0.03] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#C9A227]/[0.02] rounded-full blur-[100px] pointer-events-none" />
+
+      {/* Main content area - centered */}
+      <div className="relative flex-1 flex items-center">
         <motion.div
-          className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full border border-gold/10"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-        />
-        <motion.div
-          className="absolute -top-24 -right-24 w-[400px] h-[400px] rounded-full border border-gold/5"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
-        />
-
-        {/* Floating particles */}
-        <Particles />
-
-        {/* Gold gradient orb */}
-        <div className="absolute top-20 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gold/3 rounded-full blur-3xl" />
-
-        {/* Diagonal lines pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(45deg, transparent, transparent 60px, #C9A227 60px, #C9A227 61px)',
-          }}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-0">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Text content */}
-          <div className="text-center lg:text-left">
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-gold text-gold text-xs font-semibold mb-6"
-            >
-              <Sparkles className="size-3.5" />
-              Premium Offset Printing Since 2009
-            </motion.div>
-
-            {/* Heading with rotating word */}
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.7 }}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] mb-6"
-            >
-              <span className="text-white">Where Every </span>
-              <span className="relative inline-block min-w-[180px] sm:min-w-[240px] lg:min-w-[280px]">
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={wordIndex}
-                    initial={{ y: 30, opacity: 0, filter: 'blur(8px)' }}
-                    animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
-                    exit={{ y: -30, opacity: 0, filter: 'blur(8px)' }}
-                    transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="text-gradient-animate inline-block text-5xl sm:text-6xl lg:text-7xl xl:text-8xl"
-                  >
-                    {rotatingWords[wordIndex]}
-                  </motion.span>
-                </AnimatePresence>
-              </span>
-              <br />
-              <span className="text-white">Tells a </span>
-              <span className="gold-gradient-text text-4xl sm:text-5xl lg:text-6xl">Story</span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.7 }}
-              className="text-white/70 text-lg sm:text-xl max-w-lg mx-auto lg:mx-0 mb-8 leading-relaxed"
-            >
-              Murlidhar Offset — Gujarat&apos;s trusted printing press. From
-              business cards to wedding invitations, we bring your vision to
-              life with premium quality printing.
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7, duration: 0.7 }}
-              className="flex flex-col sm:flex-row items-center gap-5 justify-center lg:justify-start"
-            >
-              <Button
-                onClick={() => navigate('products')}
-                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
-              >
-                Shop Now
-                <ArrowRight className="size-4 ml-1" />
-              </Button>
-              <Button
-                variant="outline"
-                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300 hover-shimmer"
-              >
-                Get Custom Quote
-              </Button>
-            </motion.div>
-          </div>
-
-          {/* Right side visual - Product showcase with real images */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="hidden lg:flex items-center justify-center relative"
-          >
-            <div className="relative w-[420px] h-[420px]">
-              {/* Stacked cards effect with real product images */}
-              <motion.div
-                className="absolute inset-0 rounded-2xl glass-card rotate-6 overflow-hidden"
-                animate={{ y: [-4, 4, -4] }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                <img src="/products/wedding-cards.png" alt="Wedding Cards" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <h3 className="text-white font-bold text-lg drop-shadow-lg">Wedding Cards</h3>
-                  <p className="text-white/80 text-sm drop-shadow-md">Premium Collection</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="absolute inset-0 rounded-2xl glass-card -rotate-3 overflow-hidden"
-                animate={{ y: [4, -4, 4] }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                <img src="/products/brochures.png" alt="Brochures" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-white/20 backdrop-blur-[1px]" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <h3 className="text-white font-bold text-lg drop-shadow-lg">Brochures</h3>
-                  <p className="text-white/80 text-sm drop-shadow-md">Professional Quality</p>
-                </div>
-              </motion.div>
-
-              <motion.div
-                className="absolute inset-0 rounded-2xl overflow-hidden premium-shadow-lg"
-                animate={{ y: [-6, 6, -6] }}
-                transition={{
-                  duration: 4.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              >
-                <img src="/products/business-cards.png" alt="Business Cards" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <div className="w-14 h-14 rounded-xl gold-gradient flex items-center justify-center mb-3 premium-shadow">
-                    <span className="text-navy font-bold text-lg">MO</span>
-                  </div>
-                  <h3 className="text-white font-bold text-xl drop-shadow-lg">Business Cards</h3>
-                  <p className="text-white/80 text-sm drop-shadow-md">Starting from ₹299</p>
-                </div>
-              </motion.div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.7 }}
-          className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full text-center py-20 md:py-28"
         >
-          {stats.map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              custom={i}
-              variants={fadeInUp}
-              initial="hidden"
-              animate="visible"
-              className="flex flex-col items-center p-5 md:p-6 rounded-xl glass-gold group hover:bg-gold/10 transition-all duration-300 backdrop-blur-sm"
+          {/* Top badge */}
+          <motion.div variants={fadeUpVariant} className="mb-8">
+            <span className="inline-flex items-center gap-2 text-[#8899B3] text-xs sm:text-sm tracking-[0.2em] uppercase font-medium">
+              <span className="w-8 h-px bg-[#C9A227]/40" />
+              Established &amp; Trusted · Gujarat, India
+              <span className="w-8 h-px bg-[#C9A227]/40" />
+            </span>
+          </motion.div>
+
+          {/* Main heading - serif font with gold accents */}
+          <motion.h1
+            variants={fadeUpVariant}
+            className="font-[family-name:var(--font-display)] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[4.25rem] leading-[1.2] sm:leading-[1.15] md:leading-[1.15] text-white mb-8 tracking-tight"
+          >
+            Where ink meets{' '}
+            <span className="text-[#C9A227] italic">intention</span>,
+            <br className="hidden sm:block" />
+            {' '}and paper becomes a{' '}
+            <span className="text-[#C9A227] italic">keepsake</span>.
+          </motion.h1>
+
+          {/* Subtext */}
+          <motion.p
+            variants={fadeUpVariant}
+            className="text-[#8899B3] text-base sm:text-lg md:text-xl max-w-3xl mx-auto leading-relaxed mb-10 sm:mb-12"
+          >
+            Murlidhar Offset is a full-service offset printing house crafting brochures,
+            packaging, wedding stationery, and brand collateral for India&apos;s most
+            considered businesses — from D2C labels to FMCG and pharmaceutical leaders.
+          </motion.p>
+
+          {/* CTA Buttons */}
+          <motion.div
+            variants={fadeUpVariant}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5"
+          >
+            <Button
+              onClick={() => navigate('products')}
+              className="bg-[#C9A227] hover:bg-[#D4B54E] text-[#0B1628] font-semibold px-8 py-6 text-base rounded-lg transition-all duration-300 h-auto gold-shadow hover-shimmer group"
             >
-              <stat.icon className="size-5 text-gold mb-2 group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-3xl md:text-4xl font-bold gold-gradient-text mb-1">
-                {stat.value}
-              </span>
-              <span className="text-white/60 text-[10px] md:text-xs text-center uppercase tracking-wider">
-                {stat.label}
-              </span>
-            </motion.div>
-          ))}
+              Explore Our Craft
+              <ChevronRight className="size-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+            </Button>
+            <Button
+              variant="outline"
+              asChild
+              className="border-[#C9A227]/40 text-[#C9A227] hover:bg-[#C9A227]/10 hover:border-[#C9A227]/70 font-semibold px-8 py-6 text-base rounded-lg h-auto bg-transparent transition-all duration-300 group"
+            >
+              <a
+                href="https://wa.me/919876543210?text=Hi%20Murlidhar%20Offset%2C%20I%27d%20like%20to%20discuss%20a%20printing%20project."
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="size-4 mr-2 group-hover:scale-110 transition-transform" />
+                Talk on WhatsApp
+              </a>
+            </Button>
+          </motion.div>
         </motion.div>
       </div>
+
+      {/* Stats row */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.8, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative border-t border-white/[0.06] bg-[#0A1220]/80 backdrop-blur-sm"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6">
+            {stats.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                variants={scaleInVariant}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 1 + i * 0.08 }}
+                className="flex items-center gap-3 justify-center sm:justify-start group"
+              >
+                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-[#C9A227]/[0.08] border border-[#C9A227]/[0.12] flex items-center justify-center group-hover:bg-[#C9A227]/[0.14] transition-colors duration-300">
+                  <stat.icon className="size-4 text-[#C9A227]/70 group-hover:text-[#C9A227] transition-colors duration-300" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-white font-semibold text-sm sm:text-base leading-tight">
+                    {stat.value}
+                  </div>
+                  <div className="text-[#8899B3] text-[10px] sm:text-xs leading-tight truncate">
+                    {stat.label}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Scrolling service badges marquee */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        className="relative border-t border-white/[0.06] bg-[#080F1E] py-4 overflow-hidden"
+      >
+        {/* Gradient fade edges */}
+        <div className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-r from-[#080F1E] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 bg-gradient-to-l from-[#080F1E] to-transparent z-10 pointer-events-none" />
+
+        <div className="marquee-track flex items-center gap-6">
+          {/* Duplicate the badges for seamless loop */}
+          {[...serviceBadges, ...serviceBadges].map((badge, i) => (
+            <span
+              key={`${badge}-${i}`}
+              className="flex-shrink-0 inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#C9A227]/[0.12] bg-[#C9A227]/[0.04] text-[#C9A227]/70 text-xs sm:text-sm tracking-wide whitespace-nowrap hover:border-[#C9A227]/25 hover:text-[#C9A227] transition-colors duration-300"
+            >
+              <span className="w-1 h-1 rounded-full bg-[#C9A227]/50" />
+              {badge}
+            </span>
+          ))}
+        </div>
+      </motion.div>
     </section>
   )
 }

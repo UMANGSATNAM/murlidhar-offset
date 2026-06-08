@@ -1,179 +1,226 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { ArrowRight, Printer, MessageSquareQuote } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { useNavigationStore } from '@/lib/store'
+import React from 'react'
+import { motion } from 'framer-motion'
+import { Sparkles, ShoppingBag, Pill, Heart, Briefcase, Store, Flame } from 'lucide-react'
 
-const stats = [
-  { value: 500, suffix: '+', label: 'Products' },
-  { value: 15, suffix: '+', label: 'Years' },
-  { value: 10, suffix: 'K+', label: 'Customers' },
-  { value: 99, suffix: '%', label: 'Satisfaction' },
+const industries = [
+  {
+    number: '01',
+    title: 'FMCG & Beauty',
+    description: 'Mono cartons, labels, dispenser sleeves and shelf-ready packaging for fast-moving brands.',
+    icon: ShoppingBag,
+  },
+  {
+    number: '02',
+    title: 'Pharmaceutical',
+    description: 'Compliant cartons, leaflet inserts, batch-printed labels and tamper-evident packaging.',
+    icon: Pill,
+  },
+  {
+    number: '03',
+    title: 'Weddings & Events',
+    description: 'Multilingual wedding cards, save-the-dates, RSVPs and event collateral — foil, emboss, laser-cut.',
+    icon: Heart,
+  },
+  {
+    number: '04',
+    title: 'Corporate & Finance',
+    description: 'Annual reports, identity stationery, presentation folders and conference collateral.',
+    icon: Briefcase,
+  },
+  {
+    number: '05',
+    title: 'Retail & D2C',
+    description: 'Hangtags, lookbooks, dispatch boxes, paper bags and seasonal campaign posters.',
+    icon: Store,
+  },
+  {
+    number: '06',
+    title: 'Festival & Religious',
+    description: 'Diwali, Navratri and temple-trust posters, calendars, panchang and prasad packaging.',
+    icon: Flame,
+  },
 ]
 
-// Animated counter component — starts at target value so users never see "0"
-function AnimatedCounter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
-  const hasAnimated = useRef(false)
-  const spanRef = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(spanRef, { once: true })
+const stats = [
+  { value: '25+', label: 'Print Categories' },
+  { value: '1K+', label: 'Projects Delivered' },
+  { value: '200+', label: 'Brand Partners' },
+  { value: '100%', label: 'In-House Production' },
+]
 
-  useEffect(() => {
-    if (!isInView || hasAnimated.current || !spanRef.current) return
-    hasAnimated.current = true
-    // Animate from 0 to target value by updating the DOM directly
-    spanRef.current.textContent = `0${suffix}`
-    let start = 0
-    const increment = value / (duration * 60)
-    const timer = setInterval(() => {
-      start += increment
-      if (start >= value) {
-        if (spanRef.current) spanRef.current.textContent = `${value.toLocaleString()}${suffix}`
-        clearInterval(timer)
-      } else {
-        if (spanRef.current) spanRef.current.textContent = `${Math.floor(start).toLocaleString()}${suffix}`
-      }
-    }, 1000 / 60)
-    return () => clearInterval(timer)
-  }, [isInView, value, duration, suffix])
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+}
 
-  return (
-    <span ref={spanRef} className="tabular-nums">
-      {value.toLocaleString()}{suffix}
-    </span>
-  )
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
 }
 
 export default function CTABanner() {
-  const { navigate } = useNavigationStore()
-
   return (
-    <section className="relative overflow-hidden">
-      {/* Main container */}
-      <div className="relative bg-navy-gradient py-16 sm:py-20 lg:py-24">
-        {/* Animated dot pattern background */}
-        <div className="absolute inset-0 pointer-events-none animate-dot-pattern opacity-40" />
-
-        {/* Decorative gold pattern overlay - CSS-based */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Diamond pattern */}
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage: `
-                linear-gradient(45deg, #C9A227 25%, transparent 25%),
-                linear-gradient(-45deg, #C9A227 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, #C9A227 75%),
-                linear-gradient(-45deg, transparent 75%, #C9A227 75%)
-              `,
-              backgroundSize: '40px 40px',
-              backgroundPosition: '0 0, 0 20px, 20px -20px, -20px 0px',
-            }}
-          />
-
-          {/* Large gold circles */}
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full border border-gold/10" />
-          <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full border border-gold/5" />
-
-          {/* Gold glow orbs */}
-          <div className="absolute top-1/4 right-1/4 w-48 h-48 bg-gold/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 bg-gold/3 rounded-full blur-2xl" />
-
-          {/* Diagonal gold lines */}
-          <div
-            className="absolute inset-0 opacity-[0.03]"
-            style={{
-              backgroundImage:
-                'repeating-linear-gradient(135deg, transparent, transparent 80px, #C9A227 80px, #C9A227 81px)',
-            }}
-          />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
-            {/* Left side - Heading */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="text-center lg:text-left flex-shrink-0"
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-semibold mb-4">
-                <Printer className="size-3.5" />
-                Start Your Order Today
-              </div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
-                <span className="text-white">Ready to </span>
-                <span className="text-gradient-animate">Print?</span>
-              </h2>
-              <p className="text-white/60 mt-3 text-sm sm:text-base max-w-md">
-                From concept to delivery — we make premium printing effortless.
-              </p>
-            </motion.div>
-
-            {/* Center - Glass stats card with count-up */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="hidden md:block"
-            >
-              <div className="glass-navy rounded-2xl p-6 lg:p-8 gold-border-glow">
-                <div className="grid grid-cols-2 gap-6 lg:gap-8">
-                  {stats.map((stat, i) => (
-                    <motion.div
-                      key={stat.label}
-                      initial={{ opacity: 0, y: 15 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
-                      className="text-center relative"
-                    >
-                      {/* Subtle background shape */}
-                      <div className="absolute inset-0 rounded-xl bg-gold/[0.06] -m-3" />
-                      <div className="relative">
-                        <div className="text-4xl lg:text-5xl font-bold gold-gradient-text">
-                          <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                        </div>
-                        <div className="text-white/60 text-xs mt-1.5 uppercase tracking-widest font-medium">
-                          {stat.label}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right side - CTA buttons */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col sm:flex-row lg:flex-col gap-3 sm:gap-4 lg:gap-4 flex-shrink-0"
-            >
-              <Button
-                onClick={() => navigate('products')}
-                className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
-              >
-                Shop Now
-                <ArrowRight className="size-4 ml-2" />
-              </Button>
-              <Button
-                variant="outline"
-                className="border-gold/50 text-gold hover:bg-gold/10 hover:text-gold-light hover:border-gold font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent transition-all duration-300 hover-shimmer"
-              >
-                <MessageSquareQuote className="size-4 mr-2" />
-                Get Custom Quote
-              </Button>
-            </motion.div>
-          </div>
-        </div>
+    <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28" style={{ backgroundColor: '#0B1628' }}>
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(135deg, transparent, transparent 80px, #C9A227 80px, #C9A227 81px)',
+          }}
+        />
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full bg-[#C9A227]/[0.03] blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-[#C9A227]/[0.02] blur-3xl" />
       </div>
+
+      {/* Top divider */}
+      <div className="absolute top-0 left-0 right-0 ink-line" />
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        {/* Section header */}
+        <div className="text-center mb-14 sm:mb-16">
+          {/* Gold label */}
+          <motion.div variants={fadeUpVariant} className="flex items-center justify-center gap-3 mb-5">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A227]/60" />
+            <span className="text-[#C9A227] text-xs font-semibold uppercase tracking-[0.2em] flex items-center gap-1.5">
+              <Sparkles className="size-3.5" />
+              Industries We Serve
+            </span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A227]/60" />
+          </motion.div>
+
+          {/* Main heading */}
+          <motion.h2
+            variants={fadeUpVariant}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-display)] text-[#E2E8F0] mb-4"
+          >
+            Who We Print{' '}
+            <span className="italic bg-gradient-to-r from-[#C9A227] via-[#E8CC6E] to-[#C9A227] bg-clip-text text-transparent">
+              For
+            </span>
+          </motion.h2>
+
+          {/* Gold accent line */}
+          <motion.div variants={fadeUpVariant} className="flex justify-center mb-6">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#C9A227] to-transparent" />
+          </motion.div>
+
+          {/* Subheading */}
+          <motion.p
+            variants={fadeUpVariant}
+            className="text-[#94A3B8] text-base sm:text-lg max-w-3xl mx-auto leading-relaxed"
+          >
+            Trusted by businesses across every shelf. Our press has run jobs for FMCG launches, family weddings,
+            hospital networks, festival shopkeepers and D2C founders. The standard is the same for all of them.
+          </motion.p>
+        </div>
+
+        {/* Industry cards grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 mb-14 sm:mb-16">
+          {industries.map((industry) => {
+            const Icon = industry.icon
+            return (
+              <motion.div
+                key={industry.number}
+                variants={cardVariant}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                className="group relative overflow-hidden rounded-xl p-5 sm:p-6 border-l-[3px] border-l-[#C9A227] transition-all duration-300"
+                style={{
+                  backgroundColor: '#162032',
+                  borderRight: '1px solid rgba(30, 48, 72, 0.6)',
+                  borderTop: '1px solid rgba(30, 48, 72, 0.6)',
+                  borderBottom: '1px solid rgba(30, 48, 72, 0.6)',
+                }}
+              >
+                {/* Hover glow */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: 'radial-gradient(ellipse at left center, rgba(201,162,39,0.06) 0%, transparent 70%)',
+                  }}
+                />
+
+                <div className="relative">
+                  {/* Number + Icon row */}
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-[#C9A227]/20 text-5xl sm:text-6xl font-bold font-[family-name:var(--font-display)] leading-none select-none">
+                      {industry.number}
+                    </span>
+                    <div
+                      className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors duration-300"
+                      style={{
+                        backgroundColor: 'rgba(30, 48, 72, 0.6)',
+                      }}
+                    >
+                      <Icon className="size-4.5 text-[#94A3B8] group-hover:text-[#C9A227] transition-colors duration-300" />
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-[#E2E8F0] text-lg font-semibold font-[family-name:var(--font-display)] mb-2 group-hover:text-white transition-colors duration-300">
+                    {industry.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-[#64748B] text-sm leading-relaxed">
+                    {industry.description}
+                  </p>
+                </div>
+              </motion.div>
+            )
+          })}
+        </div>
+
+        {/* Stats row */}
+        <motion.div
+          variants={fadeUpVariant}
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6"
+        >
+          {stats.map((stat) => (
+            <div
+              key={stat.label}
+              className="text-center py-4 px-3 rounded-xl border border-[#1E3048]/60 transition-colors duration-300 hover:border-[#C9A227]/30"
+              style={{ backgroundColor: 'rgba(22, 32, 50, 0.5)' }}
+            >
+              <div className="text-2xl sm:text-3xl font-bold font-[family-name:var(--font-display)] bg-gradient-to-r from-[#C9A227] to-[#E8CC6E] bg-clip-text text-transparent mb-1">
+                {stat.value}
+              </div>
+              <div className="text-[#64748B] text-xs sm:text-sm uppercase tracking-wider">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Bottom accent */}
+        <div className="flex justify-center mt-14 sm:mt-16">
+          <div className="w-48 h-px bg-gradient-to-r from-transparent via-[#C9A227]/30 to-transparent" />
+        </div>
+      </motion.div>
     </section>
   )
 }

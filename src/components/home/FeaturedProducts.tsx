@@ -1,333 +1,212 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Eye, ShoppingCart, Star, Heart, GitCompare } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useNavigationStore } from '@/lib/store'
-import { useCartStore } from '@/lib/cart-store'
-import { useCompareStore } from '@/lib/compare-store'
-import { toast } from 'sonner'
-import ScrollReveal from '@/components/ui/ScrollReveal'
-import ProductCardSkeleton from '@/components/products/ProductCardSkeleton'
+import { Camera } from 'lucide-react'
 
-interface Product {
-  id: string
-  name: string
-  slug: string
-  shortDesc: string | null
-  images: string[]
-  basePrice: number
-  category: { name: string; slug: string }
-  isFeatured: boolean
+interface Project {
+  title: string
+  category: string
+  gradient: string
+  aspectClass: string
 }
 
-const staggerContainer = {
+const projects: Project[] = [
+  {
+    title: 'Saffron & Gold Wedding Suite',
+    category: 'Wedding · Foil',
+    gradient: 'linear-gradient(135deg, #B45309 0%, #D97706 30%, #F59E0B 60%, #FBBF24 100%)',
+    aspectClass: 'aspect-[3/4]',
+  },
+  {
+    title: "Architect's Visiting Card",
+    category: 'Stationery',
+    gradient: 'linear-gradient(135deg, #1E3A5F 0%, #2563EB 40%, #3B82F6 70%, #60A5FA 100%)',
+    aspectClass: 'aspect-[4/3]',
+  },
+  {
+    title: 'Skincare Mono Carton',
+    category: 'Packaging',
+    gradient: 'linear-gradient(135deg, #065F46 0%, #059669 35%, #10B981 65%, #34D399 100%)',
+    aspectClass: 'aspect-[3/4]',
+  },
+  {
+    title: 'Jewellery Catalogue',
+    category: 'Brochure',
+    gradient: 'linear-gradient(135deg, #581C87 0%, #7C3AED 35%, #8B5CF6 65%, #A78BFA 100%)',
+    aspectClass: 'aspect-[4/5]',
+  },
+  {
+    title: 'Spot UV Brand Folder',
+    category: 'Specialty',
+    gradient: 'linear-gradient(135deg, #134E4A 0%, #0D9488 35%, #14B8A6 65%, #2DD4BF 100%)',
+    aspectClass: 'aspect-[4/3]',
+  },
+  {
+    title: 'Wellness Packaging Series',
+    category: 'Pharmaceutical · Carton',
+    gradient: 'linear-gradient(135deg, #78350F 0%, #B45309 30%, #D97706 60%, #F59E0B 100%)',
+    aspectClass: 'aspect-[3/4]',
+  },
+  {
+    title: 'Studio Annual Report',
+    category: 'Binding',
+    gradient: 'linear-gradient(135deg, #312E81 0%, #4338CA 35%, #6366F1 65%, #818CF8 100%)',
+    aspectClass: 'aspect-[4/5]',
+  },
+  {
+    title: 'Diwali Storefront Print',
+    category: 'Festival Poster',
+    gradient: 'linear-gradient(135deg, #9A3412 0%, #EA580C 30%, #F97316 60%, #FB923C 100%)',
+    aspectClass: 'aspect-[4/3]',
+  },
+]
+
+const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 },
+    transition: { staggerChildren: 0.06 },
   },
 }
 
-const staggerItem = {
-  hidden: { opacity: 0, y: 24 },
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 24, scale: 0.97 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
   },
 }
 
 export default function FeaturedProducts() {
-  const { navigate } = useNavigationStore()
-  const addItem = useCartStore((s) => s.addItem)
-  const compareAddItem = useCompareStore((s) => s.addItem)
-  const isInCompare = useCompareStore((s) => s.isInCompare)
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const res = await fetch('/api/products?featured=true&limit=8')
-        const data = await res.json()
-        setProducts(data.products || [])
-      } catch {
-        setProducts([
-          { id: '1', name: 'Premium Business Cards', slug: 'premium-business-cards', shortDesc: '250 GSM Premium Cards', images: [], basePrice: 199, category: { name: 'Business Cards', slug: 'business-cards' }, isFeatured: true },
-          { id: '2', name: 'Royal Wedding Cards', slug: 'royal-wedding-cards', shortDesc: 'Hand-crafted Luxury', images: [], basePrice: 1499, category: { name: 'Wedding Cards', slug: 'wedding-cards' }, isFeatured: true },
-          { id: '3', name: 'Corporate Letterheads', slug: 'corporate-letterheads', shortDesc: 'Professional Stationery', images: [], basePrice: 499, category: { name: 'Letterheads', slug: 'letterheads' }, isFeatured: true },
-          { id: '4', name: 'Tri-fold Brochures', slug: 'tri-fold-brochures', shortDesc: 'Marketing Materials', images: [], basePrice: 799, category: { name: 'Brochures', slug: 'brochures' }, isFeatured: true },
-          { id: '5', name: 'Custom Packaging Boxes', slug: 'custom-packaging', shortDesc: 'Branded Packaging', images: [], basePrice: 999, category: { name: 'Packaging', slug: 'packaging' }, isFeatured: true },
-          { id: '6', name: 'Vinyl Stickers', slug: 'vinyl-stickers', shortDesc: 'Die-cut Stickers', images: [], basePrice: 299, category: { name: 'Stickers', slug: 'stickers' }, isFeatured: true },
-          { id: '7', name: 'Flex Banners', slug: 'flex-banners', shortDesc: 'Large Format', images: [], basePrice: 399, category: { name: 'Banners', slug: 'banners' }, isFeatured: true },
-          { id: '8', name: 'Premium Envelopes', slug: 'premium-envelopes', shortDesc: 'Corporate Envelopes', images: [], basePrice: 349, category: { name: 'Envelopes', slug: 'envelopes' }, isFeatured: true },
-        ])
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchProducts()
-  }, [])
-
-  const handleQuickAdd = (e: React.MouseEvent, product: Product) => {
-    e.stopPropagation()
-    addItem({
-      productId: product.id,
-      name: product.name,
-      quantity: 1,
-      price: product.basePrice,
-      image: product.images?.[0] || '',
-      variantName: 'Standard',
-      variantId: null,
-      attrs: {},
-    })
-    toast.success('Added to cart', {
-      description: `${product.name} has been added to your cart.`,
-    })
-  }
-
-  const handleCompare = (e: React.MouseEvent, product: Product) => {
-    e.stopPropagation()
-    if (isInCompare(product.id)) {
-      useCompareStore.getState().removeItem(product.id)
-      toast.info('Removed from comparison')
-      return
-    }
-    const success = compareAddItem({
-      productId: product.id,
-      name: product.name,
-      price: product.basePrice,
-      image: product.images?.[0] || '',
-      slug: product.slug,
-      category: product.category.name,
-      materials: [],
-      sizes: [],
-      finishes: [],
-      turnaround: '3-5 Business Days',
-    })
-    if (!success) {
-      toast.error('Compare list is full', {
-        description: 'You can compare up to 3 products at a time. Remove one to add another.',
-      })
-    } else {
-      toast.success('Added to comparison', {
-        description: `${product.name} added. Click the compare icon in the header to view.`,
-      })
-    }
-  }
-
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-[#F8F9FA] to-white relative">
-      <ScrollReveal variant="fade-up" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28" style={{ backgroundColor: '#0B1628' }}>
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(-45deg, transparent, transparent 80px, #C9A227 80px, #C9A227 81px)',
+          }}
+        />
+        <div className="absolute top-1/3 right-0 w-72 h-72 rounded-full bg-[#C9A227]/[0.02] blur-3xl" />
+        <div className="absolute bottom-1/3 left-0 w-64 h-64 rounded-full bg-[#C9A227]/[0.02] blur-3xl" />
+      </div>
+
+      {/* Top divider */}
+      <div className="absolute top-0 left-0 right-0 ink-line" />
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
         {/* Section header */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-muted text-gold text-xs font-semibold mb-4"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-            FEATURED
+        <div className="text-center mb-14 sm:mb-16">
+          {/* Gold label */}
+          <motion.div variants={fadeUpVariant} className="flex items-center justify-center gap-3 mb-5">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A227]/60" />
+            <span className="text-[#C9A227] text-xs font-semibold uppercase tracking-[0.2em] flex items-center gap-1.5">
+              <Camera className="size-3.5" />
+              From Our Floor
+            </span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A227]/60" />
           </motion.div>
+
+          {/* Main heading */}
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold mb-3 text-gradient-animate"
+            variants={fadeUpVariant}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-display)] text-[#E2E8F0] mb-4"
           >
-            Our Best Sellers
+            Recent{' '}
+            <span className="italic bg-gradient-to-r from-[#C9A227] via-[#E8CC6E] to-[#C9A227] bg-clip-text text-transparent">
+              Work
+            </span>
           </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-0.5 gold-gradient mx-auto mb-4"
-          />
+
+          {/* Gold accent line */}
+          <motion.div variants={fadeUpVariant} className="flex justify-center mb-6">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#C9A227] to-transparent" />
+          </motion.div>
+
+          {/* Subheading */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-base max-w-2xl mx-auto"
+            variants={fadeUpVariant}
+            className="text-[#94A3B8] text-base sm:text-lg max-w-3xl mx-auto leading-relaxed"
           >
-            Discover our most popular printing products, crafted with premium
-            materials and state-of-the-art offset printing technology.
+            A few things we&apos;ve made recently. A small selection from our floor — packaging, stationery, weddings, brochures.
           </motion.p>
         </div>
 
-        {/* Products grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <ProductCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : (
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {products.map((product, idx) => (
-              <motion.div
-                key={product.id}
-                variants={staggerItem}
-                whileHover={{ y: -6 }}
-                className="group rounded-xl border border-border/40 bg-white overflow-hidden shadow-[0_4px_20px_-4px_rgba(13,27,61,0.08)] hover:premium-shadow-xl transition-all duration-300 cursor-pointer gold-glow-hover border-glow-animate card-hover-lift"
-                onClick={() =>
-                  navigate('product-detail', { productId: product.id })
-                }
+        {/* Project cards masonry grid */}
+        <motion.div
+          variants={containerVariants}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
+          {projects.map((project) => (
+            <motion.div
+              key={project.title}
+              variants={cardVariant}
+              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+              className="group cursor-pointer"
+            >
+              <div
+                className={`${project.aspectClass} relative rounded-xl overflow-hidden border border-[#1E3048]/60 transition-all duration-500 group-hover:border-[#C9A227]/30`}
               >
-                {/* Image area */}
-                <div className="relative aspect-[4/3] bg-gradient-to-br from-navy/5 to-gold/5 overflow-hidden">
-                  {product.images && product.images.length > 0 ? (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-xl bg-navy/5 flex items-center justify-center">
-                        <span className="text-navy/20 font-bold text-2xl">
-                          MO
-                        </span>
-                      </div>
-                    </div>
-                  )}
+                {/* Gradient placeholder background */}
+                <div
+                  className="absolute inset-0 transition-transform duration-700 group-hover:scale-110"
+                  style={{ background: project.gradient }}
+                />
 
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                    <Badge className="gold-gradient text-navy font-semibold text-[10px] uppercase tracking-wider border-0 px-2.5 py-0.5">
-                      {product.isFeatured ? 'BESTSELLER' : 'NEW'}
-                    </Badge>
-                    <Badge className="bg-white/90 text-navy text-[10px] font-medium backdrop-blur-sm border-0">
-                      {product.category.name}
-                    </Badge>
-                  </div>
+                {/* Subtle overlay on hover */}
+                <div className="absolute inset-0 bg-[#0B1628]/0 group-hover:bg-[#0B1628]/20 transition-colors duration-500" />
 
-                  {/* Hover actions - right side */}
-                  <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => { e.stopPropagation() }}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
-                    >
-                      <Heart className="h-3.5 w-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={(e) => handleCompare(e, product)}
-                      className={`flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-sm shadow-md transition-colors ${
-                        isInCompare(product.id)
-                          ? 'bg-gold text-navy'
-                          : 'bg-white/90 hover:bg-gold hover:text-navy'
-                      }`}
-                    >
-                      <GitCompare className="h-3.5 w-3.5" />
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => navigate('product-detail', { productId: product.id })}
-                      className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm shadow-md hover:bg-gold hover:text-navy transition-colors"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
-                    </motion.button>
-                  </div>
+                {/* Bottom gradient for text readability */}
+                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0B1628]/80 via-[#0B1628]/40 to-transparent" />
 
-                  {/* Quick Add to Cart overlay - bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
-                    <Button
-                      onClick={(e) => handleQuickAdd(e, product)}
-                      className="w-full rounded-none gold-gradient hover-shimmer text-navy font-semibold text-sm h-9 border-0 shadow-lg"
-                    >
-                      <ShoppingCart className="size-3.5 mr-1.5" />
-                      Quick Add to Cart
-                    </Button>
-                  </div>
-
-                  {/* Bottom gradient overlay for text readability */}
-                  <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-navy/30 via-navy/10 to-transparent group-hover:from-navy/50 transition-colors duration-300 pointer-events-none" />
-                </div>
-
-                {/* Content */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-navy text-sm mb-1 group-hover:text-gold-dark transition-colors line-clamp-1">
-                    {product.name}
+                {/* Content overlay */}
+                <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+                  {/* Category label */}
+                  <span className="inline-block text-[#C9A227] text-[10px] sm:text-xs font-medium uppercase tracking-wider mb-1.5 sm:mb-2">
+                    {project.category}
+                  </span>
+                  {/* Title */}
+                  <h3 className="text-white text-sm sm:text-base font-semibold font-[family-name:var(--font-display)] leading-snug line-clamp-2 group-hover:text-[#E2E8F0] transition-colors duration-300">
+                    {project.title}
                   </h3>
-                  <p className="text-muted-foreground text-sm mb-2 line-clamp-1">
-                    {product.shortDesc || 'Premium Quality Printing'}
-                  </p>
-
-                  {/* Star Rating */}
-                  <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex items-center gap-0.5">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <Star
-                          key={star}
-                          className={`size-3 ${
-                            star <= 4
-                              ? 'fill-gold text-gold'
-                              : 'fill-gold/40 text-gold/40'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-[10px] text-muted-foreground">
-                      ({64 + idx * 12})
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-xs text-muted-foreground">
-                        Starting from
-                      </span>
-                      <p className="text-gold-dark font-bold text-lg leading-tight">
-                        ₹{product.basePrice.toLocaleString()}
-                      </p>
-                    </div>
-                    <Button
-                      size="sm"
-                      className="gold-gradient hover-shimmer text-navy font-semibold text-xs h-8 px-3 hover:opacity-90 transition-opacity"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigate('product-detail', { productId: product.id })
-                      }}
-                    >
-                      View
-                      <ArrowRight className="size-3 ml-1" />
-                    </Button>
-                  </div>
                 </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
 
-        {/* View all button */}
-        <ScrollReveal variant="fade-up" delay={0.3} className="text-center mt-12">
-          <Button
-            onClick={() => navigate('products')}
-            variant="outline"
-            className="border-navy/20 text-navy hover:bg-navy hover:text-white font-semibold px-8 py-5 rounded-xl transition-all hover-shimmer"
-          >
-            View All Products
-            <ArrowRight className="size-4 ml-2" />
-          </Button>
-        </ScrollReveal>
-      </ScrollReveal>
+                {/* Gold border glow on hover */}
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    boxShadow: 'inset 0 0 20px rgba(201, 162, 39, 0.08), 0 0 20px rgba(201, 162, 39, 0.05)',
+                  }}
+                />
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Bottom accent */}
+        <div className="flex justify-center mt-14 sm:mt-16">
+          <div className="w-48 h-px bg-gradient-to-r from-transparent via-[#C9A227]/30 to-transparent" />
+        </div>
+      </motion.div>
     </section>
   )
 }

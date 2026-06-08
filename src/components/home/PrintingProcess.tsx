@@ -2,159 +2,275 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Palette, Printer, Scissors, Truck } from 'lucide-react'
-import ScrollReveal from '@/components/ui/ScrollReveal'
 
 const steps = [
   {
     number: '01',
-    icon: Palette,
-    title: 'Design',
+    title: 'Design & File Prep',
     description:
-      'Choose from our templates or upload your own design. Our team can also create a custom design for you.',
+      'Your artwork — or ours — checked for bleed, colour profile, fonts, and resolution. Print-ready files only.',
   },
   {
     number: '02',
-    icon: Printer,
-    title: 'Print',
+    title: 'Proofing & Sign-Off',
     description:
-      'Your design goes through our state-of-the-art offset printing machines for crisp, vibrant results.',
+      'Digital and (where the run requires it) physical proofs. Approved on paper, before plate.',
   },
   {
     number: '03',
-    icon: Scissors,
-    title: 'Finish',
+    title: 'Press & Finishing',
     description:
-      'Professional finishing touches — lamination, foiling, embossing, die-cutting, and more.',
+      'Offset run with colour calibration, then through the chosen finishing line — coating, foil, emboss, die-cut.',
   },
   {
     number: '04',
-    icon: Truck,
-    title: 'Deliver',
+    title: 'Quality Check & Dispatch',
     description:
-      'Securely packed and shipped right to your doorstep. Track your order every step of the way.',
+      'Visual inspection, count verification, careful packing — and onward delivery to your door.',
   },
 ]
 
+const stepVariant = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+      delay: i * 0.15,
+    },
+  }),
+}
+
+const lineVariant = {
+  hidden: { scaleX: 0 },
+  visible: {
+    scaleX: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+      delay: 0.4,
+    },
+  },
+}
+
 export default function PrintingProcess() {
   return (
-    <section className="py-16 md:py-24 bg-white relative">
+    <section
+      className="py-20 md:py-28 relative overflow-hidden"
+      style={{ background: '#0B1628' }}
+    >
       {/* Subtle top gold divider */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-      {/* Subtle bottom gold divider */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-      <ScrollReveal variant="fade-right" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
+
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute top-1/3 right-1/4 w-72 h-72 rounded-full opacity-[0.025]"
+          style={{
+            background: 'radial-gradient(circle, #C9A227 0%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section header */}
-        <div className="text-center mb-12 md:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-16 md:mb-20"
+        >
+          {/* Label */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-muted text-gold text-xs font-semibold mb-4"
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="inline-flex items-center gap-2 mb-6"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-            OUR PROCESS
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A227]/60" />
+            <span
+              className="text-xs font-semibold uppercase tracking-[0.25em]"
+              style={{ color: '#C9A227' }}
+            >
+              Our Process
+            </span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A227]/60" />
           </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-navy mb-3"
-          >
-            How It Works
-          </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-0.5 gold-gradient mx-auto mb-4"
-          />
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-base max-w-2xl mx-auto"
-          >
-            From design to delivery — our streamlined 4-step process ensures
-            your printing experience is smooth and hassle-free.
-          </motion.p>
-        </div>
 
-        {/* Process steps */}
-        <div className="relative">
-          {/* Connecting dotted line - desktop */}
-          <div className="hidden md:flex absolute top-1/2 left-[12.5%] right-[12.5%] -translate-y-1/2 items-center justify-between z-0">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="flex-1 flex items-center mx-4">
-                <div className="w-full border-t-2 border-dashed border-gold/20" />
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.5 + i * 0.2 }}
-                  className="w-3 h-3 rounded-full bg-gold/20 -ml-1.5 shrink-0"
-                />
-              </div>
-            ))}
-          </div>
+          {/* Heading */}
+          <h2
+            className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6"
+            style={{
+              fontFamily: 'var(--font-display), "Playfair Display", ui-serif, Georgia, serif',
+              color: '#E2E8F0',
+            }}
+          >
+            How We Work
+          </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6 relative">
-            {steps.map((step, index) => (
+          {/* Subheading */}
+          <p
+            className="text-base md:text-lg max-w-3xl mx-auto leading-relaxed"
+            style={{ color: '#94A3B8' }}
+          >
+            From file to finished piece, in four careful passes. Every project
+            follows the same disciplined route — because the surprises that
+            shouldn&apos;t happen on press, don&apos;t.
+          </p>
+        </motion.div>
+
+        {/* Desktop timeline — horizontal */}
+        <div className="hidden md:block">
+          <div className="relative">
+            {/* Connecting line */}
+            <div className="absolute top-[32px] left-[12%] right-[12%] h-[2px] origin-left">
               <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                variants={lineVariant}
+                initial="hidden"
+                whileInView="visible"
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-                className="relative text-center group"
-              >
-                {/* Step circle */}
-                <div className="relative mx-auto mb-6">
-                  <motion.div
-                    whileHover={{ scale: 1.08 }}
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white border-2 border-gold/30 flex items-center justify-center mx-auto relative z-10 group-hover:border-gold group-hover:gold-shadow transition-all duration-300 premium-shadow"
+                className="w-full h-full"
+                style={{
+                  background:
+                    'linear-gradient(90deg, #C9A227, #D4B54E, #C9A227)',
+                }}
+              />
+            </div>
+
+            {/* Steps */}
+            <div className="grid grid-cols-4 gap-6 relative">
+              {steps.map((step, i) => (
+                <motion.div
+                  key={step.number}
+                  custom={i}
+                  variants={stepVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '-40px' }}
+                  className="flex flex-col items-center text-center"
+                >
+                  {/* Numbered circle */}
+                  <div
+                    className="w-16 h-16 rounded-full flex items-center justify-center mb-6 relative z-10"
+                    style={{
+                      background: '#0B1628',
+                      border: '2px solid #C9A227',
+                      boxShadow: '0 0 20px rgba(201, 162, 39, 0.15)',
+                    }}
                   >
-                    <motion.div
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6, ease: 'easeInOut' }}
+                    <span
+                      className="text-lg font-bold"
+                      style={{
+                        fontFamily: 'var(--font-display), "Playfair Display", ui-serif, Georgia, serif',
+                        color: '#C9A227',
+                      }}
                     >
-                      <step.icon className="size-8 md:size-9 text-navy group-hover:text-gold transition-colors duration-300" />
-                    </motion.div>
-                  </motion.div>
-                  {/* Step number with gold circle and pulse animation */}
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.3 + index * 0.15, type: 'spring', stiffness: 300 }}
-                    className="absolute -top-2 -right-2 w-8 h-8 rounded-full gold-gradient flex items-center justify-center text-navy font-bold text-xs z-20 premium-shadow animate-gold-pulse-sm"
-                  >
-                    {step.number}
-                  </motion.span>
-                </div>
-
-                {/* Content */}
-                <h3 className="text-navy font-bold text-lg md:text-xl mb-2 group-hover:text-gold-dark transition-colors">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground text-base leading-relaxed max-w-[250px] mx-auto">
-                  {step.description}
-                </p>
-
-                {/* Connecting dotted line for mobile */}
-                {index < steps.length - 1 && (
-                  <div className="md:hidden flex justify-center my-4">
-                    <div className="w-0.5 h-8 border-l-2 border-dashed border-gold/30" />
+                      {step.number}
+                    </span>
                   </div>
-                )}
-              </motion.div>
-            ))}
+
+                  {/* Title */}
+                  <h3
+                    className="text-lg font-bold mb-2"
+                    style={{
+                      fontFamily: 'var(--font-display), "Playfair Display", ui-serif, Georgia, serif',
+                      color: '#E2E8F0',
+                    }}
+                  >
+                    {step.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p
+                    className="text-sm leading-relaxed max-w-[260px]"
+                    style={{ color: '#94A3B8' }}
+                  >
+                    {step.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
-      </ScrollReveal>
+
+        {/* Mobile timeline — vertical */}
+        <div className="md:hidden">
+          <div className="relative">
+            {/* Vertical connecting line */}
+            <div className="absolute left-[31px] top-0 bottom-0 w-[2px]">
+              <motion.div
+                initial={{ scaleY: 0 }}
+                whileInView={{ scaleY: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full h-full origin-top"
+                style={{
+                  background:
+                    'linear-gradient(180deg, #C9A227, #D4B54E, #C9A227)',
+                }}
+              />
+            </div>
+
+            {/* Steps */}
+            <div className="space-y-10">
+              {steps.map((step, i) => (
+                <motion.div
+                  key={step.number}
+                  custom={i}
+                  variants={stepVariant}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, margin: '-20px' }}
+                  className="flex gap-5 relative"
+                >
+                  {/* Numbered circle */}
+                  <div
+                    className="w-16 h-16 rounded-full flex items-center justify-center shrink-0 relative z-10"
+                    style={{
+                      background: '#0B1628',
+                      border: '2px solid #C9A227',
+                      boxShadow: '0 0 20px rgba(201, 162, 39, 0.15)',
+                    }}
+                  >
+                    <span
+                      className="text-lg font-bold"
+                      style={{
+                        fontFamily: 'var(--font-display), "Playfair Display", ui-serif, Georgia, serif',
+                        color: '#C9A227',
+                      }}
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div className="pt-2">
+                    <h3
+                      className="text-lg font-bold mb-2"
+                      style={{
+                        fontFamily: 'var(--font-display), "Playfair Display", ui-serif, Georgia, serif',
+                        color: '#E2E8F0',
+                      }}
+                    >
+                      {step.title}
+                    </h3>
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: '#94A3B8' }}
+                    >
+                      {step.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }

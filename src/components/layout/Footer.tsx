@@ -1,358 +1,242 @@
 'use client'
 
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  Printer,
-  Phone,
-  Mail,
-  MapPin,
-  Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
-  ArrowRight,
-  Send,
-  CreditCard,
-  Banknote,
-  Smartphone,
-  Wallet,
-  Truck,
-  Heart,
-  ShieldCheck,
-  Clock,
-  Award,
-  ArrowUp,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import React from 'react'
+import { Phone, Mail, MapPin } from 'lucide-react'
 import { useNavigationStore } from '@/lib/store'
 
-const quickLinks = [
-  { label: 'All Products', page: 'products' as const },
-  { label: 'Business Cards', page: 'products' as const, categorySlug: 'business-cards' },
-  { label: 'Wedding Cards', page: 'products' as const, categorySlug: 'wedding-cards' },
-  { label: 'Brochures & Flyers', page: 'products' as const, categorySlug: 'brochures' },
-  { label: 'Packaging', page: 'products' as const, categorySlug: 'packaging' },
-  { label: 'Track Order', page: 'order-tracking' as const },
-  { label: 'About Us', page: 'about' as const },
-  { label: 'Contact Us', page: 'contact' as const },
-  { label: 'Wishlist', page: 'wishlist' as const },
-  { label: 'Free Samples', page: 'sample-request' as const },
-]
-
 const services = [
-  'Offset Printing',
-  'Digital Printing',
-  'Custom Design',
-  'Bulk Orders',
-  'GST Invoicing',
-  'Pan-India Delivery',
+  'Brochures & Catalogues',
+  'Wedding Cards',
+  'Mono Cartons',
+  'Visiting Cards',
+  'Bill Books',
+  'T-Shirt Printing',
 ]
 
-const socialLinks = [
-  { icon: Facebook, href: '#', label: 'Facebook' },
-  { icon: Instagram, href: '#', label: 'Instagram' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
-]
-
-const paymentMethods = [
-  { label: 'Visa', icon: CreditCard },
-  { label: 'Mastercard', icon: CreditCard },
-  { label: 'UPI', icon: Smartphone },
-  { label: 'Razorpay', icon: Wallet },
-  { label: 'COD', icon: Banknote },
-]
-
-const trustBadges = [
-  { icon: Truck, label: 'Free Shipping' },
-  { icon: ShieldCheck, label: 'Secure Payments' },
-  { icon: Clock, label: '24hr Turnaround' },
-  { icon: Award, label: 'ISO Certified' },
+const specialties = [
+  'Foil Stamping',
+  'Embossing',
+  'UV & Spot UV',
+  'Lamination',
+  'Die-Cutting',
+  'Binding',
 ]
 
 export default function Footer() {
   const { navigate } = useNavigationStore()
-  const [email, setEmail] = useState('')
-  const [subscribing, setSubscribing] = useState(false)
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.trim() || !email.includes('@')) {
-      toast.error('Please enter a valid email address')
-      return
-    }
-    setSubscribing(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    toast.success('Subscribed successfully!', {
-      description: 'You\'ll receive exclusive offers and printing tips.',
-    })
-    setEmail('')
-    setSubscribing(false)
-  }
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
 
   return (
-    <footer className="bg-navy-dark text-white mt-auto relative">
-      {/* Gold gradient top border */}
-      <div className="h-1 bg-gradient-to-r from-navy-dark via-gold to-navy-dark" />
-      <div className="h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+    <footer className="mt-auto relative" style={{ backgroundColor: '#0B1628' }}>
+      {/* Subtle gold gradient top border */}
+      <div
+        className="h-px"
+        style={{
+          background:
+            'linear-gradient(to right, transparent, #C9A227, transparent)',
+        }}
+      />
 
-      {/* Newsletter Signup Bar */}
-      <div className="navy-gradient">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-10">
-            {/* Left side - Text */}
-            <div className="text-center md:text-left flex-1">
-              <h3 className="text-xl md:text-2xl font-bold mb-1.5">
-                Stay{' '}
-                <span className="gold-gradient-text">Updated</span>
-              </h3>
-              <p className="text-white/60 text-sm md:text-base max-w-md">
-                Subscribe for exclusive offers, printing tips, and new product launches
-              </p>
-            </div>
-
-            {/* Right side - Email form */}
-            <form
-              onSubmit={handleSubscribe}
-              className="flex w-full md:w-auto max-w-md gap-2"
-            >
-              <div className="relative flex-1 md:w-72">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-white/30" />
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-gold focus:ring-gold/30 h-11 pl-10 pr-4 w-full rounded-lg"
-                />
-              </div>
-              <Button
-                type="submit"
-                disabled={subscribing}
-                className="gold-gradient hover-shimmer text-navy font-semibold h-11 px-5 shrink-0 rounded-lg"
-              >
-                {subscribing ? (
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                  >
-                    <Send className="size-4" />
-                  </motion.div>
-                ) : (
-                  <>
-                    <Send className="size-4 mr-1.5" />
-                    Subscribe
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* Trust badges strip */}
-      <div className="border-t border-b border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {trustBadges.map((badge) => (
-              <div
-                key={badge.label}
-                className="flex items-center gap-2.5 justify-center md:justify-start group/badge"
-              >
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gold/10 to-gold/5 flex items-center justify-center shrink-0 group-hover/badge:from-gold/20 group-hover/badge:to-gold/10 transition-all duration-300">
-                  <badge.icon className="size-4 text-gold" />
-                </div>
-                <span className="text-white/60 text-xs font-medium group-hover/badge:text-gold/80 transition-colors duration-200">{badge.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main footer content */}
-        <div className="py-10 md:py-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
-          {/* Brand column */}
+        <div className="py-12 md:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+          {/* Column 1: Brand Info */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center premium-shadow">
-                <Printer className="size-5 text-navy" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg leading-tight">Murlidhar</h3>
-                <span className="text-gold text-xs tracking-[0.2em] uppercase font-medium">
-                  Offset
-                </span>
-              </div>
-            </div>
-            <p className="text-white/60 text-sm leading-relaxed mb-6">
-              Where Every Print Tells a Story. Gujarat&apos;s trusted printing
-              press delivering premium quality offset and digital printing
-              solutions since 2009.
+            {/* Brand name */}
+            <h3
+              className="text-2xl font-bold tracking-tight mb-1"
+              style={{
+                fontFamily: 'var(--font-display), "Playfair Display", Georgia, serif',
+                color: '#E2E8F0',
+              }}
+            >
+              Murlidhar Offset
+            </h3>
+
+            {/* Tagline */}
+            <p
+              className="text-xs uppercase tracking-[0.25em] mb-5"
+              style={{ color: '#C9A227' }}
+            >
+              The Craft of Print
             </p>
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <motion.a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/50 hover:text-gold hover:border-gold/30 hover:bg-gold/5 transition-all duration-200"
-                >
-                  <social.icon className="size-4" />
-                </motion.a>
-              ))}
-            </div>
+
+            {/* Quote */}
+            <p
+              className="text-sm italic leading-relaxed mb-4"
+              style={{
+                fontFamily: 'var(--font-display), "Playfair Display", Georgia, serif',
+                color: '#94A3B8',
+              }}
+            >
+              &ldquo;Where ink meets intention, and paper becomes a keepsake.&rdquo;
+            </p>
+
+            {/* Description */}
+            <p className="text-sm leading-relaxed" style={{ color: '#64748B' }}>
+              A Gujarat-based offset printing house, serving Indian businesses
+              with patience and precision.
+            </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Column 2: Services */}
           <div>
-            <h4 className="text-gold font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              Quick Links
-              <span className="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent" />
+            <h4
+              className="text-xs uppercase tracking-[0.2em] font-semibold mb-5"
+              style={{ color: '#C9A227' }}
+            >
+              Services
             </h4>
             <ul className="space-y-2.5">
-              {quickLinks.map((link) => (
-                <li key={link.label}>
+              {services.map((service) => (
+                <li key={service}>
                   <button
-                    onClick={() =>
-                      navigate(link.page, {
-                        categorySlug: (link as { categorySlug?: string }).categorySlug ?? null,
-                      })
-                    }
-                    className="text-white/60 text-sm hover:text-gold transition-colors duration-200 flex items-center gap-1.5 group/link py-0.5"
+                    onClick={() => navigate('products')}
+                    className="text-sm transition-colors duration-200 hover:text-[#E2E8F0] text-left"
+                    style={{ color: '#94A3B8' }}
                   >
-                    <ArrowRight className="size-3 opacity-0 -ml-5 group-hover/link:opacity-100 group-hover/link:ml-0 transition-all duration-200 text-gold" />
-                    <span className="text-[13px] group-hover/link:translate-x-0.5 transition-transform duration-200">{link.label}</span>
+                    {service}
                   </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Services */}
+          {/* Column 3: Specialty */}
           <div>
-            <h4 className="text-gold font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              Our Services
-              <span className="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent" />
+            <h4
+              className="text-xs uppercase tracking-[0.2em] font-semibold mb-5"
+              style={{ color: '#C9A227' }}
+            >
+              Specialty
             </h4>
             <ul className="space-y-2.5">
-              {services.map((service) => (
-                <li key={service}>
-                  <span className="text-white/60 text-sm flex items-center gap-1.5">
-                    <span className="w-1 h-1 rounded-full bg-gold/50" />
-                    {service}
-                  </span>
+              {specialties.map((specialty) => (
+                <li key={specialty}>
+                  <button
+                    onClick={() => navigate('products')}
+                    className="text-sm transition-colors duration-200 hover:text-[#E2E8F0] text-left"
+                    style={{ color: '#94A3B8' }}
+                  >
+                    {specialty}
+                  </button>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          {/* Column 4: Get In Touch */}
           <div>
-            <h4 className="text-gold font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
-              Contact Us
-              <span className="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent" />
+            <h4
+              className="text-xs uppercase tracking-[0.2em] font-semibold mb-5"
+              style={{ color: '#C9A227' }}
+            >
+              Get In Touch
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="space-y-4">
+              {/* Phone */}
               <li className="flex items-start gap-3">
-                <MapPin className="size-4 text-gold shrink-0 mt-0.5" />
-                <span className="text-white/60 text-sm leading-relaxed">
-                  Industrial Area, Rajkot,
-                  <br />
-                  Gujarat, India - 360002
-                </span>
+                <Phone
+                  className="size-4 shrink-0 mt-0.5"
+                  style={{ color: '#C9A227' }}
+                />
+                <div>
+                  <a
+                    href="tel:+919510737852"
+                    className="text-sm transition-colors duration-200 hover:text-[#E2E8F0] block"
+                    style={{ color: '#94A3B8' }}
+                  >
+                    +91 95107 37852
+                  </a>
+                  <span className="text-xs" style={{ color: '#64748B' }}>
+                    Call or WhatsApp
+                  </span>
+                </div>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="size-4 text-gold shrink-0" />
-                <a
-                  href="tel:+919876543210"
-                  className="text-white/60 text-sm hover:text-gold transition-colors"
-                >
-                  +91 98765 43210
-                </a>
+
+              {/* Email */}
+              <li className="flex items-start gap-3">
+                <Mail
+                  className="size-4 shrink-0 mt-0.5"
+                  style={{ color: '#C9A227' }}
+                />
+                <div>
+                  <a
+                    href="mailto:murlidharoffset84@gmail.com"
+                    className="text-sm transition-colors duration-200 hover:text-[#E2E8F0] block"
+                    style={{ color: '#94A3B8' }}
+                  >
+                    murlidharoffset84@gmail.com
+                  </a>
+                  <span className="text-xs" style={{ color: '#64748B' }}>
+                    Send your brief
+                  </span>
+                </div>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="size-4 text-gold shrink-0" />
-                <a
-                  href="mailto:info@murlidharoffset.com"
-                  className="text-white/60 text-sm hover:text-gold transition-colors"
-                >
-                  info@murlidharoffset.com
-                </a>
+
+              {/* Location */}
+              <li className="flex items-start gap-3">
+                <MapPin
+                  className="size-4 shrink-0 mt-0.5"
+                  style={{ color: '#C9A227' }}
+                />
+                <div>
+                  <p className="text-sm" style={{ color: '#94A3B8' }}>
+                    Gujarat, India
+                  </p>
+                  <span className="text-xs" style={{ color: '#64748B' }}>
+                    Visit us by appointment
+                  </span>
+                </div>
               </li>
             </ul>
 
-            {/* Accepted Payments */}
-            <div className="mt-6">
-              <h4 className="text-gold font-semibold text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
-                Accepted Payments
-                <span className="flex-1 h-px bg-gradient-to-r from-gold/30 to-transparent" />
-              </h4>
-              <div className="flex flex-wrap gap-2">
-                {paymentMethods.map((method) => (
-                  <div
-                    key={method.label}
-                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/[0.04] border border-white/10 text-white/50 text-xs hover:border-gold/30 hover:text-gold/80 hover:bg-gold/[0.06] transition-all duration-200 group/pay"
-                  >
-                    <method.icon className="size-3.5 group-hover/pay:text-gold transition-colors" />
-                    <span className="font-medium">{method.label}</span>
-                  </div>
-                ))}
+            {/* Internal navigation links */}
+            <div className="mt-6 pt-5" style={{ borderTop: '1px solid #1E3048' }}>
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                <button
+                  onClick={() => navigate('about')}
+                  className="text-xs transition-colors duration-200 hover:text-[#E2E8F0]"
+                  style={{ color: '#64748B' }}
+                >
+                  About
+                </button>
+                <button
+                  onClick={() => navigate('contact')}
+                  className="text-xs transition-colors duration-200 hover:text-[#E2E8F0]"
+                  style={{ color: '#64748B' }}
+                >
+                  Contact
+                </button>
+                <button
+                  onClick={() => navigate('products')}
+                  className="text-xs transition-colors duration-200 hover:text-[#E2E8F0]"
+                  style={{ color: '#64748B' }}
+                >
+                  Products
+                </button>
+                <button
+                  onClick={() => navigate('order-tracking')}
+                  className="text-xs transition-colors duration-200 hover:text-[#E2E8F0]"
+                  style={{ color: '#64748B' }}
+                >
+                  Track Order
+                </button>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/50 text-xs md:text-sm">
-            © {new Date().getFullYear()} Murlidhar Offset. All rights reserved.
+        <div
+          className="py-5 flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-0"
+          style={{ borderTop: '1px solid #1E3048' }}
+        >
+          <p className="text-xs" style={{ color: '#64748B' }}>
+            © 2026 Murlidhar Offset. All rights reserved. Crafted with care ·
+            Made in Gujarat
           </p>
-          <div className="flex items-center gap-4 text-white/50 text-xs md:text-sm">
-            <button
-              onClick={() => navigate('privacy')}
-              className="hover:text-gold transition-colors"
-            >
-              Privacy Policy
-            </button>
-            <span>|</span>
-            <button
-              onClick={() => navigate('terms')}
-              className="hover:text-gold transition-colors"
-            >
-              Terms of Service
-            </button>
-            <span>|</span>
-            <button
-              onClick={() => navigate('refund')}
-              className="hover:text-gold transition-colors"
-            >
-              Refund Policy
-            </button>
-          </div>
         </div>
       </div>
-
-      {/* Back to top button */}
-      <motion.button
-        onClick={scrollToTop}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="absolute -top-5 right-8 w-10 h-10 rounded-full gold-gradient flex items-center justify-center premium-shadow hover-shimmer z-10"
-        aria-label="Back to top"
-      >
-        <ArrowUp className="size-4 text-navy" />
-      </motion.button>
     </footer>
   )
 }

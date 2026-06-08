@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "# Murlidhar Offset Landing Page Design Specification\n\n## 1. Color Scheme\n- **Primary Background**: #0A192F (deep navy blue)\n- **Secondary Background**: #112240 (slightly lighter navy)\n- **Accent Color**: #F59E0B (vibrant amber/gold)\n- **Text Primary**: #FFFFFF (white)\n- **Text Secondary**: #CBD5E1 (light blue-gray)\n- **Text Tertiary**: #64748B (medium gray)\n- **Card Background**: #1E293B (dark slate)\n- **Border Color**: #334155 (lighter slate)\n\n## 2. Typography\n- **Primary Font**: 'Inter' (sans-serif) - used for headings and body text\n- **Secondary Font**: 'Playfair Display' (serif) - used for hero headings\n- **Font Sizes**:\n  - H1: 3.5rem (56px)\n  - H2: 2.5rem (40px)\n  - H3: 1.875rem (30px)\n  - H4: 1.25rem (20px)\n  - Body: 1rem (16px)\n  - Small: 0.875rem (14px)\n- **Font Weights**:\n  - Headings: 700 (bold)\n  - Body: 400 (regular)\n  - Accent text: 600 (medium)\n\n## 3. Layout Structure\n- **Header**: Fixed position with navigation\n- **Hero Section**: Full viewport height with centered content\n- **Service Categories**: Horizontal scrolling section\n- **Content Blocks**: Alternating dark/light blue background sections\n- **Footer**: Multi-column layout with social links\n\n## 4. Navigation Style\n- **Logo**: Left-aligned with brand name \"Murlidhar Offset\" in white\n- **Menu Items**: Right-aligned horizontal menu with hover effects\n- **Menu Items**: \"Heritage\", \"Services\", \"Finishes\", \"Process\", \"Gallery\", \"Contact\"\n- **CTA Button**: \"Get a Quote\" in amber with rounded corners\n- **Phone Number**: Right-aligned with icon\n\n## 5. Hero Section Design\n- **Background**: Dark navy blue with subtle geometric pattern overlay\n- **Main Heading**: \"Where ink meets intention, and paper becomes keepsake.\" with \"intention\" and \"keepsake\" in amber\n- **Subheading**: White text describing the company as a full-service offset printing house\n- **Logo**: Circular emblem with intricate border design and brand name inside\n- **CTA Buttons**: \n  - \"Our Craft\" in amber with rounded corners\n  - \"Talk on WhatsApp\" with WhatsApp icon\n  - \"Print-Ready\" in amber with star icon\n- **Statistics**: \n  - \"1000+\" in amber\n  - \"FMCG Pharma\" in amber\n  - \"Projects Delivered\" and \"Industry Approved\" in white\n\n## 6. Card/Grid Layouts\n- **Service Cards**: Rectangular cards with rounded corners\n- **Category Badges**: Small amber badges with white text\n- **Service Categories**: Horizontal scrollable section with:\n  - \"Wedding Invitations\"\n  - \"Mono Cartons & Packaging\"\n  - \"Foil Stamping & Embossing\"\n  - \"Pharmaceutical Labels\"\n\n## 7. Spacing and Visual Rhythm\n- **Padding**: 4rem (64px) on all sides for main content\n- **Gutter**: 2rem (32px) between grid items\n- **Section Spacing**: 6rem (96px) between sections\n- **Line Height**: 1.6 for body text\n- **Letter Spacing**: 0.05rem for headings\n\n## 8. Animation Styles\n- **Fade-in**: Elements appear on scroll\n- **Slide-in**: From bottom for hero content\n- **Hover Effects**: Subtle scale on cards and buttons\n- **Scroll Animation**: Smooth reveal for content blocks\n\n## 9. Button Styles\n- **Primary Button**: \n  - Background: #F59E0B (amber)\n  - Text: White\n  - Border-radius: 0.5rem (8px)\n  - Padding: 0.75rem 1.5rem (12px 24px)\n  - Font-weight: 600\n- **Secondary Button**: \n  - Background: Transparent\n  - Border: 1px solid #F59E0B\n  - Text: #F59E0B\n  - Border-radius: 0.5rem\n  - Padding: 0.75rem 1.5rem\n\n## 10. Footer Design\n- **Background**: #0A192F (same as header)\n- **Columns**: 4-column layout with:\n  - Company info\n  - Services list\n  - Quick links\n  - Contact information\n- **Social Icons**: White icons with hover effects\n- **Copyright**: Small text in #64748B\n\n## 11. Special Visual Effects\n- **Geometric Pattern**: Subtle overlay in hero section\n- **Gradient**: Soft blue gradient in content blocks\n- **Glass Morphism**: Subtle transparency effects on cards\n- **Border Decorations**: Intricate circular border on logo\n- **Shadow**: Soft shadows on cards and buttons\n- **Iconography**: Custom icons for services and features\n\n## Additional Details\n- **Icons**: Custom line icons for services\n- **Images**: High-quality product photography with dark borders\n- **Dividers**: Subtle lines between sections\n- **Loading States**: Smooth transitions for interactive elements\n- **Responsive**: Fully responsive with mobile-first approach\n- **Accessibility**: High contrast ratios, proper heading hierarchy\n\nThis design emphasizes elegance and professionalism with its dark color scheme, sophisticated typography, and premium feel that matches the high-end printing services offered by the company.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1780944411,
+  "id": "202606090246282a2d263062c74b89",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606090246282a2d263062c74b89",
+  "usage": {
+    "completion_tokens": 1245,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 6017,
+    "prompt_tokens_details": {
+      "cached_tokens": 6
+    },
+    "total_tokens": 7262
+  }
+}

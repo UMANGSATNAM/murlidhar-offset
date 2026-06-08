@@ -1,203 +1,264 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import {
-  Award,
-  Truck,
-  BadgeIndianRupee,
-  Palette,
-  Receipt,
-  Globe,
-} from 'lucide-react'
-import ScrollReveal from '@/components/ui/ScrollReveal'
+import React from 'react'
+import { motion } from 'framer-motion'
+import { CheckCircle, Palette, Clock, Layers } from 'lucide-react'
 
-const features = [
+const valueCards = [
   {
-    icon: Award,
-    title: 'Premium Quality',
+    icon: CheckCircle,
+    title: 'Print-Ready Standard',
     description:
-      'State-of-the-art offset printing technology delivering unmatched color accuracy and sharp detail on every print.',
-    stat: { value: 99, suffix: '%', label: 'Quality Rate' },
-  },
-  {
-    icon: Truck,
-    title: 'Fast Delivery',
-    description:
-      '24–48 hour turnaround on most orders. Rush delivery available for urgent printing needs across India.',
-    stat: { value: 24, suffix: 'hr', label: 'Turnaround' },
-  },
-  {
-    icon: BadgeIndianRupee,
-    title: 'Best Prices',
-    description:
-      'Competitive pricing with bulk discounts. Get the best value without compromising on print quality.',
-    stat: { value: 40, suffix: '%', label: 'Bulk Savings' },
+      'Every file is inspected, profiled and proofed before plate. No surprises on press.',
   },
   {
     icon: Palette,
-    title: 'Custom Design',
+    title: 'Craft Finishing',
     description:
-      'Professional design support from our in-house team. Upload your own or let us create something special.',
-    stat: { value: 500, suffix: '+', label: 'Templates' },
+      'Foil, emboss, spot UV — applied with the patience these techniques deserve.',
   },
   {
-    icon: Receipt,
-    title: 'GST Invoicing',
+    icon: Clock,
+    title: 'Honest Timelines',
     description:
-      'Fully compliant GST invoices for all business orders. Simplify your accounting with proper documentation.',
-    stat: { value: 100, suffix: '%', label: 'Compliant' },
+      'We commit only to what the press can deliver. Then we deliver early when we can.',
   },
   {
-    icon: Globe,
-    title: 'Pan-India Delivery',
+    icon: Layers,
+    title: 'Substrate Range',
     description:
-      'Reliable shipping to every corner of India. Track your orders and get them delivered right to your doorstep.',
-    stat: { value: 5000, suffix: '+', label: 'Pincodes' },
+      'Standard paper, board, MetPet, and certain plastics — printed with the right ink for the surface.',
   },
 ]
 
-// Animated counter component — starts at target value so users never see "0"
-function AnimatedCounter({ value, suffix, duration = 2 }: { value: number; suffix: string; duration?: number }) {
-  const hasAnimated = useRef(false)
-  const spanRef = useRef<HTMLSpanElement>(null)
-  const isInView = useInView(spanRef, { once: true })
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.2,
+    },
+  },
+}
 
-  useEffect(() => {
-    if (!isInView || hasAnimated.current || !spanRef.current) return
-    hasAnimated.current = true
-    // Animate from 0 to target value by updating the DOM directly
-    spanRef.current.textContent = `0${suffix}`
-    let start = 0
-    const increment = value / (duration * 60)
-    const timer = setInterval(() => {
-      start += increment
-      if (start >= value) {
-        if (spanRef.current) spanRef.current.textContent = `${value.toLocaleString()}${suffix}`
-        clearInterval(timer)
-      } else {
-        if (spanRef.current) spanRef.current.textContent = `${Math.floor(start).toLocaleString()}${suffix}`
-      }
-    }, 1000 / 60)
-    return () => clearInterval(timer)
-  }, [isInView, value, duration, suffix])
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+}
 
-  return (
-    <span ref={spanRef} className="tabular-nums">
-      {value.toLocaleString()}{suffix}
-    </span>
-  )
+const cardVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
 }
 
 export default function WhyChooseUs() {
   return (
-    <section className="py-16 md:py-24 bg-navy relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-gold/3 rounded-full blur-3xl" />
+    <section
+      className="relative py-20 md:py-28 lg:py-32 overflow-hidden"
+      style={{ backgroundColor: '#0B1628' }}
+    >
+      {/* Subtle background pattern — diagonal lines */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(45deg, #C9A227 0, #C9A227 1px, transparent 1px, transparent 32px)',
+        }}
+      />
+
+      {/* Radial gold glow — top left */}
+      <div className="absolute top-0 left-0 w-[500px] h-[500px] pointer-events-none">
+        <div
+          className="w-full h-full rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle at 30% 30%, rgba(201,162,39,0.06) 0%, transparent 70%)',
+          }}
+        />
       </div>
 
-      <ScrollReveal variant="scale-in" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Section header */}
-        <div className="text-center mb-12 md:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-gold text-gold text-xs font-semibold mb-4"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
-            WHY CHOOSE US
-          </motion.div>
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-3xl md:text-4xl font-bold text-white mb-3"
-          >
-            The Murlidhar <span className="text-gradient-animate">Advantage</span>
-          </motion.h2>
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="w-20 h-0.5 gold-gradient mx-auto mb-4"
-          />
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-white/60 max-w-2xl mx-auto"
-          >
-            We combine decades of printing expertise with cutting-edge
-            technology to deliver results that exceed expectations.
-          </motion.p>
-        </div>
+      {/* Radial gold glow — bottom right */}
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] pointer-events-none">
+        <div
+          className="w-full h-full rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle at 70% 70%, rgba(201,162,39,0.04) 0%, transparent 70%)',
+          }}
+        />
+      </div>
 
-        {/* Features grid */}
-        <div className="relative">
-          {/* Connecting lines - desktop */}
-          <div className="hidden lg:block absolute top-1/2 left-[16.67%] right-[16.67%] h-px -translate-y-1/2">
-            <div className="w-full h-full bg-gradient-to-r from-gold/0 via-gold/15 to-gold/0" />
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="absolute top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gold/30"
-                style={{ left: `${i * 20}%` }}
-              />
-            ))}
-          </div>
+      {/* Content */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        {/* Opening Quote */}
+        <motion.div variants={fadeUpVariant} className="text-center mb-14 md:mb-20">
+          <blockquote
+            className="font-[family-name:var(--font-display)] text-base sm:text-lg md:text-xl italic leading-relaxed max-w-3xl mx-auto"
+            style={{ color: '#8899B3' }}
+          >
+            &ldquo;The press has a memory. Every machine remembers a story it has helped
+            tell.&rdquo;
+          </blockquote>
+        </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
-            {features.map((feature, index) => (
-              <motion.div
-                key={feature.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.08 }}
-                whileHover={{ y: -4 }}
-                className="group relative p-6 md:p-7 rounded-xl bg-white/5 border border-white/10 hover:border-gold/30 transition-all duration-300 hover:bg-white/[0.08]"
+        {/* Two-column layout: text left, cards right */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20">
+          {/* Left column — Text content */}
+          <motion.div variants={fadeUpVariant} className="flex flex-col justify-center">
+            {/* Section heading */}
+            <div className="mb-6">
+              <motion.h2
+                variants={fadeUpVariant}
+                className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight"
+                style={{ fontFamily: 'var(--font-display)' }}
               >
-                {/* Gold accent corner */}
-                <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden rounded-tr-xl">
-                  <div className="absolute top-0 right-0 w-8 h-8 bg-gold/10 transform rotate-45 translate-x-4 -translate-y-4 group-hover:bg-gold/20 transition-colors" />
+                <span style={{ color: '#E2E8F0' }}>Our </span>
+                <span
+                  style={{
+                    background:
+                      'linear-gradient(135deg, #C9A227 0%, #E8CC6E 50%, #C9A227 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  Heritage
+                </span>
+              </motion.h2>
+
+              {/* Gold accent line */}
+              <motion.div
+                variants={fadeUpVariant}
+                className="mt-4 mb-6"
+                style={{
+                  height: '2px',
+                  width: '64px',
+                  background: 'linear-gradient(90deg, #C9A227, transparent)',
+                }}
+              />
+            </div>
+
+            {/* Subheading */}
+            <motion.p
+              variants={fadeUpVariant}
+              className="text-lg sm:text-xl font-medium mb-6"
+              style={{ color: '#94A3B8', fontFamily: 'var(--font-display)' }}
+            >
+              A printing house built on precision, paper &amp; patience.
+            </motion.p>
+
+            {/* Body text */}
+            <motion.p
+              variants={fadeUpVariant}
+              className="text-base sm:text-lg leading-relaxed"
+              style={{ color: '#8899B3' }}
+            >
+              For Murlidhar Offset, printing isn&rsquo;t manufacturing — it&rsquo;s craft.
+              Every job that leaves our floor passes through hands that understand paper grain,
+              ink density, and the quiet difference between &ldquo;good enough&rdquo; and finished.
+              From a saffron-stitched wedding invitation to a thousand-unit pharmaceutical
+              carton run, we treat each piece with the same standard: it should look as
+              considered in your hand as it did on the page.
+            </motion.p>
+          </motion.div>
+
+          {/* Right column — Value cards grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
+            {valueCards.map((card, index) => (
+              <motion.div
+                key={card.title}
+                variants={cardVariant}
+                whileHover={{
+                  y: -4,
+                  borderColor: 'rgba(201,162,39,0.35)',
+                  transition: { duration: 0.3 },
+                }}
+                className="group relative p-5 md:p-6 rounded-xl transition-colors duration-300"
+                style={{
+                  backgroundColor: '#162032',
+                  border: '1px solid rgba(30,48,72,0.7)',
+                }}
+              >
+                {/* Gold icon */}
+                <div
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-lg flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    backgroundColor: 'rgba(201,162,39,0.12)',
+                    border: '1px solid rgba(201,162,39,0.2)',
+                  }}
+                >
+                  <card.icon
+                    className="w-5 h-5 md:w-5.5 md:h-5.5"
+                    style={{ color: '#C9A227' }}
+                    strokeWidth={1.75}
+                  />
                 </div>
 
-                <motion.div
-                  className="w-12 h-12 rounded-xl gold-gradient flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 icon-bounce-hover"
-                  whileHover={{ scale: 1.15 }}
+                {/* Card title */}
+                <h3
+                  className="text-base md:text-lg font-semibold mb-2 transition-colors duration-300"
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    color: '#E2E8F0',
+                  }}
                 >
-                  <feature.icon className="size-6 text-navy" />
-                </motion.div>
-                <h3 className="text-white font-semibold text-lg mb-2 group-hover:text-gold-light transition-colors">
-                  {feature.title}
+                  {card.title}
                 </h3>
-                <p className="text-white/50 text-base leading-relaxed mb-3">
-                  {feature.description}
+
+                {/* Card description */}
+                <p
+                  className="text-sm md:text-base leading-relaxed"
+                  style={{ color: '#8899B3' }}
+                >
+                  {card.description}
                 </p>
-                {/* Animated stat */}
-                <div className="flex items-baseline gap-1.5 pt-3 border-t border-white/10 relative">
-                  {/* Subtle background shape */}
-                  <div className="absolute -left-2 -right-2 -top-1 -bottom-1 rounded-lg bg-gold/[0.04]" />
-                  <div className="relative flex items-baseline gap-1.5">
-                    <span className="text-gold font-bold text-2xl gold-gradient-text">
-                      <AnimatedCounter value={feature.stat.value} suffix={feature.stat.suffix} />
-                    </span>
-                    <span className="text-white/60 text-sm uppercase tracking-wider font-medium">
-                      {feature.stat.label}
-                    </span>
-                  </div>
-                </div>
+
+                {/* Subtle gold accent on hover — top border reveal */}
+                <div
+                  className="absolute top-0 left-4 right-4 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background:
+                      'linear-gradient(90deg, transparent, rgba(201,162,39,0.5), transparent)',
+                  }}
+                />
               </motion.div>
             ))}
           </div>
         </div>
-      </ScrollReveal>
+
+        {/* Bottom decorative divider */}
+        <motion.div
+          variants={fadeUpVariant}
+          className="mt-16 md:mt-24 mx-auto"
+          style={{
+            height: '1px',
+            maxWidth: '200px',
+            background:
+              'linear-gradient(90deg, transparent, rgba(201,162,39,0.3), transparent)',
+          }}
+        />
+      </motion.div>
     </section>
   )
 }

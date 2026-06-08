@@ -1,5 +1,389 @@
 # Murlidhar Offset - Project Worklog
 
+## Round 14: Complete Landing Page Redesign Matching Reference Site
+
+### Current Project Status: Complete visual redesign matching reference site (gold-dragonfly-137948.hostingersite.com)
+The entire landing page has been rebuilt to match the reference Murlidhar Offset site's dark navy + gold premium editorial design. All 8 home page sections rewritten, Header and Footer rebuilt, CSS theme updated, Google Fonts added. VLM rating: 8/10.
+
+### Reference Site Design Language
+- **Primary BG**: #0B1628 (deep dark navy)
+- **Card BG**: #162032 (dark navy card)
+- **Accent**: #C9A227 (gold)
+- **Serif Font**: Playfair Display (headings)
+- **Sans Font**: Inter (body)
+- **Style**: Editorial, luxury, typographic — no hero images, dark backgrounds throughout
+
+### Sections Built (Top to Bottom)
+1. **Hero** — "Where ink meets intention" serif heading, gold accent words, editorial subtext, 5 stats, marquee service badges, 2 CTAs
+2. **Heritage** — Opening quote, 2-column layout with 4 value cards
+3. **What We Print** — 6 category filter tabs, 16 service cards with gold left border hover
+4. **Specialty Finishes** — 7 finish cards (Foil, Emboss, UV, Lamination, Die-Cut, Binding, Substrates)
+5. **How We Work** — 4-step horizontal timeline with gold connecting line
+6. **Who We Print For** — 6 industry cards + 4 stats
+7. **Recent Work** — 8 project cards with gradient placeholders
+8. **Start a Print** — 3 contact methods (WhatsApp, Email, Call), CTA button
+
+### Verification
+- ✅ Playwright screenshots captured for all 8 sections
+- ✅ Zero console errors across full page scroll
+- ✅ Lint passes (0 errors, 0 warnings)
+- ✅ VLM rating: 8/10
+
+### Known Issues
+1. Agent-browser connectivity issues with localhost
+2. Dev server persistence requires detached child process workaround
+3. Inner pages still use old light theme styling
+
+### Priority Recommendations for Next Phase
+1. Update inner pages to dark theme
+2. Add real product images to Gallery
+3. Implement hash-based URL routing
+4. JWT authentication upgrade
+5. Razorpay payment gateway integration
+
+---
+Task ID: 2g+2h+2i
+Agent: Sections Developer
+Task: Build Who We Print For, Gallery, and CTA sections
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign, hero/header/footer/CSS already updated)
+- Read `/home/z/my-project/src/components/home/CTABanner.tsx` — Previous component was a CTA banner with stats counter, animated dot pattern, "Ready to Print?" heading, glass stats card, Shop Now/Get Custom Quote buttons
+- Read `/home/z/my-project/src/components/home/FeaturedProducts.tsx` — Previous component fetched featured products from API, displayed in product cards with cart/compare/wishlist actions, light gradient background
+- Read `/home/z/my-project/src/components/home/BulkOrderCTA.tsx` — Previous component was "Need Bulk Printing?" section with Printer icon, navy gradient background, Get Custom Quote/Call Us buttons, trust badges
+- Read `/home/z/my-project/src/app/page.tsx` — Confirmed CTABanner, FeaturedProducts, BulkOrderCTA are dynamically imported and used in HomePageContent
+- Read `/home/z/my-project/src/app/globals.css` — Confirmed brand utility classes, color tokens, font variables, ink-line class
+- Completely rewrote `/home/z/my-project/src/components/home/CTABanner.tsx` as "Who We Print For" section (Task 2g):
+  - **Background**: Dark navy (#0B1628) with diagonal gold line pattern overlay (3% opacity), radial gold glow orbs, ink-line top divider
+  - **Section heading**: "Who We Print For" with gold italic "For" using bg-clip gradient text, Playfair Display serif, responsive 3xl→4xl→5xl
+  - **Gold label**: "Industries We Serve" with Sparkles icon and horizontal gold rule accents
+  - **Gold accent line**: 16px wide centered below heading
+  - **Subheading**: Full editorial description in #94A3B8, max-w-3xl centered
+  - **6 industry cards** in 1→2→3 responsive grid:
+    1. ShoppingBag icon — "FMCG & Beauty" (01) — Mono cartons, labels, dispenser sleeves
+    2. Pill icon — "Pharmaceutical" (02) — Compliant cartons, leaflet inserts, batch-printed labels
+    3. Heart icon — "Weddings & Events" (03) — Multilingual wedding cards, RSVPs, foil/emboss/laser-cut
+    4. Briefcase icon — "Corporate & Finance" (04) — Annual reports, stationery, folders
+    5. Store icon — "Retail & D2C" (05) — Hangtags, lookbooks, dispatch boxes, paper bags
+    6. Flame icon — "Festival & Religious" (06) — Diwali, Navratri posters, calendars, prasad packaging
+  - **Card design**: Dark navy card bg (#162032), 3px gold left border accent, #1E3048/60 borders, large muted number (01-06) in #C9A227/20, icon in top-right corner, title in white Playfair Display, description in #64748B, radial hover glow from left
+  - **Stats row below**: 4 stats in 2→4 column grid — "25+ Print Categories", "1K+ Projects Delivered", "200+ Brand Partners", "100% In-House Production" — each with gold gradient numbers and muted labels, hover border accent
+  - **Framer Motion animations**: containerVariants staggerChildren (0.08s), fadeUpVariant (opacity 0→1, y 28→0, 0.7s), cardVariant (0→1, y 24→0, 0.6s), whileHover y:-4
+  - **Removed**: AnimatedCounter stats, old CTA banner layout, glass stats card, Shop Now/Get Custom Quote buttons, dot pattern animation
+- Completely rewrote `/home/z/my-project/src/components/home/FeaturedProducts.tsx` as "Recent Work" gallery (Task 2h):
+  - **Background**: Dark navy (#0B1628) with diagonal gold line pattern overlay (2% opacity), radial gold glow orbs, ink-line top divider
+  - **Section heading**: "Recent Work" with gold italic "Work" using bg-clip gradient text, Playfair Display serif
+  - **Gold label**: "From Our Floor" with Camera icon and horizontal gold rule accents
+  - **Subheading**: "A few things we've made recently..." in #94A3B8, max-w-3xl centered
+  - **8 project cards** in 2→4 responsive grid with varied aspect ratios for masonry feel:
+    1. "Saffron & Gold Wedding Suite" — Wedding · Foil — warm amber/gold gradient (aspect 3/4)
+    2. "Architect's Visiting Card" — Stationery — blue gradient (aspect 4/3)
+    3. "Skincare Mono Carton" — Packaging — green gradient (aspect 3/4)
+    4. "Jewellery Catalogue" — Brochure — purple gradient (aspect 4/5)
+    5. "Spot UV Brand Folder" — Specialty — teal gradient (aspect 4/3)
+    6. "Wellness Packaging Series" — Pharmaceutical · Carton — amber gradient (aspect 3/4)
+    7. "Studio Annual Report" — Binding — indigo gradient (aspect 4/5)
+    8. "Diwali Storefront Print" — Festival Poster — orange gradient (aspect 4/3)
+  - **Card design**: Gradient placeholder backgrounds (scale 110% on hover), #1E3048/60 border, bottom gradient overlay for text readability, gold category label, white serif title, gold border glow on hover
+  - **Framer Motion animations**: containerVariants staggerChildren (0.06s), cardVariant (opacity 0→1, y 24→0, scale 0.97→1, 0.6s), whileHover y:-6, gradient background scale-110 on hover
+  - **Removed**: API fetch for products, cart/compare/wishlist actions, product pricing, star ratings, quick add to cart, badge system, ProductCardSkeleton, ScrollReveal wrapper
+- Completely rewrote `/home/z/my-project/src/components/home/BulkOrderCTA.tsx` as "Start a Print" CTA/Contact section (Task 2i):
+  - **Background**: Dark navy (#0B1628) with radial gold gradient accent at top center (rgba(201,162,39,0.06)), diagonal gold line pattern (3% opacity), radial glow orbs, ink-line top divider
+  - **Section heading**: "Start a Print" with gold italic "Print" using bg-clip gradient text, Playfair Display serif
+  - **Gold label**: "Get In Touch" with horizontal gold rule accents
+  - **Subheading**: Full editorial description about the process — send file, idea, or rough description; get options, paper recommendations, honest timeline — usually same working day
+  - **3 contact methods** in 1→3 responsive grid:
+    1. "WhatsApp Us" — MessageCircle icon — green accent (#25D366) — links to wa.me/919510737852
+    2. "Email a Brief" — Mail icon — gold accent (#C9A227) — murlidharoffset84@gmail.com — mailto link
+    3. "Call the Studio" — Phone icon — gold accent (#C9A227) — +91 95107 37852 — tel link
+  - **Contact card design**: Dark navy card bg (#162032), #1E3048/60 border, icon in colored container with matching border, title in Playfair Display, subtitle in #64748B, radial hover glow from top, dynamic accent-colored border on hover
+  - **Working hours**: "Mon–Sat · 9 AM to 8 PM" in #64748B text
+  - **Big CTA button**: "Send a Brief" with Send icon — gold gradient fill (#C9A227→#D4B54E→#C9A227), gold-shadow, hover-shimmer, navigates to contact page
+  - **Framer Motion animations**: containerVariants staggerChildren (0.1s), fadeUpVariant, cardVariant (0→1, y 24→0, 0.6s), whileHover y:-4
+  - **Removed**: Printer icon badge, "Need Bulk Printing?" heading, trust badges, dot pattern animation, old CTA buttons
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully (✓ Compiled in ~280ms)
+
+Stage Summary:
+- Complete CTABanner → "Who We Print For" section rewrite with 6 industry cards (FMCG, Pharma, Wedding, Corporate, Retail, Festival) and 4 stats
+- Complete FeaturedProducts → "Recent Work" gallery with 8 project cards using gradient placeholders and varied aspect ratios
+- Complete BulkOrderCTA → "Start a Print" CTA section with 3 contact methods (WhatsApp/Email/Phone) and "Send a Brief" gold CTA
+- All 3 sections use dark navy (#0B1628) background, Playfair Display serif headings, gold (#C9A227) accents, #162032 card backgrounds
+- Framer Motion staggered entrance animations with whileInView on all sections
+- Fully responsive (mobile-first): 1→2→3 grids for industry cards, 2→4 for gallery, 1→3 for contact methods
+- Lint passes cleanly (0 errors), dev server compiles successfully
+
+---
+Task ID: 2d
+Agent: Services Section Developer
+Task: Build Services section matching reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign, hero/header/footer/CSS already updated)
+- Read `/home/z/my-project/src/components/home/PopularCategories.tsx` — Previous component was a "Browse by Category" section with light background, 8 category cards in a 4-col grid, fetched categories from API, white card backgrounds with product count badges
+- Read `/home/z/my-project/src/app/globals.css` — Confirmed brand color tokens, utility classes (ink-line, gold-gradient, glass-card, card-hover-lift, gold-glow-hover, etc.), and Playfair Display serif font setup
+- Read `/home/z/my-project/src/app/page.tsx` — Confirmed PopularCategories is dynamically imported and used in HomePageContent
+- Completely rewrote `/home/z/my-project/src/components/home/PopularCategories.tsx` with the following changes:
+  - **Background**: Slightly different navy shade (#0D1A2E) vs main #0B1628, with ink-line top divider and subtle gold dot pattern at 3% opacity
+  - **Section heading**: "What We Print" in Playfair Display serif (font-[family-name:var(--font-display)]), large responsive sizing (3xl→4xl→5xl)
+  - **Gold label**: "Our Services" with horizontal gold rule accents on both sides, uppercase tracking
+  - **Gold underline accent**: 2px gradient line below heading (transparent→#C9A227→transparent)
+  - **Subheading**: Full editorial description "A complete printing studio, under one roof..." in #94A3B8, max-w-3xl centered
+  - **Category filter tabs**: 6 pill buttons (All Services, Commercial, Stationery, Packaging, Events, Branding) with Framer Motion layoutId animated gold active indicator, spring transition (stiffness: 380, damping: 30)
+  - **Active tab styling**: Gold (#C9A227) filled background with shadow, inactive tabs: transparent with #1E3048 border, hover gold border
+  - **Service cards in grid**: 1 col mobile → 2 cols sm → 3 cols lg → 4 cols xl, gap-4/5
+  - **16 service cards** with: lucide-react icon (BookOpen, Megaphone, BookMarked, CalendarDays, CreditCard, FileText, Mail, Receipt, Package, Tag, Sticker, Heart, PartyPopper, Maximize2, Palette, Shirt), bold white title, muted description (#64748B), 3-line clamp
+  - **Card backgrounds**: #162032 (navy-card) with #1E3048/60 border
+  - **Gold left border on hover**: 3px #C9A227 left accent that scales from 0 to full height on hover via CSS transform (scale-y-0 → scale-y-100, origin-top)
+  - **Subtle hover glow**: Radial gradient from left center (rgba(201,162,39,0.06) → transparent) appears on hover
+  - **Icon container**: #1E3048/60 background, transitions to #C9A227/15 on hover; icon text #94A3B8→#C9A227 on hover
+  - **Framer Motion animations**: containerVariants with staggerChildren (0.04s), cardVariants (opacity 0→1, y 24→0, 0.45s ease), whileHover y:-4 lift, AnimatePresence mode="wait" with key on activeCategory for smooth tab transitions
+  - **Category mapping**: Commercial (Brochure, Flyers, Catalogues, Bill Books), Stationery (Visiting Cards, Letterheads, Envelopes), Packaging (Mono Cartons, Product Labels, Stickers), Events (Festival Posters, Wedding Cards, Invitation Cards, Flex Banners), Branding (Logo & Identity, T-Shirt Printing)
+  - **Removed**: API fetch for categories, product count badges, background images, ArrowRight icons, white card backgrounds, old "Browse by Category" heading
+  - **Bottom accent**: Subtle navy divider (gradient via #1E3048) at section bottom
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Complete PopularCategories→Services section rewrite matching reference site design
+- Dark navy background (#0D1A2E) with ink-line top divider and gold dot pattern
+- Playfair Display serif heading "What We Print" with gold label and underline accent
+- 6 filter tabs with Framer Motion layoutId animated gold active pill (All, Commercial, Stationery, Packaging, Events, Branding)
+- 16 service cards in responsive grid (1→2→3→4 cols) with lucide-react icons
+- Navy card backgrounds (#162032) with gold left border accent on hover
+- AnimatePresence smooth transitions when filtering by category
+- Full editorial description subheading
+- 0 lint errors, dev server compiles successfully
+
+---
+Task ID: 2c
+Agent: Heritage Section Developer
+Task: Build Heritage section matching reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign, hero/header/footer/CSS already updated)
+- Read `/home/z/my-project/src/components/home/WhyChooseUs.tsx` — Previous version had 6 feature cards (Premium Quality, Fast Delivery, Best Prices, Custom Design, GST Invoicing, Pan-India Delivery) with AnimatedCounter stats, connecting line decorations, gold gradient icon containers
+- Read `/home/z/my-project/src/app/globals.css` — Confirmed brand utility classes, color tokens (navy #0B1628, navy-card #162032, navy-border #1E3048, gold #C9A227), font variables (--font-display for Playfair Display, --font-sans for Inter)
+- Read `/home/z/my-project/src/app/page.tsx` — Confirmed WhyChooseUs is dynamically imported and used in HomePageContent between CTABanner and SectionDivider
+- Completely rewrote `/home/z/my-project/src/components/home/WhyChooseUs.tsx` as Heritage section with the following changes:
+  - **Background**: Dark navy (#0B1628) with subtle diagonal line pattern overlay (gold at 3% opacity, 45deg repeating gradient) and radial gold glow accents (top-left and bottom-right)
+  - **Opening Quote**: "The press has a memory. Every machine remembers a story it has helped tell." in italic Playfair Display serif, muted blue-gray (#8899B3), centered above main content
+  - **Section Heading**: "Our Heritage" — "Our" in #E2E8F0, "Heritage" in gold gradient (135deg #C9A227 → #E8CC6E → #C9A227 with background-clip text), Playfair Display, text-3xl→5xl responsive
+  - **Gold accent line**: 64px wide, 2px tall, gold-to-transparent gradient, below heading
+  - **Subheading**: "A printing house built on precision, paper & patience." in Playfair Display, #94A3B8, text-lg→xl
+  - **Body text**: Full editorial paragraph about Murlidhar Offset's craft philosophy in #8899B3, text-base→lg, leading-relaxed
+  - **Layout**: 2-column grid on desktop (lg:grid-cols-2), text content left, cards right; stacked on mobile
+  - **4 Value Cards**: 2x2 grid (sm:grid-cols-2) on right column, each with dark navy card bg (#162032), subtle border (rgba(30,48,72,0.7)):
+    1. CheckCircle icon — "Print-Ready Standard" — "Every file is inspected, profiled and proofed before plate. No surprises on press."
+    2. Palette icon — "Craft Finishing" — "Foil, emboss, spot UV — applied with the patience these techniques deserve."
+    3. Clock icon — "Honest Timelines" — "We commit only to what the press can deliver. Then we deliver early when we can."
+    4. Layers icon — "Substrate Range" — "Standard paper, board, MetPet, and certain plastics — printed with the right ink for the surface."
+  - **Card design**: Gold icon container (rgba(201,162,39,0.12) bg, rgba(201,162,39,0.2) border, #C9A227 icon color, scale-110 on hover), Playfair Display heading (#E2E8F0), description (#8899B3), subtle gold top-border reveal on hover (gradient line)
+  - **Framer Motion animations**: containerVariants with staggerChildren (0.12s delay), fadeUpVariant (opacity 0→1, y 28→0, 0.7s ease [0.22,1,0.36,1]), cardVariant (opacity 0→1, y 24→0, 0.6s), whileInView with once:true, whileHover y:-4 and gold border transition on cards
+  - **Bottom decorative divider**: Centered 200px gold gradient line (transparent → rgba(201,162,39,0.3) → transparent)
+  - **Removed**: 6 feature cards with AnimatedCounter stats, connecting line decorations, glass-gold badge, ScrollReveal wrapper, old stat values
+  - **Responsive**: Mobile-first, py-20→28→32, text sizes scale with breakpoints, grid 1→2 columns for both main layout and cards
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully (✓ Compiled in 263ms)
+
+Stage Summary:
+- Complete WhyChooseUs → Heritage section rewrite matching reference site editorial/premium design
+- Dark navy (#0B1628) background with diagonal line pattern and radial gold glow accents
+- Opening quote in italic Playfair Display serif
+- "Our Heritage" heading with gold gradient text accent
+- Editorial subheading and body text about Murlidhar Offset's craft philosophy
+- 4 value cards (Print-Ready Standard, Craft Finishing, Honest Timelines, Substrate Range) with gold icons
+- 2-column layout on desktop (text left, cards right), stacked on mobile
+- Framer Motion staggered entrance animations with whileInView
+- Premium editorial magazine layout feel
+- Fully responsive (mobile-first)
+- Lint passes cleanly (0 errors)
+
+---
+Task ID: 2b
+Agent: Header Developer
+Task: Rebuild Header to match reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign, footer and CSS theme already updated)
+- Read `/home/z/my-project/src/components/layout/Header.tsx` — Previous header had top info bar (phone, email, GST info), logo with Printer icon + "Murlidhar/Offset" split text, desktop nav with Home/Products/Categories dropdown/About/Contact, right section with Search/Notifications/ThemeToggle/Wishlist/Compare/Cart/User dropdown, mobile Sheet sidebar with all links
+- Read `/home/z/my-project/src/lib/store.ts` — Confirmed PageName types and navigate function signature for SPA routing
+- Read `/home/z/my-project/src/app/globals.css` — Confirmed brand utility classes (gold-underline-hover, glass-navy, premium-shadow, ink-line, text colors, etc.)
+- Completely rewrote `/home/z/my-project/src/components/layout/Header.tsx` with the following changes:
+  - **Layout**: Fixed header at top (replacing sticky), deep dark navy (#0B1628) background with backdrop blur, scroll-based elevation (stronger blur + shadow on scroll)
+  - **Border bottom**: 1px gradient line using border-image: linear-gradient from transparent → #1E3048 → #C9A227(0.25 opacity) → #1E3048 → transparent — subtle gold accent in center
+  - **Logo**: Left side — "MO" monogram in gold (#C9A227) square with serif font, "Murlidhar Offset" in white, "The Craft of Print" subtitle in #64748B uppercase tracking
+  - **Navigation links**: Center — 6 links matching reference site: Heritage→about, Services→products, Finishes→products, Process→about, Gallery→home, Contact→contact — uppercase tracking-wide, #94A3B8 text with gold underline on hover, active page gets white text + Framer Motion layoutId gold underline indicator
+  - **Phone number**: Right side (xl+) — Phone icon in gold + "95107 37852" in white/70 with tel: link
+  - **Utility icons**: Desktop only (md+) — Search, NotificationCenter, Wishlist (with badge), Compare (conditional, with badge), Cart (with badge) — all in subtle white/60 with hover white
+  - **CTA button**: "Get a Quote" gold filled button with ChevronRight icon, navigates to contact page — desktop only (lg+)
+  - **Mobile cart icon**: Always visible on mobile (md:hidden) for quick cart access
+  - **Mobile hamburger**: Menu/X toggle with AnimatePresence overlay menu
+  - **Mobile overlay**: Backdrop blur + black/60 overlay, menu panel slides down from top with staggered link animations, includes phone link, full-width "Get a Quote" CTA, utility links (Search, Wishlist, Compare, Free Samples, Login/Register, Dashboard), proper gradient dividers
+  - **Removed**: Top info bar, Categories dropdown (Sheet), ThemeToggle (dark-only design), User dropdown menu (moved to mobile utility section), Printer icon logo
+  - **Spacer div**: Fixed header compensation div (h-16 lg:h-[72px]) below header
+  - **Body scroll lock**: useEffect locks body overflow when mobile menu is open
+  - **Active page detection**: isActive() function checks current page against nav link mapping, handles products/product-detail both highlighting Services/Finishes
+  - **Framer Motion**: layoutId animated gold underline on active nav link, AnimatePresence for mobile overlay, staggered entrance on mobile nav items (0.05s delay per item)
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Complete Header rewrite matching reference site editorial/premium design
+- Deep navy (#0B1628) fixed header with backdrop blur and scroll-based elevation
+- 6 editorial nav links (Heritage, Services, Finishes, Process, Gallery, Contact) with gold underline hover and layoutId active indicator
+- "MO" monogram logo + "Murlidhar Offset" + "The Craft of Print" tagline
+- Phone number 95107 37852 with tel: link on desktop
+- "Get a Quote" gold CTA button navigating to contact page
+- Utility icons (Search, Notifications, Wishlist, Compare, Cart) elegantly integrated in dark theme
+- Full mobile overlay menu with Framer Motion staggered animations
+- Subtle 1px border-image gradient with gold accent at bottom
+- Removed top info bar, categories dropdown, theme toggle, user dropdown — clean and minimal
+- All existing Zustand store integrations preserved (navigation, cart, wishlist, compare)
+- Lint passes cleanly (0 errors)
+
+---
+Task ID: 2j
+Agent: Footer Developer
+Task: Rebuild Footer to match reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign)
+- Read `/home/z/my-project/src/components/layout/Footer.tsx` — Previous footer had newsletter signup, trust badges, social links, payment methods, back-to-top button, 4-column layout (Brand, Quick Links, Services, Contact)
+- Read `/home/z/my-project/src/lib/store.ts` — Reviewed navigation store for available pages and navigate function
+- Completely rewrote `/home/z/my-project/src/components/layout/Footer.tsx` to match reference site design:
+  - **Background**: Deep dark navy (#0B1628) inline style
+  - **Top border**: Thin 1px gold gradient line (transparent → #C9A227 → transparent) replacing previous thick gradient border
+  - **Column 1 (Brand Info)**: "Murlidhar Offset" in Playfair Display serif font (var(--font-display)), tagline "The Craft of Print" in gold (#C9A227) uppercase tracking, italic quote "Where ink meets intention, and paper becomes a keepsake." in Playfair Display, description "A Gujarat-based offset printing house, serving Indian businesses with patience and precision." in muted (#64748B)
+  - **Column 2 (Services)**: Brochures & Catalogues, Wedding Cards, Mono Cartons, Visiting Cards, Bill Books, T-Shirt Printing — each as clickable button navigating to products page, text color #94A3B8 with hover → #E2E8F0
+  - **Column 3 (Specialty)**: Foil Stamping, Embossing, UV & Spot UV, Lamination, Die-Cutting, Binding — same interactive style as Services
+  - **Column 4 (Get In Touch)**: Phone +91 95107 37852 with "Call or WhatsApp" subtitle, Email murlidharoffset84@gmail.com with "Send your brief" subtitle, Location "Gujarat, India" with "Visit us by appointment" subtitle — each with gold (#C9A227) lucide-react icon (Phone, Mail, MapPin). Internal nav links (About, Contact, Products, Track Order) below a thin separator
+  - **Bottom bar**: "© 2026 Murlidhar Offset. All rights reserved. Crafted with care · Made in Gujarat" centered, color #64748B, top border #1E3048
+  - **Removed**: Newsletter section, back-to-top button, social media icons, trust badges, payment methods, old quick links
+  - **Text colors**: #E2E8F0 (primary), #94A3B8 (secondary), #64748B (muted), #C9A227 (gold accents)
+  - **Responsive**: 1-col mobile → 2-col sm → 4-col lg with proper spacing
+  - **Clean, editorial, premium feel**: Minimal design matching reference site
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Complete Footer rewrite matching reference site editorial/premium design
+- Deep navy (#0B1628) background with thin gold gradient top border
+- 4-column layout: Brand info (Playfair Display serif), Services, Specialty, Get In Touch
+- Phone, email, location with contextual subtitles (Call or WhatsApp, Send your brief, Visit us by appointment)
+- No social media icons, no newsletter, no back-to-top button — clean and minimal
+- Proper text hierarchy: #E2E8F0 / #94A3B8 / #64748B / #C9A227
+- Internal navigation links for About, Contact, Products, Track Order
+- Fully responsive (1→2→4 columns)
+- Lint passes cleanly (0 errors)
+
+---
+Task ID: 2k
+Agent: CSS Theme Developer
+Task: Update globals.css with dark navy + gold theme
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, existing navy/gold theme)
+- Read `/home/z/my-project/src/app/globals.css` — Previous theme used oklch values for light mode (white backgrounds) and dark mode (navy #0D1B3D), with brand tokens: navy #0D1B3D, gold #C9A227
+- Read `/home/z/my-project/src/app/layout.tsx` — Confirmed Inter (var --font-geist-sans) and Playfair Display (var --font-display) already loaded via next/font/google
+- Completely rewrote `/home/z/my-project/src/app/globals.css` with the following changes:
+  - **Added Google Fonts @import** at the top: `@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap');` as a fallback alongside next/font optimization
+  - **Updated @theme inline section**:
+    - Added `--font-serif: var(--font-display), 'Playfair Display', ui-serif, Georgia, serif` for serif headings
+    - Updated `--font-sans` to include 'Inter' fallback: `var(--font-geist-sans), 'Inter', ui-sans-serif, system-ui, sans-serif`
+    - Updated brand color tokens from #0D1B3D → #0B1628 (deep dark navy), #1A2D52 → #112240 (secondary navy), #081228 → #070E1A (navy-dark)
+    - Added new tokens: `--color-navy-card: #162032`, `--color-navy-border: #1E3048`, `--color-slate-primary: #E2E8F0`, `--color-slate-secondary: #94A3B8`, `--color-slate-tertiary: #64748B`
+  - **Updated :root CSS variables** to match reference site dark navy theme (site defaults to dark):
+    - `--background`: oklch(0.11 0.03 255) (#0B1628 deep dark navy)
+    - `--foreground`: oklch(0.93 0.01 250) (#E2E8F0 off-white text)
+    - `--card`: oklch(0.18 0.035 258) (#162032 dark navy card)
+    - `--popover`: oklch(0.18 0.035 258) (#162032)
+    - `--primary`: oklch(0.70 0.14 85) (#C9A227 gold)
+    - `--primary-foreground`: oklch(0.11 0.03 255) (#0B1628)
+    - `--secondary`: oklch(0.15 0.04 260) (#112240)
+    - `--muted`: oklch(0.15 0.04 260) (#112240)
+    - `--muted-foreground`: oklch(0.68 0.02 250) (#94A3B8 medium slate)
+    - `--border`: oklch(0.22 0.04 260) (#1E3048 subtle navy border)
+    - `--input`: oklch(0.22 0.04 260) (#1E3048)
+    - `--sidebar`: oklch(0.09 0.025 255) (deep dark navy)
+    - All chart and sidebar variables updated to dark navy + gold palette
+  - **Updated .dark CSS variables** to match same dark navy theme (consistent dark-first design)
+  - **Added base layer heading rule**: `h1, h2, h3, h4, h5, h6 { font-family: var(--font-serif); }` for Playfair Display serif headings
+  - **Updated scrollbar colors** to use #0B1628 track and #C9A227 thumb
+  - **Updated .gold-gradient class** to use background-clip text gradient instead of solid background
+  - **Updated .navy-gradient class** to use #0B1628 and #112240 colors
+  - **Updated .glass-card class** for dark navy glass morphism: rgba(22, 32, 50, 0.6) background, rgba(30, 48, 72, 0.6) border
+  - **Updated .premium-shadow class** for dark theme: deeper shadows with rgba(0,0,0,0.3) instead of light navy
+  - **Added .ink-line utility class**: subtle 1px border with gradient (transparent → #1E3048 → #C9A22733 → #1E3048 → transparent)
+  - **Added .ink-line-gold utility class**: 2px gold divider variant
+  - **Added .text-slate-primary, .text-slate-secondary, .text-slate-tertiary** utility classes
+  - **Updated .navy-divider** to use #1E3048 border color
+  - **Updated ::selection** to use #E2E8F0 text color and gold highlight
+  - **Updated .hover-shimmer** to use more subtle white (0.15 opacity) for dark backgrounds
+  - **Updated .card-hover-lift** for dark theme shadow values
+- Updated `/home/z/my-project/src/app/layout.tsx`: Changed `defaultTheme="light"` to `defaultTheme="dark"` in ThemeProvider to make site default to dark mode
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Complete CSS theme overhaul to match reference site dark navy + gold design
+- `:root` and `.dark` now use the same dark navy palette (#0B1628 background)
+- Google Fonts import added for Playfair Display (400–800) and Inter (300–700)
+- Serif headings (Playfair Display) via base layer h1–h6 rule and --font-serif token
+- All brand color tokens updated: navy #0D1B3D→#0B1628, navy-light #1A2D52→#112240
+- New utility classes: .ink-line, .ink-line-gold, .text-slate-primary/secondary/tertiary
+- Updated utility classes: .gold-gradient (text gradient), .glass-card (dark glass), .premium-shadow (dark shadows)
+- Site defaults to dark mode (ThemeProvider defaultTheme="dark")
+- 2 files modified (globals.css, layout.tsx), 0 errors
+
+## Round 13: Hero Section Reference Site Redesign
+
+### Current Project Status: Premium Editorial Hero Redesign
+Complete rewrite of HeroSection to match reference site design — deep dark navy background, Playfair Display serif heading with gold-accented keywords, editorial/typographic layout with no hero image, stats row, and scrolling service badges marquee.
+
+---
+Task ID: 2a
+Agent: Hero Section Developer
+Task: Rebuild HeroSection to match reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context and current state
+- Read `/home/z/my-project/src/components/home/HeroSection.tsx` — previous version had hero image background, rotating words animation, glass card product showcase on right, and 4-stat grid
+- Read `/home/z/my-project/src/app/layout.tsx` — confirmed Playfair_Display font already loaded as `--font-display` CSS variable
+- Read `/home/z/my-project/src/app/globals.css` — reviewed brand utility classes and custom animations
+- Read `/home/z/my-project/tailwind.config.ts` — reviewed theme configuration
+- Completely rewrote `/home/z/my-project/src/components/home/HeroSection.tsx` with the following changes:
+  - **Background**: Deep dark navy (#0B1628) replacing hero image + overlay approach, with subtle geometric grid pattern overlay (gold lines at 4% opacity) and radial gold glow accents
+  - **Top badge**: "Established & Trusted · Gujarat, India" in muted blue-gray (#8899B3) with gold horizontal rule accents and letter-spacing
+  - **Main heading**: "Where ink meets intention, and paper becomes a keepsake." using `font-[family-name:var(--font-display)]` (Playfair Display serif), with "intention" and "keepsake" in gold (#C9A227) italic
+  - **Subtext**: Full editorial description paragraph in muted blue-gray (#8899B3), max-w-3xl centered
+  - **CTA Buttons**: "Explore Our Craft" — solid gold button with ChevronRight icon; "Talk on WhatsApp" — outlined gold button with MessageCircle icon linking to WhatsApp
+  - **Stats row**: 5 stats at bottom — "25+ Print Categories", "1000+ Projects Delivered", "Industry-Approved FMCG·Pharma", "Premium Offset Press", "Included Pre-press & Proofing" — each with icon in gold-tinted container
+  - **Scrolling service badges**: 16 service names (Brochures, Wedding Invitations, Mono Cartons, Foil Stamping, Pharmaceutical Labels, Festival Posters, Annual Reports, Spot UV, Business Cards, Flex Banners, Letter Pads, Stickers, Bill Books, Envelope Printing, Danglers, Catalogues) in marquee animation with gold border pills, gradient fade edges
+  - **No hero image**: Purely typographic/editorial design
+  - **Framer Motion animations**: containerVariants with staggerChildren, fadeUpVariant for main content, scaleInVariant for stat items, fadeInVariant for marquee section
+  - **Responsive**: Mobile-first design with responsive text sizing (text-3xl→4xl→5xl→6xl), grid columns (2→3→5 for stats), gradient fade edge widths
+  - **Removed**: Particles component, rotating words animation, AnimatePresence word rotation, product showcase cards, hero background image
+- Added marquee CSS animation to `/home/z/my-project/src/app/globals.css`:
+  - `@keyframes marqueeScroll` — translateX(0) to translateX(-50%) for seamless loop
+  - `.marquee-track` — 40s linear infinite animation, width: max-content
+  - `.marquee-track:hover` — animation-play-state: paused for accessibility
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Complete HeroSection rewrite matching reference site editorial/luxury design
+- Deep navy background (#0B1628) with geometric grid pattern and gold glow accents
+- Playfair Display serif heading with gold italic keywords ("intention", "keepsake")
+- Text-driven design with no hero image — editorial, luxury aesthetic
+- Gold CTA buttons (solid + outlined) with proper WhatsApp integration
+- 5 stat items in bottom row with gold-tinted icon containers
+- Scrolling marquee of 16 service badges with gradient fade edges
+- Framer Motion staggered entrance animations
+- Added marquee CSS keyframe animation to globals.css
+- Fully responsive (mobile-first)
+- Lint passes cleanly (0 errors)
+
 ## Round 12: Launch-Ready QA, Admin Auth, Admin Redesign, UX Fixes
 
 ### Current Project Status: LAUNCH-READY — 30/30 QA Tests Pass (100%)
@@ -1247,3 +1631,61 @@ Stage Summary:
 - Contact API endpoint uses shared database connection
 - 5 files modified: CTABanner.tsx, WhyChooseUs.tsx, TestimonialsSection.tsx, CookieConsent.tsx, Header.tsx, contact/route.ts
 - Lint passes cleanly (0 errors)
+
+---
+Task ID: 2e+2f
+Agent: Finishes + Process Developer
+Task: Build Finishes and Process sections matching reference site
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 12–13, navy/gold theme, editorial redesign)
+- Read `/home/z/my-project/src/components/home/TestimonialsSection.tsx` — Previous version was a testimonial carousel with navy card, star ratings, author avatars, auto-play, and navigation arrows on light gray background
+- Read `/home/z/my-project/src/components/home/PrintingProcess.tsx` — Previous version was a 4-step process (Design, Print, Finish, Deliver) with white background, gold step circles, dotted connecting lines, and Palette/Printer/Scissors/Truck icons
+- Read `/home/z/my-project/src/app/globals.css` — Confirmed brand color tokens (navy #0B1628, navy-card #162032, navy-border #1E3048, gold #C9A227), font variables, and utility classes
+- Read `/home/z/my-project/src/app/page.tsx` — Confirmed component import order and SectionDivider usage between sections
+- Read `/home/z/my-project/src/components/ui/SectionDivider.tsx` — Reviewed available divider directions (light-to-dark, dark-to-light, light-to-light)
+- Completely rewrote `/home/z/my-project/src/components/home/TestimonialsSection.tsx` as Specialty Finishes section:
+  - **Background**: Dark navy (#0B1628) with subtle radial gold glow accents and top gold gradient divider
+  - **Gold label**: "What Sets Us Apart" with horizontal gold rule accents on both sides, uppercase tracking
+  - **Section heading**: "Specialty Finishes" in Playfair Display serif (var(--font-display)), responsive 4xl→5xl→6xl, white (#E2E8F0)
+  - **Subheading**: "The treatments that turn print into an experience. A piece of paper holds attention for one second longer when it has weight, sheen, and texture." + "These are the techniques we use to earn that second." in #94A3B8
+  - **7 finish cards** in 3-column grid (1-col mobile → 2-col sm → 3-col lg), each with:
+    - Gold icon in tinted container (rgba(201,162,39,0.1) bg) — Sparkles, Layers, Sun, Shield, Scissors, BookOpen, FileText
+    - Title in Playfair Display serif, white (#E2E8F0)
+    - Description in muted text (#94A3B8)
+    - Card background: #162032 (navy-card) with #1E3048/60 border
+    - Gold border glow on hover with y:-4 lift animation
+  - **Framer Motion animations**: containerVariants with staggerChildren (0.08s), cardVariant (opacity 0→1, y 30→0, 0.6s), whileInView with once:true, whileHover y:-4 lift
+  - **Removed**: Testimonial carousel, star ratings, author avatars, auto-play, navigation arrows, API fetch, AnimatePresence, all testimonial-related code
+- Completely rewrote `/home/z/my-project/src/components/home/PrintingProcess.tsx` as How We Work section:
+  - **Background**: Dark navy (#0B1628) with subtle radial gold glow accent and top gold gradient divider
+  - **Gold label**: "Our Process" with horizontal gold rule accents, uppercase tracking
+  - **Section heading**: "How We Work" in Playfair Display serif, responsive 4xl→5xl→6xl, white (#E2E8F0)
+  - **Subheading**: "From file to finished piece, in four careful passes. Every project follows the same disciplined route — because the surprises that shouldn't happen on press, don't." in #94A3B8
+  - **4-step horizontal timeline** (desktop) with:
+    - Gold gradient connecting line (linear-gradient 90deg, #C9A227, #D4B54E, #C9A227) between circles
+    - Numbered circles (01, 02, 03, 04) with gold (#C9A227) border, #0B1628 fill, gold glow shadow
+    - Playfair Display serif step numbers in gold
+    - Title in Playfair Display serif, white (#E2E8F0)
+    - Description in muted text (#94A3B8)
+  - **4-step vertical timeline** (mobile) with:
+    - Vertical gold gradient connecting line (180deg)
+    - Same numbered circles and content, horizontal layout with circle left + text right
+  - **Steps**: Design & File Prep, Proofing & Sign-Off, Press & Finishing, Quality Check & Dispatch — matching reference site copy exactly
+  - **Framer Motion animations**: stepVariant with custom delay (i * 0.15s), lineVariant with scaleX animation, whileInView with once:true
+  - **Removed**: Palette/Printer/Scissors/Truck icons, white background, dotted connecting lines, gold step number badges, hover icon rotation, ScrollReveal wrapper
+- Updated `/home/z/my-project/src/app/page.tsx`: Changed SectionDivider directions between WhyChooseUs→TestimonialsSection→PrintingProcess→BulkOrderCTA from dark-to-light/light-to-dark to light-to-light (all sections now share dark navy background, subtle gold line dividers are appropriate)
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully (✓ Compiled in 175ms)
+
+Stage Summary:
+- Complete TestimonialsSection → Specialty Finishes rewrite matching reference site
+- 7 finish cards (Foil Stamping, Embossing & Debossing, UV Coating & Spot UV, Lamination, Die-Cutting, Binding & Assembly, Specialty Substrates) with gold lucide-react icons
+- Dark navy (#0B1628) background with navy-card (#162032) cards and gold accent hover glow
+- Complete PrintingProcess → How We Work rewrite matching reference site
+- 4-step horizontal timeline (desktop) with gold connecting line and numbered circles (01–04)
+- 4-step vertical timeline (mobile) with gold gradient vertical line
+- Playfair Display serif headings, Inter body text, gold (#C9A227) accents throughout
+- Framer Motion entrance animations with staggered timing
+- SectionDividers updated in page.tsx for consistent dark navy flow
+- 3 files modified, 0 lint errors, dev server compiles cleanly

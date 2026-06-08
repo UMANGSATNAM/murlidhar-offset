@@ -2,110 +2,227 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Phone, Printer } from 'lucide-react'
+import { MessageCircle, Mail, Phone, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useNavigationStore } from '@/lib/store'
-import ScrollReveal from '@/components/ui/ScrollReveal'
+
+const contactMethods = [
+  {
+    title: 'WhatsApp Us',
+    subtitle: 'Quick response, easy sharing',
+    icon: MessageCircle,
+    href: 'https://wa.me/919510737852',
+    accent: '#25D366',
+    accentBg: 'rgba(37, 211, 102, 0.1)',
+    accentBorder: 'rgba(37, 211, 102, 0.25)',
+  },
+  {
+    title: 'Email a Brief',
+    subtitle: 'murlidharoffset84@gmail.com',
+    icon: Mail,
+    href: 'mailto:murlidharoffset84@gmail.com',
+    accent: '#C9A227',
+    accentBg: 'rgba(201, 162, 39, 0.1)',
+    accentBorder: 'rgba(201, 162, 39, 0.25)',
+  },
+  {
+    title: 'Call the Studio',
+    subtitle: '+91 95107 37852',
+    icon: Phone,
+    href: 'tel:+919510737852',
+    accent: '#C9A227',
+    accentBg: 'rgba(201, 162, 39, 0.1)',
+    accentBorder: 'rgba(201, 162, 39, 0.25)',
+  },
+]
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+}
+
+const fadeUpVariant = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  },
+}
+
+const cardVariant = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+  },
+}
 
 export default function BulkOrderCTA() {
   const { navigate } = useNavigationStore()
 
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-light to-navy" />
-      <div className="absolute inset-0 hero-gradient opacity-60" />
-
-      {/* Animated dot pattern */}
-      <div className="absolute inset-0 pointer-events-none animate-dot-pattern opacity-30" />
-
-      {/* Decorative elements */}
+    <section className="relative overflow-hidden py-20 sm:py-24 lg:py-28" style={{ backgroundColor: '#0B1628' }}>
+      {/* Subtle gold gradient accent */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-gold/3 rounded-full blur-3xl" />
         <div
-          className="absolute inset-0 opacity-[0.02]"
+          className="absolute inset-0"
           style={{
-            backgroundImage:
-              'repeating-linear-gradient(-45deg, transparent, transparent 80px, #C9A227 80px, #C9A227 81px)',
+            background: 'radial-gradient(ellipse at 50% 0%, rgba(201, 162, 39, 0.06) 0%, transparent 60%)',
           }}
         />
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(135deg, transparent, transparent 80px, #C9A227 80px, #C9A227 81px)',
+          }}
+        />
+        <div className="absolute bottom-0 left-1/3 w-96 h-96 rounded-full bg-[#C9A227]/[0.03] blur-3xl" />
+        <div className="absolute top-1/4 right-0 w-80 h-80 rounded-full bg-[#C9A227]/[0.02] blur-3xl" />
       </div>
 
-      <ScrollReveal variant="scale-in" className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Printer icon */}
+      {/* Top divider */}
+      <div className="absolute top-0 left-0 right-0 ink-line" />
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: '-80px' }}
+        className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+      >
+        {/* Section header */}
+        <div className="text-center mb-12 sm:mb-14">
+          {/* Gold label */}
+          <motion.div variants={fadeUpVariant} className="flex items-center justify-center gap-3 mb-5">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent to-[#C9A227]/60" />
+            <span className="text-[#C9A227] text-xs font-semibold uppercase tracking-[0.2em]">
+              Get In Touch
+            </span>
+            <div className="h-px w-8 bg-gradient-to-l from-transparent to-[#C9A227]/60" />
+          </motion.div>
+
+          {/* Main heading */}
+          <motion.h2
+            variants={fadeUpVariant}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold font-[family-name:var(--font-display)] text-[#E2E8F0] mb-4"
+          >
+            Start a{' '}
+            <span className="italic bg-gradient-to-r from-[#C9A227] via-[#E8CC6E] to-[#C9A227] bg-clip-text text-transparent">
+              Print
+            </span>
+          </motion.h2>
+
+          {/* Gold accent line */}
+          <motion.div variants={fadeUpVariant} className="flex justify-center mb-6">
+            <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-[#C9A227] to-transparent" />
+          </motion.div>
+
+          {/* Subheading */}
+          <motion.p
+            variants={fadeUpVariant}
+            className="text-[#94A3B8] text-base sm:text-lg max-w-3xl mx-auto leading-relaxed"
+          >
+            Have a print job on your mind? Let&apos;s make it well. Send us your file, your idea, or even just a
+            rough description. We&apos;ll come back with options, paper recommendations, and an honest timeline —
+            usually within the same working day.
+          </motion.p>
+        </div>
+
+        {/* Contact methods */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          className="inline-flex items-center justify-center w-16 h-16 rounded-2xl gold-gradient mb-6 premium-shadow animate-gold-pulse-sm"
+          variants={containerVariants}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-8"
         >
-          <Printer className="size-8 text-navy" />
+          {contactMethods.map((method) => {
+            const Icon = method.icon
+            return (
+              <motion.a
+                key={method.title}
+                href={method.href}
+                target={method.href.startsWith('http') ? '_blank' : undefined}
+                rel={method.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                variants={cardVariant}
+                whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                className="group relative rounded-xl p-5 sm:p-6 text-center transition-all duration-300 border border-[#1E3048]/60 hover:border-opacity-100"
+                style={{
+                  backgroundColor: '#162032',
+                }}
+              >
+                {/* Hover glow */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(ellipse at center top, ${method.accentBg} 0%, transparent 70%)`,
+                  }}
+                />
+
+                {/* Dynamic hover border */}
+                <div
+                  className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none border"
+                  style={{ borderColor: method.accentBorder }}
+                />
+
+                <div className="relative">
+                  {/* Icon */}
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-3 transition-colors duration-300"
+                    style={{
+                      backgroundColor: method.accentBg,
+                      border: `1px solid ${method.accentBorder}`,
+                    }}
+                  >
+                    <Icon className="size-5" style={{ color: method.accent }} />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-[#E2E8F0] font-semibold font-[family-name:var(--font-display)] text-lg mb-1.5 group-hover:text-white transition-colors duration-300">
+                    {method.title}
+                  </h3>
+
+                  {/* Subtitle */}
+                  <p className="text-[#64748B] text-sm leading-relaxed">
+                    {method.subtitle}
+                  </p>
+                </div>
+              </motion.a>
+            )
+          })}
         </motion.div>
 
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
-        >
-          Need Bulk Printing?
-        </motion.h2>
-
+        {/* Working hours */}
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="text-white/70 text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed"
+          variants={fadeUpVariant}
+          className="text-center text-[#64748B] text-sm mb-8 sm:mb-10"
         >
-          Whether it&apos;s 1,000 business cards or 50,000 wedding invitations,
-          we offer the best bulk pricing with uncompromising quality. Get a
-          custom quote today!
+          Mon–Sat · 9 AM to 8 PM
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
+        {/* Big CTA button */}
+        <motion.div variants={fadeUpVariant} className="text-center">
           <Button
-            onClick={() => navigate('products')}
-            className="gold-gradient font-semibold px-8 py-6 text-base rounded-xl hover:opacity-90 transition-all gold-shadow h-auto hover-shimmer"
+            onClick={() => navigate('contact')}
+            className="font-semibold px-10 py-6 text-base sm:text-lg rounded-xl h-auto transition-all duration-300 hover-shimmer gold-shadow"
+            style={{
+              background: 'linear-gradient(135deg, #C9A227 0%, #D4B54E 50%, #C9A227 100%)',
+              color: '#0B1628',
+            }}
           >
-            Get Custom Quote
-            <ArrowRight className="size-4 ml-2" />
+            <Send className="size-5 mr-2" />
+            Send a Brief
           </Button>
-          <a href="tel:+919876543210">
-            <Button
-              variant="outline"
-              className="border-white/30 text-white hover:bg-white/10 hover:text-white font-semibold px-8 py-6 text-base rounded-xl h-auto bg-transparent hover-shimmer"
-            >
-              <Phone className="size-4 mr-2" />
-              Call Us Now
-            </Button>
-          </a>
         </motion.div>
 
-        {/* Trust badges */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="flex flex-wrap items-center justify-center gap-6 mt-10 text-white/40 text-xs"
-        >
-          {['Free Design Support', 'Bulk Discounts', 'GST Invoicing', 'Pan-India Delivery'].map((text) => (
-            <span key={text} className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-gold/60" />
-              {text}
-            </span>
-          ))}
-        </motion.div>
-      </ScrollReveal>
+        {/* Bottom accent */}
+        <div className="flex justify-center mt-14 sm:mt-16">
+          <div className="w-48 h-px bg-gradient-to-r from-transparent via-[#C9A227]/30 to-transparent" />
+        </div>
+      </motion.div>
     </section>
   )
 }
