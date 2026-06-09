@@ -1,5 +1,58 @@
 # Murlidhar Offset - Project Worklog
 
+## Round 15: Dropdown Menu for Service Category Filter
+
+### Current Project Status: UX Improvement — Category filter converted to dropdown
+User requested that the service category filter options in the "What We Print" section should be displayed as a dropdown menu instead of inline pill buttons.
+
+---
+Task ID: 1
+Agent: Main Agent
+Task: Convert PopularCategories filter tabs to dropdown menu
+
+Work Log:
+- Read `/home/z/my-project/worklog.md` for project context (Round 14, navy/gold theme, "What We Print" section with 6 pill button filter tabs)
+- Read `/home/z/my-project/src/components/home/PopularCategories.tsx` — Confirmed 6 inline pill buttons (All Services, Commercial, Stationery, Packaging, Events, Branding) with Framer Motion layoutId animated gold active indicator
+- Read `/home/z/my-project/src/components/ui/dropdown-menu.tsx` — Confirmed shadcn/ui DropdownMenu components available (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator)
+- Modified `/home/z/my-project/src/components/home/PopularCategories.tsx`:
+  - Added imports: ChevronDown, Check, Filter from lucide-react; DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel from shadcn/ui
+  - Replaced the entire "Category Filter Tabs" section (flex-wrap pill buttons with layoutId animation) with a DropdownMenu component
+  - **Dropdown trigger button**: Rounded-full, bg-[#162032] with border-[#1E3048], shows Filter icon (gold), current category label, and ChevronDown with rotation animation on open
+  - **Dropdown content**: Centered alignment, bg-[#162032] with border-[#1E3048], rounded-xl, shadow-xl, padded
+  - **Dropdown label**: "FILTER BY CATEGORY" in muted text with uppercase tracking
+  - **Dropdown separator**: bg-[#1E3048] dividing label from items
+  - **Dropdown items**: Each category as a clickable item with:
+    - Active item: bg-[#C9A227]/15 gold tinted background, text-[#C9A227] gold text, Check icon on right
+    - Inactive item: text-[#94A3B8] muted text, hover:bg-[#1E3048]/60, hover:text-[#E2E8F0]
+  - Removed: Framer Motion layoutId animated gold pill, 6 inline buttons, spring transition animation
+- Ran `bun run lint` — 0 errors, 0 warnings
+- Dev server compiles successfully
+
+Stage Summary:
+- Successfully converted 6 inline pill filter tabs to a compact dropdown menu
+- Dropdown trigger shows current category with Filter icon and animated ChevronDown
+- Dropdown menu items styled with gold highlight and check mark for active category
+- Category filtering still works correctly (verified via agent-browser)
+- All 6 categories accessible: All Services, Commercial, Stationery, Packaging, Events, Branding
+- Service cards filter correctly when selecting different categories
+- Zero console errors, zero lint errors
+
+### Verification (Agent Browser)
+- ✅ Dropdown button renders correctly with Filter icon, label, and chevron
+- ✅ Clicking opens dropdown menu with all 6 category options
+- ✅ Active category shows gold highlight (#C9A227/15 bg) and gold check mark
+- ✅ Selecting a category filters service cards correctly (All=16, Commercial=4, Packaging=3, etc.)
+- ✅ ChevronDown rotates 180° when dropdown is open
+- ✅ Proper ARIA attributes (menu, menuitem, expanded)
+- ✅ Zero console errors
+
+### Unresolved Issues & Next Phase Recommendations
+1. Inner pages still use old light theme styling
+2. No URL-based routing (SPA uses Zustand store)
+3. Admin token is base64 — consider JWT upgrade
+4. Add real product images to Gallery section
+5. Razorpay payment gateway integration
+
 ## Round 14: Complete Landing Page Redesign Matching Reference Site
 
 ### Current Project Status: Complete visual redesign matching reference site (gold-dragonfly-137948.hostingersite.com)

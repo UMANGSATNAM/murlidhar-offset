@@ -19,7 +19,18 @@ import {
   Maximize2,
   Palette,
   Shirt,
+  ChevronDown,
+  Check,
+  Filter,
 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/components/ui/dropdown-menu'
 
 // ─── Service Data ───────────────────────────────────────────
 
@@ -254,41 +265,66 @@ export default function PopularCategories() {
           </p>
         </motion.div>
 
-        {/* ── Category Filter Tabs ── */}
+        {/* ── Category Filter Dropdown ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-10 md:mb-14"
+          className="flex justify-center mb-10 md:mb-14"
         >
-          {categoryTabs.map((tab) => {
-            const isActive = activeCategory === tab.key
-            return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <button
-                key={tab.key}
-                onClick={() => setActiveCategory(tab.key)}
-                className={`
-                  relative px-4 sm:px-5 py-2 rounded-full text-xs sm:text-sm font-medium
-                  transition-all duration-300 cursor-pointer
-                  ${
-                    isActive
-                      ? 'text-[#0B1628] bg-[#C9A227] shadow-lg shadow-[#C9A227]/20'
-                      : 'text-[#94A3B8] bg-transparent border border-[#1E3048] hover:border-[#C9A227]/40 hover:text-[#E2E8F0]'
-                  }
-                `}
+                className="
+                  group inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3
+                  rounded-full text-sm sm:text-base font-medium cursor-pointer
+                  bg-[#162032] border border-[#1E3048]
+                  hover:border-[#C9A227]/50
+                  transition-all duration-300
+                  focus:outline-none focus:ring-2 focus:ring-[#C9A227]/30 focus:ring-offset-2 focus:ring-offset-[#0D1A2E]
+                "
               >
-                {isActive && (
-                  <motion.div
-                    layoutId="activeServiceTab"
-                    className="absolute inset-0 rounded-full bg-[#C9A227]"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                  />
-                )}
-                <span className="relative z-10">{tab.label}</span>
+                <Filter className="w-4 h-4 text-[#C9A227]" />
+                <span className="text-[#E2E8F0]">
+                  {categoryTabs.find((t) => t.key === activeCategory)?.label || 'All Services'}
+                </span>
+                <ChevronDown className="w-4 h-4 text-[#94A3B8] group-data-[state=open]:rotate-180 transition-transform duration-200" />
               </button>
-            )
-          })}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="center"
+              className="w-56 bg-[#162032] border-[#1E3048] rounded-xl shadow-xl shadow-black/40 p-1.5"
+            >
+              <DropdownMenuLabel className="text-[#64748B] text-xs uppercase tracking-widest px-2.5 py-2">
+                Filter by Category
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-[#1E3048]" />
+              {categoryTabs.map((tab) => {
+                const isActive = activeCategory === tab.key
+                return (
+                  <DropdownMenuItem
+                    key={tab.key}
+                    onClick={() => setActiveCategory(tab.key)}
+                    className={`
+                      flex items-center justify-between rounded-lg px-3 py-2.5 my-0.5 cursor-pointer
+                      transition-colors duration-150
+                      ${
+                        isActive
+                          ? 'bg-[#C9A227]/15 text-[#C9A227] focus:bg-[#C9A227]/20 focus:text-[#C9A227]'
+                          : 'text-[#94A3B8] hover:bg-[#1E3048]/60 hover:text-[#E2E8F0] focus:bg-[#1E3048]/60 focus:text-[#E2E8F0]'
+                      }
+                    `}
+                  >
+                    <span className="text-sm font-medium">{tab.label}</span>
+                    {isActive && (
+                      <Check className="w-4 h-4 text-[#C9A227]" />
+                    )}
+                  </DropdownMenuItem>
+                )
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </motion.div>
 
         {/* ── Service Cards Grid ── */}
