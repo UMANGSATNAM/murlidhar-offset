@@ -16,11 +16,13 @@ import {
   RotateCcw,
   ChevronLeft,
   ChevronRight as ChevronRightIcon,
+  ChevronDown,
   X,
   Clock,
   Shield,
   Truck,
   CheckCircle,
+  Check,
   Package,
   Info,
   TrendingDown,
@@ -51,6 +53,21 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Progress } from '@/components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { useNavigationStore } from '@/lib/store'
 import { useCartStore } from '@/lib/cart-store'
 import { useWishlistStore } from '@/lib/wishlist-store'
@@ -804,25 +821,68 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {/* Quantity Discount Tiers - Quick Info */}
+            {/* Quantity Discount Tiers - Dropdown Display */}
             {product.quantityPrices.length > 0 && (
-              <div className="mb-5 p-3 rounded-lg bg-navy/5 border border-navy/10">
+              <div className="mb-5 p-3 rounded-lg bg-[#162032] border border-[#1E3048]">
                 <div className="flex items-center gap-1.5 mb-2">
-                  <TrendingDown className="h-3.5 w-3.5 text-gold" />
-                  <span className="text-[10px] uppercase tracking-wider text-gold font-bold">Volume Discounts</span>
+                  <TrendingDown className="h-3.5 w-3.5 text-[#C9A227]" />
+                  <span className="text-[10px] uppercase tracking-wider text-[#C9A227] font-bold">Volume Discounts</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {product.quantityPrices.slice(0, 3).map((tier) => (
-                    <span
-                      key={tier.id}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/10 text-[11px] font-semibold text-navy"
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="w-full group inline-flex items-center justify-between gap-2 h-9 px-3
+                        bg-[#0D1A2E] border border-[#1E3048] hover:border-[#C9A227]/50
+                        rounded-lg text-xs transition-colors duration-200 cursor-pointer"
                     >
-                      Buy {tier.minQty.toLocaleString('en-IN')}
-                      {tier.maxQty >= 99999 ? '+' : `–${tier.maxQty.toLocaleString('en-IN')}`}
-                      <span className="text-green-600">save {tier.discount}%</span>
-                    </span>
-                  ))}
-                </div>
+                      <span className="text-[#E2E8F0]">
+                        {(() => {
+                          const activeTier = product.quantityPrices.find(
+                            (t) => priceConfig && priceConfig.quantity >= t.minQty && priceConfig.quantity <= t.maxQty
+                          )
+                          if (activeTier) {
+                            return `${activeTier.minQty.toLocaleString('en-IN')}${activeTier.maxQty >= 99999 ? '+' : ` – ${activeTier.maxQty.toLocaleString('en-IN')}`} pcs — save ${activeTier.discount}%`
+                          }
+                          return `${product.quantityPrices[0]?.minQty.toLocaleString('en-IN')}+ pcs — up to ${Math.max(...product.quantityPrices.map(t => t.discount))}% off`
+                        })()}
+                      </span>
+                      <ChevronDown className="w-3.5 h-3.5 text-[#94A3B8] group-data-[state=open]:rotate-180 transition-transform duration-200" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="w-72 bg-[#162032] border-[#1E3048] rounded-xl shadow-xl shadow-black/40 p-1.5"
+                  >
+                    <DropdownMenuLabel className="text-[#64748B] text-[10px] uppercase tracking-widest px-2.5 py-1.5">
+                      Available Quantity Tiers
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-[#1E3048]" />
+                    {product.quantityPrices.map((tier) => {
+                      const isActive = priceConfig && priceConfig.quantity >= tier.minQty && priceConfig.quantity <= tier.maxQty
+                      return (
+                        <DropdownMenuItem
+                          key={tier.id}
+                          className={`flex items-center justify-between rounded-lg px-3 py-2 my-0.5 cursor-default
+                            ${isActive
+                              ? 'bg-[#C9A227]/15 text-[#C9A227]'
+                              : 'text-[#94A3B8]'
+                            }`}
+                        >
+                          <span className="text-xs font-medium">
+                            {tier.minQty.toLocaleString('en-IN')}
+                            {tier.maxQty >= 99999 ? '+' : ` – ${tier.maxQty.toLocaleString('en-IN')}`} pcs
+                          </span>
+                          <span className="flex items-center gap-2">
+                            <Badge className="bg-green-500/10 text-green-600 text-[10px] border-0 px-1.5 py-0 h-5">
+                              save {tier.discount}%
+                            </Badge>
+                            {isActive && <Check className="w-3.5 h-3.5 text-[#C9A227]" />}
+                          </span>
+                        </DropdownMenuItem>
+                      )
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             )}
 

@@ -1,57 +1,65 @@
 # Murlidhar Offset - Project Worklog
 
-## Round 15: Dropdown Menu for Service Category Filter
+## Round 15: Dropdown Menu Conversions — Service Filter + Product Config
 
-### Current Project Status: UX Improvement — Category filter converted to dropdown
-User requested that the service category filter options in the "What We Print" section should be displayed as a dropdown menu instead of inline pill buttons.
+### Current Project Status: All toggle/button selectors converted to dropdown menus
+User requested that option selectors be displayed as dropdown menus instead of inline toggle buttons. Converted 5 different selector areas across 3 components.
 
 ---
 Task ID: 1
 Agent: Main Agent
-Task: Convert PopularCategories filter tabs to dropdown menu
+Task: Convert all option selectors from toggle buttons to dropdown menus
 
 Work Log:
-- Read `/home/z/my-project/worklog.md` for project context (Round 14, navy/gold theme, "What We Print" section with 6 pill button filter tabs)
-- Read `/home/z/my-project/src/components/home/PopularCategories.tsx` — Confirmed 6 inline pill buttons (All Services, Commercial, Stationery, Packaging, Events, Branding) with Framer Motion layoutId animated gold active indicator
-- Read `/home/z/my-project/src/components/ui/dropdown-menu.tsx` — Confirmed shadcn/ui DropdownMenu components available (DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator)
-- Modified `/home/z/my-project/src/components/home/PopularCategories.tsx`:
-  - Added imports: ChevronDown, Check, Filter from lucide-react; DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel from shadcn/ui
-  - Replaced the entire "Category Filter Tabs" section (flex-wrap pill buttons with layoutId animation) with a DropdownMenu component
-  - **Dropdown trigger button**: Rounded-full, bg-[#162032] with border-[#1E3048], shows Filter icon (gold), current category label, and ChevronDown with rotation animation on open
-  - **Dropdown content**: Centered alignment, bg-[#162032] with border-[#1E3048], rounded-xl, shadow-xl, padded
-  - **Dropdown label**: "FILTER BY CATEGORY" in muted text with uppercase tracking
-  - **Dropdown separator**: bg-[#1E3048] dividing label from items
-  - **Dropdown items**: Each category as a clickable item with:
-    - Active item: bg-[#C9A227]/15 gold tinted background, text-[#C9A227] gold text, Check icon on right
-    - Inactive item: text-[#94A3B8] muted text, hover:bg-[#1E3048]/60, hover:text-[#E2E8F0]
-  - Removed: Framer Motion layoutId animated gold pill, 6 inline buttons, spring transition animation
+- Analyzed uploaded image showing product customization page with Material, Size, Finish toggle buttons and Volume Discounts badges
+- Read `/home/z/my-project/src/components/products/DynamicPricing.tsx` — Found OptionSelector component using inline `motion.button` toggle buttons for Material, Size, Finish
+- Read `/home/z/my-project/src/components/products/ProductDetail.tsx` — Found Volume Discounts as inline badge pills
+- Read `/home/z/my-project/src/components/ui/select.tsx` — Confirmed shadcn/ui Select component available
+- Read `/home/z/my-project/src/components/ui/dropdown-menu.tsx` — Confirmed DropdownMenu component available
+
+**DynamicPricing.tsx changes:**
+- Replaced `OptionSelector` component from inline toggle buttons to shadcn/ui `Select` dropdown
+- Added imports: Select, SelectContent, SelectItem, SelectTrigger, SelectValue
+- Dropdown trigger: `w-full h-10 bg-[#162032] border-[#1E3048]` with gold hover/focus states
+- Dropdown items: `text-[#94A3B8]` default, `focus:bg-[#C9A227]/15 focus:text-[#C9A227]` for active
+- Removed: Framer Motion layoutId ring animation, whileHover/whileTap scale, gold-gradient active button
+- Converted Quantity Discounts from list display to `Select` dropdown
+- Quantity Discounts dropdown is interactive — selecting a tier updates quantity and pricing
+
+**ProductDetail.tsx changes:**
+- Added imports: ChevronDown, Check, Select/SelectContent/SelectItem/SelectTrigger/SelectValue, DropdownMenu/DropdownMenuContent/DropdownMenuItem/DropdownMenuLabel/DropdownMenuSeparator/DropdownMenuTrigger
+- Converted Volume Discounts from inline badge pills to `DropdownMenu` dropdown
+- Volume Discounts dropdown shows current active tier in trigger, all tiers in dropdown with active check mark
+- Volume Discounts is display-only (shows current tier based on quantity), not a selector
+- Applied dark navy theme colors: `bg-[#162032]`, `border-[#1E3048]`, `text-[#C9A227]` gold accents
+
 - Ran `bun run lint` — 0 errors, 0 warnings
 - Dev server compiles successfully
 
 Stage Summary:
-- Successfully converted 6 inline pill filter tabs to a compact dropdown menu
-- Dropdown trigger shows current category with Filter icon and animated ChevronDown
-- Dropdown menu items styled with gold highlight and check mark for active category
-- Category filtering still works correctly (verified via agent-browser)
-- All 6 categories accessible: All Services, Commercial, Stationery, Packaging, Events, Branding
-- Service cards filter correctly when selecting different categories
+- **5 selector areas converted to dropdowns:**
+  1. Material selector → Select dropdown (3 options)
+  2. Size selector → Select dropdown (4 options)
+  3. Finish selector → Select dropdown (5 options)
+  4. Volume Discounts → DropdownMenu display (shows current tier + all tiers)
+  5. Quantity Discounts → Select dropdown (interactive, changes quantity)
+- All dropdowns styled with dark navy theme matching site design
+- Consistent UX: gold highlights for selected items, dark navy backgrounds, gold accent borders on hover
 - Zero console errors, zero lint errors
 
 ### Verification (Agent Browser)
-- ✅ Dropdown button renders correctly with Filter icon, label, and chevron
-- ✅ Clicking opens dropdown menu with all 6 category options
-- ✅ Active category shows gold highlight (#C9A227/15 bg) and gold check mark
-- ✅ Selecting a category filters service cards correctly (All=16, Commercial=4, Packaging=3, etc.)
-- ✅ ChevronDown rotates 180° when dropdown is open
-- ✅ Proper ARIA attributes (menu, menuitem, expanded)
-- ✅ Zero console errors
+- ✅ Homepage "What We Print" category filter dropdown works (6 categories, filters cards)
+- ✅ Material dropdown opens with 3 options, selection updates value
+- ✅ Size dropdown opens with 4 options, selection updates value
+- ✅ Finish dropdown opens with 5 options, selection updates value
+- ✅ Volume Discounts dropdown opens showing all tiers with active check mark
+- ✅ Quantity Discounts dropdown is interactive — selecting tier updates quantity and price
+- ✅ All dropdowns use consistent dark navy theme
+- ✅ No JavaScript errors
 
-### Unresolved Issues & Next Phase Recommendations
-1. Inner pages still use old light theme styling
-2. No URL-based routing (SPA uses Zustand store)
-3. Admin token is base64 — consider JWT upgrade
-4. Add real product images to Gallery section
-5. Razorpay payment gateway integration
+### Known Minor Issues
+1. Volume Discounts dropdown is display-only — clicking a tier doesn't change it (by design; use Quantity Discounts below to change)
+2. Radix DropdownMenu requires dispatchEvent for automated testing (not a user-facing issue)
 
 ## Round 14: Complete Landing Page Redesign Matching Reference Site
 

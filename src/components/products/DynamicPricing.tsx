@@ -14,6 +14,13 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -80,7 +87,7 @@ interface DynamicPricingProps {
 
 const GST_RATE = 0.18
 
-// Option selector component - defined outside to avoid lint error
+// Option selector component - dropdown menu style
 function OptionSelector({
   label,
   options,
@@ -99,31 +106,30 @@ function OptionSelector({
       <Label className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
         {label}
       </Label>
-      <div className="flex flex-wrap gap-2">
-        {options.map((option) => (
-          <motion.button
-            key={option}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => onSelect(option)}
-            className={`relative px-3.5 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
-              selected === option
-                ? 'gold-gradient text-navy border-gold gold-shadow'
-                : 'border-border bg-background text-foreground hover:border-gold/40 hover:bg-gold/5'
-            }`}
-          >
-            {selected === option && (
-              <motion.div
-                layoutId={`ring-${label}`}
-                className="absolute inset-0 rounded-lg border-2 border-gold/40 pointer-events-none"
-                initial={false}
-                transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              />
-            )}
-            {option}
-          </motion.button>
-        ))}
-      </div>
+      <Select value={selected} onValueChange={onSelect}>
+        <SelectTrigger
+          className="w-full h-10 bg-[#162032] border-[#1E3048] hover:border-[#C9A227]/50
+            focus:ring-[#C9A227]/30 text-[#E2E8F0] rounded-lg transition-colors duration-200"
+        >
+          <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+        </SelectTrigger>
+        <SelectContent
+          className="bg-[#162032] border-[#1E3048] rounded-xl shadow-xl shadow-black/40"
+        >
+          {options.map((option) => (
+            <SelectItem
+              key={option}
+              value={option}
+              className="text-[#94A3B8] hover:bg-[#1E3048]/60 hover:text-[#E2E8F0]
+                focus:bg-[#C9A227]/15 focus:text-[#C9A227]
+                data-[state=checked]:bg-[#C9A227]/15 data-[state=checked]:text-[#C9A227]
+                cursor-pointer rounded-md my-0.5 transition-colors duration-150"
+            >
+              {option}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   )
 }
@@ -342,44 +348,47 @@ export default function DynamicPricing({
             </div>
           </div>
 
-          {/* Quantity Price Tiers */}
+          {/* Quantity Price Tiers - Dropdown */}
           {product.quantityPrices && product.quantityPrices.length > 0 && (
-            <div className="mt-3 rounded-lg border border-gold/15 bg-gold/5 p-3">
+            <div className="mt-3">
               <div className="flex items-center gap-1.5 mb-2">
-                <Calculator className="h-3.5 w-3.5 text-gold" />
-                <span className="text-xs font-semibold text-gold uppercase tracking-wider">
+                <Calculator className="h-3.5 w-3.5 text-[#C9A227]" />
+                <span className="text-xs font-semibold text-[#C9A227] uppercase tracking-wider">
                   Quantity Discounts
                 </span>
               </div>
-              <div className="space-y-1.5">
-                {product.quantityPrices.map((tier) => (
-                  <div
-                    key={tier.id}
-                    className={`flex items-center justify-between text-xs px-2 py-1.5 rounded-md transition-colors ${
-                      quantityTier?.id === tier.id
-                        ? 'bg-gold/15 text-foreground font-medium'
-                        : 'text-muted-foreground'
-                    }`}
-                  >
-                    <span>
+              <Select
+                value={quantityTier?.id || product.quantityPrices[0]?.id || ''}
+                onValueChange={(val) => {
+                  const tier = product.quantityPrices.find((t) => t.id === val)
+                  if (tier) setQuantity(tier.minQty)
+                }}
+              >
+                <SelectTrigger
+                  className="w-full h-9 bg-[#0D1A2E] border-[#1E3048] hover:border-[#C9A227]/50
+                    focus:ring-[#C9A227]/30 text-[#E2E8F0] rounded-lg text-xs transition-colors duration-200"
+                >
+                  <SelectValue placeholder="Select quantity tier" />
+                </SelectTrigger>
+                <SelectContent
+                  className="bg-[#162032] border-[#1E3048] rounded-xl shadow-xl shadow-black/40"
+                >
+                  {product.quantityPrices.map((tier) => (
+                    <SelectItem
+                      key={tier.id}
+                      value={tier.id}
+                      className="text-[#94A3B8] hover:bg-[#1E3048]/60 hover:text-[#E2E8F0]
+                        focus:bg-[#C9A227]/15 focus:text-[#C9A227]
+                        cursor-pointer rounded-md my-0.5 transition-colors duration-150 text-xs"
+                    >
                       {tier.minQty.toLocaleString('en-IN')}
                       {tier.maxQty >= 99999 ? '+' : ` – ${tier.maxQty.toLocaleString('en-IN')}`} pcs
-                    </span>
-                    <span className="flex items-center gap-2">
-                      {tier.discount > 0 && (
-                        <Badge className="bg-green-500/10 text-green-600 text-[10px] border-0 px-1.5 py-0">
-                          -{tier.discount}% OFF
-                        </Badge>
-                      )}
-                      {tier.pricePer > 0 && (
-                        <span className="font-medium">
-                          ₹{tier.pricePer.toLocaleString('en-IN')}/pc
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                ))}
-              </div>
+                      {tier.discount > 0 ? ` — save ${tier.discount}%` : ''}
+                      {tier.pricePer > 0 ? ` (₹${tier.pricePer.toLocaleString('en-IN')}/pc)` : ''}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           )}
         </div>
