@@ -1,10 +1,12 @@
 # Use official Node.js image to ensure maximum compatibility with Next.js standalone
-FROM node:20-alpine AS base
+FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 # Install libc6-compat for process compatibility and openssl for Prisma
-RUN apk add --no-cache libc6-compat openssl
+RUN apt-get update -qq && \
+    apt-get install -y openssl && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package manager files
@@ -37,7 +39,9 @@ ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV HOSTNAME "0.0.0.0"
 
-RUN apk add --no-cache openssl
+RUN apt-get update -qq && \
+    apt-get install -y openssl && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
