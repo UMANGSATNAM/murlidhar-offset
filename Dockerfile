@@ -39,6 +39,9 @@ ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV HOSTNAME "0.0.0.0"
 
+# Fix for Railway internal network DNS resolution with Node 20+ (force IPv4)
+ENV DNS_DEFAULT_RESULT_ORDER=ipv4first
+
 RUN apt-get update -qq && \
     apt-get install -y openssl && \
     rm -rf /var/lib/apt/lists/*
