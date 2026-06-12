@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { hash } from 'bcryptjs'
-import prisma from '@/lib/db'
+import { db } from '@/lib/db'
 
 export async function GET(req: Request) {
   try {
     // Check if an admin already exists
-    const existingAdmin = await prisma.user.findFirst({
+    const existingAdmin = await db.user.findFirst({
       where: {
         role: {
           in: ['admin', 'super_admin']
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     const hashedPassword = await hash('admin123', 12)
 
     // Create the super_admin
-    const newAdmin = await prisma.user.create({
+    const newAdmin = await db.user.create({
       data: {
         name: 'Super Admin',
         email: 'admin@murlidhar.com',
