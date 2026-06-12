@@ -221,6 +221,13 @@ export default function Footer() {
                 >
                   Track Order
                 </button>
+                <button
+                  onClick={() => navigate('admin')}
+                  className="text-xs transition-colors duration-200 hover:text-[#E2E8F0]"
+                  style={{ color: '#64748B' }}
+                >
+                  Admin
+                </button>
               </div>
             </div>
           </div>
